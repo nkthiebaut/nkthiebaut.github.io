@@ -17,6 +17,7 @@ Built following `this blog post <https://www.dataquest.io/blog/how-to-setup-a-da
 
 To create master branch follow the procedure explained `here <http://ntanjerome.org/blog/how-to-setup-github-user-page-with-pelican/>`_. From the source branch:
 
+* pelican content -s publishconf.py
 * git branch gh-pages
 * ghp-import output
 * git checkout master
