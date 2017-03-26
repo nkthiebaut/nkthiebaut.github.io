@@ -15,7 +15,8 @@ Hosted on github pages.
 
 Built following `this blog post <https://www.dataquest.io/blog/how-to-setup-a-data-science-blog/>`_, with the `Flex theme <https://github.com/alexandrevicenzi/Flex>`_.
 
-To create master branch follow the procedure explained `here <http://ntanjerome.org/blog/how-to-setup-github-user-page-with-pelican/>`_:
+To create master branch follow the procedure explained `here <http://ntanjerome.org/blog/how-to-setup-github-user-page-with-pelican/>`_. From the source branch:
+
 * git branch gh-pages
 * ghp-import output
 * git checkout master
