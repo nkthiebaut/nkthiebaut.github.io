@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>Nicolas Thiebaut's blog</title><link>https://nickthiebaut.github.io/</link><description>Data science blog</description><lastBuildDate>Wed, 08 Jun 2016 20:00:00 +0200</lastBuildDate><item><title>First Post</title><link>https://nickthiebaut.github.io/first-post.html</link><description>&lt;style type="text/css"&gt;/*!
+<rss version="2.0"><channel><title>Nicolas Thiebaut's blog</title><link>https://nkthiebaut.github.io/</link><description>Data science blog</description><lastBuildDate>Wed, 08 Jun 2016 20:00:00 +0200</lastBuildDate><item><title>First Post</title><link>https://nkthiebaut.github.io/first-post.html</link><description>&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -1043,4 +1043,4 @@ h6:hover .anchor-link {
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">me</dc:creator><pubDate>Wed, 08 Jun 2016 20:00:00 +0200</pubDate><guid isPermaLink="false">tag:nickthiebaut.github.io,2016-06-08:first-post.html</guid><category>python</category></item></channel></rss>
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">me</dc:creator><pubDate>Wed, 08 Jun 2016 20:00:00 +0200</pubDate><guid isPermaLink="false">tag:nkthiebaut.github.io,2016-06-08:first-post.html</guid><category>python</category></item></channel></rss>

@@ -15,6 +15,13 @@ Hosted on github pages.
 
 Built following `this blog post <https://www.dataquest.io/blog/how-to-setup-a-data-science-blog/>`_, with the `Flex theme <https://github.com/alexandrevicenzi/Flex>`_.
 
+For local testing: 
+
+* Run :bash:`pelican content` to generate the HTML.
+* Switch to the output directory.
+* Run :bash:`python -m pelican.server`.
+* Visit localhost:8000 in your browser to preview the blog.
+
 To create master branch follow the procedure explained `here <http://ntanjerome.org/blog/how-to-setup-github-user-page-with-pelican/>`_. From the source branch:
 
 * pelican content -s publishconf.py
