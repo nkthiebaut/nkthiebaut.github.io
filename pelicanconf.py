@@ -4,9 +4,9 @@ from __future__ import unicode_literals
 import os
 
 AUTHOR = 'Nicolas Thiebaut'
-SITENAME = "Nicolas Thiebaut's blog"
+SITENAME = "Nicolas blog"
 SITEURL = 'https://nkthiebaut.github.io'
-SITETITLE = "Nicolas Thiebaut's blog"
+SITETITLE = "Nicolas blog"
 SITESUBTITLE = 'Data science blog'
 SITEDESCRIPTION = "Nicolas Thiebaut's data science blog"
 SITELOGO = SITEURL + '/images/PhotoThiebaut.jpg'

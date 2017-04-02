@@ -8,4 +8,4 @@ Contact
 :author: Nicolas Thiebaut
 :summary: Nicolas Thiebaut contact information
 
-Feel free to contact me at ``nickthiebaut [at] gmail [dot] com``.
+Feel free to contact me at this address: ``nkthiebaut [at] gmail [dot] com``.
