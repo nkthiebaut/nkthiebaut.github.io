@@ -4,10 +4,10 @@ from __future__ import unicode_literals
 import os
 
 AUTHOR = 'Nicolas Thiebaut'
-SITENAME = "Nicolas blog"
+SITENAME = "Data4thought: data science blog"
 SITEURL = 'https://nkthiebaut.github.io'
-SITETITLE = "Nicolas blog"
-SITESUBTITLE = 'Data science blog'
+SITETITLE = "Data4thought"
+SITESUBTITLE = "Nicolas Thiebaut's data science blog"
 SITEDESCRIPTION = "Nicolas Thiebaut's data science blog"
 SITELOGO = SITEURL + '/images/PhotoThiebaut.jpg'
 FAVICON = SITEURL + '/images/favicon.ico'
