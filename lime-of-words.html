@@ -1,5 +1,103 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/all-en.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2017-08-07T16:00:00+02:00</updated><entry><title>LIME of words</title><link href="https://nkthiebaut.github.io/lime-of-words.html" rel="alternate"></link><published>2017-08-07T16:00:00+02:00</published><updated>2017-08-07T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-08-07:lime-of-words.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="https://nkthiebaut.github.io/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="https://nkthiebaut.github.io/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="https://nkthiebaut.github.io/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="https://nkthiebaut.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Data4thought: data science blog Atom">
+
+
+    <link rel="shortcut icon" href="https://nkthiebaut.github.io/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="https://nkthiebaut.github.io/images/favicon.ico" type="image/x-icon">
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+
+<meta name="author" content="Nicolas Thiebaut" />
+<meta name="description" content="Experiments with the LIME interpretation model¶In this blog post I will share some experiments on the LIME interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called “Why Should I Trust You?” Explaining the Predictions of Any Classifier. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It provides a way to investigate a model predictions beyond the sole classification or regression metric." />
+<meta name="keywords" content="python, machine learning">
+<meta property="og:site_name" content="Data4thought: data science blog"/>
+<meta property="og:title" content="LIME of words"/>
+<meta property="og:description" content="Experiments with the LIME interpretation model¶In this blog post I will share some experiments on the LIME interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called “Why Should I Trust You?” Explaining the Predictions of Any Classifier. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It provides a way to investigate a model predictions beyond the sole classification or regression metric."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://nkthiebaut.github.io/lime-of-words.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-08-07 16:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="https://nkthiebaut.github.io/author/nicolas-thiebaut.html">
+<meta property="article:section" content="posts"/>
+<meta property="article:tag" content="python"/>
+<meta property="article:tag" content="machine learning"/>
+<meta property="og:image" content="https://nkthiebaut.github.io/images/PhotoThiebaut.jpg">
+
+  <title>Data4thought: data science blog &ndash; LIME of words</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="https://nkthiebaut.github.io">
+        <img src="https://nkthiebaut.github.io/images/PhotoThiebaut.jpg" alt="Data4thought" title="Data4thought">
+      </a>
+      <h1><a href="https://nkthiebaut.github.io">Data4thought</a></h1>
+
+<p>Nicolas Thiebaut's data science blog</p>
+      <nav>
+        <ul class="list">
+          <li><a href="https://nkthiebaut.github.io/pages/about.html#about">About</a></li>
+          <li><a href="https://nkthiebaut.github.io/pages/contact.html#contact">Contact</a></li>
+
+          <li><a href="http://getpelican.com/" target="_blank">Pelican</a></li>
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-linkedin" href="https://www.linkedin.com/in/nthiebaut" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-github" href="https://github.com/nickthiebaut/" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/NicoThiebaut" target="_blank"><i class="fa fa-twitter"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="https://nkthiebaut.github.io">    Home
+</a>
+
+      <a href="/archives.html">Archives</a>
+      <a href="/categories.html">Categories</a>
+      <a href="/tags.html">Tags</a>
+
+      <a href="https://nkthiebaut.github.io/feeds/all.atom.xml">    Atom
+</a>
+
+    </nav>
+
+<article class="single">
+  <header>
+    <h1 id="lime-of-words">LIME of words</h1>
+    <p>
+          Posted on Mon 07 August 2017 in <a href="https://nkthiebaut.github.io/category/posts.html">posts</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <style type="text/css">/*!
 *
 * IPython notebook
 *
@@ -226,7 +324,7 @@ div.unrecognized_cell .inner_cell a:hover {
   text-decoration: none;
 }
 @media (max-width: 540px) {
-  div.unrecognized_cell &gt; div.prompt {
+  div.unrecognized_cell > div.prompt {
     display: none;
   }
 }
@@ -279,19 +377,19 @@ div.input_prompt {
   color: #303F9F;
   border-top: 1px solid transparent;
 }
-div.input_area &gt; div.highlight {
+div.input_area > div.highlight {
   margin: 0.4em;
   border: none;
   padding: 0px;
   background-color: transparent;
 }
-div.input_area &gt; div.highlight &gt; pre {
+div.input_area > div.highlight > pre {
   margin: 0px;
   border: none;
   padding: 0px;
   background-color: transparent;
 }
-/* The following gets added to the &lt;head&gt; if it is detected that the user has a
+/* The following gets added to the <head> if it is detected that the user has a
  * monospace font with inconsistent normal/bold/italic height.  See
  * notebookmain.js.  Such fonts will have keywords vertically offset with
  * respect to the rest of the text.  The user should select a better font.
@@ -337,7 +435,7 @@ div.input_area &gt; div.highlight &gt; pre {
 }
 /*
 
-Original style from softwaremaniacs.org (c) Ivan Sagalaev &lt;Maniac@SoftwareManiacs.Org&gt;
+Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiacs.Org>
 Adapted from GitHub theme
 
 */
@@ -799,7 +897,7 @@ div.text_cell {
   align-items: stretch;
 }
 @media (max-width: 540px) {
-  div.text_cell &gt; div.prompt {
+  div.text_cell > div.prompt {
     display: none;
   }
 }
@@ -864,8 +962,8 @@ h6:hover .anchor-link {
   font-size: 100%;
   font-style: italic;
 }
-&lt;/style&gt;
-&lt;style type="text/css"&gt;.highlight .hll { background-color: #ffffcc }
+</style>
+<style type="text/css">.highlight .hll { background-color: #ffffcc }
 .highlight  { background: #f8f8f8; }
 .highlight .c { color: #408080; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
@@ -933,8 +1031,8 @@ h6:hover .anchor-link {
 .highlight .vg { color: #19177C } /* Name.Variable.Global */
 .highlight .vi { color: #19177C } /* Name.Variable.Instance */
 .highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */&lt;/style&gt;
-&lt;style type="text/css"&gt;
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */</style>
+<style type="text/css">
 /* Temporary definitions which will become obsolete with Notebook release 5.0 */
 .ansi-black-fg { color: #3E424D; }
 .ansi-black-bg { background-color: #3E424D; }
@@ -970,36 +1068,36 @@ h6:hover .anchor-link {
 .ansi-white-intense-bg { background-color: #A1A6B2; }
 
 .ansi-bold { font-weight: bold; }
-&lt;/style&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h1 id="Experiments-with-the-LIME-interpretation-model"&gt;Experiments with the LIME interpretation model&lt;a class="anchor-link" href="#Experiments-with-the-LIME-interpretation-model"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;In this blog post I will share some experiments on the LIME interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called &lt;a href="https://arxiv.org/abs/1602.04938"&gt;“Why Should I Trust You?” Explaining the Predictions of Any Classifier&lt;/a&gt;. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It provides a way to investigate a model predictions beyond the sole classification or regression metric.&lt;/p&gt;
-&lt;p&gt;In order to set the playground I first build a quick model on the &lt;a href="www.imdb.com"&gt;IMDB&lt;/a&gt; sentiment analysis dataset, which contains movie reviews with an associated sentiment (0 for negative, 1 for positive). Data was downloaded &lt;a href="https://www.kaggle.com/c/word2vec-nlp-tutorial/download/labeledTrainData.tsv.zip"&gt;on kaggle&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [1]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;pandas&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;pd&lt;/span&gt;
-&lt;span class="n"&gt;df&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_csv&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'./labeledTrainData.tsv'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sep&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="se"&gt;\t&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt output_prompt"&gt;Out[1]:&lt;/div&gt;
-&lt;div class="output_html rendered_html output_subarea output_execute_result"&gt;
-&lt;div&gt;
-&lt;style&gt;
+</style>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Experiments-with-the-LIME-interpretation-model">Experiments with the LIME interpretation model<a class="anchor-link" href="#Experiments-with-the-LIME-interpretation-model">¶</a></h1><p>In this blog post I will share some experiments on the LIME interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called <a href="https://arxiv.org/abs/1602.04938">“Why Should I Trust You?” Explaining the Predictions of Any Classifier</a>. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It provides a way to investigate a model predictions beyond the sole classification or regression metric.</p>
+<p>In order to set the playground I first build a quick model on the <a href="www.imdb.com">IMDB</a> sentiment analysis dataset, which contains movie reviews with an associated sentiment (0 for negative, 1 for positive). Data was downloaded <a href="https://www.kaggle.com/c/word2vec-nlp-tutorial/download/labeledTrainData.tsv.zip">on kaggle</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'./labeledTrainData.tsv'</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">'</span><span class="se">\t</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[1]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>
     .dataframe thead tr:only-child th {
         text-align: right;
     }
@@ -1011,205 +1109,205 @@ h6:hover .anchor-link {
     .dataframe tbody tr th {
         vertical-align: top;
     }
-&lt;/style&gt;
-&lt;table border="1" class="dataframe"&gt;
-&lt;thead&gt;
-&lt;tr style="text-align: right;"&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;id&lt;/th&gt;
-&lt;th&gt;sentiment&lt;/th&gt;
-&lt;th&gt;review&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;th&gt;0&lt;/th&gt;
-&lt;td&gt;5814_8&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;td&gt;With all this stuff going down at the moment w...&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;1&lt;/th&gt;
-&lt;td&gt;2381_9&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;td&gt;\The Classic War of the Worlds\" by Timothy Hi...&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;2&lt;/th&gt;
-&lt;td&gt;7759_3&lt;/td&gt;
-&lt;td&gt;0&lt;/td&gt;
-&lt;td&gt;The film starts with a manager (Nicholas Bell)...&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;3&lt;/th&gt;
-&lt;td&gt;3630_4&lt;/td&gt;
-&lt;td&gt;0&lt;/td&gt;
-&lt;td&gt;It must be assumed that those who praised this...&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;4&lt;/th&gt;
-&lt;td&gt;9495_8&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;td&gt;Superbly trashy and wondrously unpretentious 8...&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="Text-preprocessing"&gt;Text preprocessing&lt;a class="anchor-link" href="#Text-preprocessing"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Here I simply replace rare words with an "oov" (out-of-vocabulary) tag. This step is crucial as rare words (tipically less than 10 occurences) do not appear often enough for the model to learn pattern with it, and they increase the vector space representation dimension dramatically with most text vectorization method (such as bag-of-words or TF-IDF).&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [2]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;collections&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;defaultdict&lt;/span&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.model_selection&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;train_test_split&lt;/span&gt;
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>sentiment</th>
+<th>review</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>5814_8</td>
+<td>1</td>
+<td>With all this stuff going down at the moment w...</td>
+</tr>
+<tr>
+<th>1</th>
+<td>2381_9</td>
+<td>1</td>
+<td>\The Classic War of the Worlds\" by Timothy Hi...</td>
+</tr>
+<tr>
+<th>2</th>
+<td>7759_3</td>
+<td>0</td>
+<td>The film starts with a manager (Nicholas Bell)...</td>
+</tr>
+<tr>
+<th>3</th>
+<td>3630_4</td>
+<td>0</td>
+<td>It must be assumed that those who praised this...</td>
+</tr>
+<tr>
+<th>4</th>
+<td>9495_8</td>
+<td>1</td>
+<td>Superbly trashy and wondrously unpretentious 8...</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Text-preprocessing">Text preprocessing<a class="anchor-link" href="#Text-preprocessing">¶</a></h2><p>Here I simply replace rare words with an "oov" (out-of-vocabulary) tag. This step is crucial as rare words (tipically less than 10 occurences) do not appear often enough for the model to learn pattern with it, and they increase the vector space representation dimension dramatically with most text vectorization method (such as bag-of-words or TF-IDF).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
 
-&lt;span class="n"&gt;texts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'review'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'sentiment'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;
+<span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s1">'review'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'sentiment'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
-&lt;span class="c1"&gt;# 1) Compute word frequencies&lt;/span&gt;
-&lt;span class="n"&gt;all_tokens&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;texts&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;()]&lt;/span&gt; 
-&lt;span class="n"&gt;frequencies&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;defaultdict&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;all_tokens&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-    &lt;span class="n"&gt;frequencies&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
-&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Vocabulary size before rare words tagging:'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;all_tokens&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+<span class="c1"># 1) Compute word frequencies</span>
+<span class="n">all_tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">texts</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span> 
+<span class="n">frequencies</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">all_tokens</span><span class="p">:</span>
+    <span class="n">frequencies</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Vocabulary size before rare words tagging:'</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_tokens</span><span class="p">)))</span>
 
-&lt;span class="c1"&gt;# 2) Replace words occuring less than 20 times in the corpus with an out-of-vocabulary tag &lt;/span&gt;
-&lt;span class="n"&gt;texts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;' '&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;frequencies&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;&gt;&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="s1"&gt;'&lt;oov&gt;'&lt;/span&gt; 
-                   &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;()])&lt;/span&gt;
-         &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;texts&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Vocabulary size after rare words tagging:'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;texts&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;()])))&lt;/span&gt;
+<span class="c1"># 2) Replace words occuring less than 20 times in the corpus with an out-of-vocabulary tag </span>
+<span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">w</span> <span class="k">if</span> <span class="n">frequencies</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">></span> <span class="mi">20</span> <span class="k">else</span> <span class="s1">'<oov>'</span> 
+                   <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">split</span><span class="p">()])</span>
+         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Vocabulary size after rare words tagging:'</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">token</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">texts</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">split</span><span class="p">()])))</span>
 
-&lt;span class="c1"&gt;# 3) Split train and test sets (should be done before rare words tagging in real world applications)&lt;/span&gt;
-&lt;span class="n"&gt;texts_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;texts_test&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_test&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;train_test_split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;texts&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_subarea output_stream output_stdout output_text"&gt;
-&lt;pre&gt;Vocabulary size before rare words tagging: 257663
+<span class="c1"># 3) Split train and test sets (should be done before rare words tagging in real world applications)</span>
+<span class="n">texts_train</span><span class="p">,</span> <span class="n">texts_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Vocabulary size before rare words tagging: 257663
 Vocabulary size after rare words tagging: 15351
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="Building-a-simple-sentiment-prediction-pipeline"&gt;Building a simple sentiment prediction pipeline&lt;a class="anchor-link" href="#Building-a-simple-sentiment-prediction-pipeline"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Here I build a simple data transformation pipeline for text classification: a &lt;a href="https://en.wikipedia.org/wiki/Tf–idf"&gt;TF-IDF&lt;/a&gt; vectorizer followed by a random forest classifier.&lt;/p&gt;
-&lt;p&gt;This classification pipeline is prettty standard but it is already hard to interpret.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [3]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.feature_extraction.text&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;TfidfVectorizer&lt;/span&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.pipeline&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;make_pipeline&lt;/span&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.ensemble&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;RandomForestClassifier&lt;/span&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;metrics&lt;/span&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Building-a-simple-sentiment-prediction-pipeline">Building a simple sentiment prediction pipeline<a class="anchor-link" href="#Building-a-simple-sentiment-prediction-pipeline">¶</a></h2><p>Here I build a simple data transformation pipeline for text classification: a <a href="https://en.wikipedia.org/wiki/Tf–idf">TF-IDF</a> vectorizer followed by a random forest classifier.</p>
+<p>This classification pipeline is prettty standard but it is already hard to interpret.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">TfidfVectorizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">make_pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">metrics</span>
 
-&lt;span class="n"&gt;vectorizer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;TfidfVectorizer&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;span class="n"&gt;classifier&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;RandomForestClassifier&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_estimators&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;max_depth&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">()</span>
+<span class="n">classifier</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 
-&lt;span class="n"&gt;pipeline&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;make_pipeline&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;vectorizer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;classifier&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">vectorizer</span><span class="p">,</span> <span class="n">classifier</span><span class="p">)</span>
 
-&lt;span class="n"&gt;pipeline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;texts_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;y_preds&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pipeline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;predict&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;texts_test&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">texts_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_preds</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">texts_test</span><span class="p">)</span>
 
-&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Accuracy: &lt;/span&gt;&lt;span class="si"&gt;{:.2f}&lt;/span&gt;&lt;span class="s1"&gt; %'&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;metrics&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;accuracy_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_preds&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
-&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'F1-score: &lt;/span&gt;&lt;span class="si"&gt;{:.2f}&lt;/span&gt;&lt;span class="s1"&gt; %'&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;metrics&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;f1_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_preds&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_subarea output_stream output_stdout output_text"&gt;
-&lt;pre&gt;Accuracy: 81.10 %
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Accuracy: </span><span class="si">{:.2f}</span><span class="s1"> %'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_preds</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'F1-score: </span><span class="si">{:.2f}</span><span class="s1"> %'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_preds</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Accuracy: 81.10 %
 F1-score: 81.66 %
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="Analysis:-what-has-the-model-learnt?"&gt;Analysis: what has the model learnt?&lt;a class="anchor-link" href="#Analysis:-what-has-the-model-learnt?"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;A F1-score of 80% is already enjoyable for some classification tasks, but we have no idea if the classifier has learnt useful features yet. For instance an additional HTML tag may have been added to the positive examples for obscure reasons, in which case our classifier would have a nice score but would have mostly learnt to recognize this artificial tag presence. This situation happens more very often in data science has some variable "from the future" sometimes leak in your dataset.&lt;/p&gt;
-&lt;p&gt;To avoid such ungeneralizable model training, one has to investigate the model prediction in addition to the computation of the score on a test set.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h3 id="Feature-importance"&gt;Feature importance&lt;a class="anchor-link" href="#Feature-importance"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;A standard way to understand the predictions of a trained random forest classifier is to compute feature (Gini) importance. Feature importance in trees is computed as the (normalized) mean Gini impurity reduction brought by the features. In a word it describes how well the feature splits classes in your trees.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [4]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;seaborn&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;sns&lt;/span&gt;
-&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="k"&gt;matplotlib&lt;/span&gt; inline
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Analysis:-what-has-the-model-learnt?">Analysis: what has the model learnt?<a class="anchor-link" href="#Analysis:-what-has-the-model-learnt?">¶</a></h2><p>A F1-score of 80% is already enjoyable for some classification tasks, but we have no idea if the classifier has learnt useful features yet. For instance an additional HTML tag may have been added to the positive examples for obscure reasons, in which case our classifier would have a nice score but would have mostly learnt to recognize this artificial tag presence. This situation happens more very often in data science has some variable "from the future" sometimes leak in your dataset.</p>
+<p>To avoid such ungeneralizable model training, one has to investigate the model prediction in addition to the computation of the score on a test set.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Feature-importance">Feature importance<a class="anchor-link" href="#Feature-importance">¶</a></h3><p>A standard way to understand the predictions of a trained random forest classifier is to compute feature (Gini) importance. Feature importance in trees is computed as the (normalized) mean Gini impurity reduction brought by the features. In a word it describes how well the feature splits classes in your trees.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
 
-&lt;span class="c1"&gt;# Create a dictionary with most important features&lt;/span&gt;
-&lt;span class="n"&gt;importances&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pipeline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;named_steps&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'randomforestclassifier'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;feature_importances_&lt;/span&gt;
-&lt;span class="n"&gt;top_indices&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argsort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;importances&lt;/span&gt;&lt;span class="p"&gt;)[::&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;][:&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="n"&gt;words_importance&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DataFrame&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="s1"&gt;'most_important_words'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;vectorizer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_feature_names&lt;/span&gt;&lt;span class="p"&gt;())[&lt;/span&gt;&lt;span class="n"&gt;top_indices&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
-                                 &lt;span class="s1"&gt;'importance'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;importances&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;top_indices&lt;/span&gt;&lt;span class="p"&gt;]})&lt;/span&gt;
+<span class="c1"># Create a dictionary with most important features</span>
+<span class="n">importances</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s1">'randomforestclassifier'</span><span class="p">]</span><span class="o">.</span><span class="n">feature_importances_</span>
+<span class="n">top_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">importances</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">words_importance</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'most_important_words'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vectorizer</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">())[</span><span class="n">top_indices</span><span class="p">],</span>
+                                 <span class="s1">'importance'</span><span class="p">:</span> <span class="n">importances</span><span class="p">[</span><span class="n">top_indices</span><span class="p">]})</span>
 
-&lt;span class="n"&gt;sns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;barplot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"most_important_words"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"importance"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;words_importance&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;title&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt output_prompt"&gt;Out[4]:&lt;/div&gt;
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;&lt;matplotlib.text.text at 0x1315fd860&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_png output_subarea "&gt;
-&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYsAAAEFCAYAAAASWssjAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"most_important_words"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">"importance"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">words_importance</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">''</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[4]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre><matplotlib.text.text at 0x1315fd860></pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYsAAAEFCAYAAAASWssjAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAIABJREFUeJzt3X28VWWZ//HPgYMhiQRFTk6mlvrN5ldkmIIikqmND4SV
 U42VaTlko5VpM9XPp2pyGmcE6meZgqE9mg+JqY1ipYKAZoMPSeJVWFraaEc7CoqhwPn9cd9Htpt9
 9lpwztps4ft+vXhx9r7XWve19sO69r0ertXR09ODmZlZM4M2dQBmZtb+nCzMzKyQk4WZmRVysjAz
@@ -1375,89 +1473,89 @@ A6TdSbeTNngbfJ/pAs+QNqa3Al+JiHtJx1IeIlUmvZN0XGJOg3lrY/oqcGaO+TxShdOdC/r+MXB3
 wXGCm0nl0W/O94C4k7SBJyJWkTb8X5e0hHRc5H31C8j3wvgE8LMc8/L8fF+vtW2GfDaU2UbKZ0MR
 jW9RarZZ8XUWtkWRtB/rbohT79CI+FMr4xkI+eK8kQ2azo+I81sdj22ePLIwM7NCPmZhZmaFnCzM
 zKyQk4WZmRVysjAzs0JOFmZmVuj/Awpidvlb7gvNAAAAAElFTkSuQmCC
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;So now we have the most important words on average on the training set. The most important words make sense, but&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;We don't know if a word contributes positively or negatively&lt;/li&gt;
-&lt;li&gt;The feature importance attribute is specific to tree-based models&lt;/li&gt;
-&lt;li&gt;If we don't undestand a specific prediction, it is hard to investigate the decision of the model&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;For the last point there is a work-around: we can compute the model importance of the words that are present in a specific text.&lt;/p&gt;
-&lt;p&gt;Here is an example:&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [5]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# We choose a sample from test set&lt;/span&gt;
-&lt;span class="n"&gt;idx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;
-&lt;span class="n"&gt;text_sample&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;texts_test&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;idx&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="n"&gt;class_names&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'negative'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'positive'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So now we have the most important words on average on the training set. The most important words make sense, but</p>
+<ul>
+<li>We don't know if a word contributes positively or negatively</li>
+<li>The feature importance attribute is specific to tree-based models</li>
+<li>If we don't undestand a specific prediction, it is hard to investigate the decision of the model</li>
+</ul>
+<p>For the last point there is a work-around: we can compute the model importance of the words that are present in a specific text.</p>
+<p>Here is an example:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># We choose a sample from test set</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">text_sample</span> <span class="o">=</span> <span class="n">texts_test</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+<span class="n">class_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'negative'</span><span class="p">,</span> <span class="s1">'positive'</span><span class="p">]</span>
 
-&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;text_sample&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'-'&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;50&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Probability(positive) ='&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pipeline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;predict_proba&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;text_sample&lt;/span&gt;&lt;span class="p"&gt;])[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'True class: &lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;class_names&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;idx&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_subarea output_stream output_stdout output_text"&gt;
-&lt;pre&gt;every great gangster movie has &lt;oov&gt; of human drama. don't expect an emotional story of guilt, &lt;oov&gt; and despair from &lt;oov&gt; this is a tale of &lt;oov&gt; &lt;oov&gt; corruption, and power. the darker side of the &lt;oov&gt; \"american &lt;oov&gt; /&gt;&lt;br &amp;lt;oov&gt; complaining about the &lt;oov&gt; of this film is missing the point. the superficial characters, cheesy music, and dated fashions further fuel the criticism of this life of diabolical &lt;oov&gt; nothing in the lives of these characters really matter, not on any human level at least. in fact the film practically &lt;oov&gt; satire, ironic considering all the &lt;oov&gt; &lt;oov&gt; that were positively inspired by the lifestyle of tony &lt;oov&gt; /&gt;&lt;br /&gt;this isn't brian &lt;oov&gt; strongest directorial effort, it is occasionally excellent and &lt;oov&gt; (particularly the memorable &lt;oov&gt; but frequently sinks to sloppy and &lt;oov&gt; thankfully, it is supported by a very strong script by oliver stone (probably good therapy for him, considering the coke habit he was &lt;oov&gt; at the time). the themes are &lt;oov&gt; with the focus primarily on the life of tony &lt;oov&gt; and the evolution of his character as he is consumed by greed and power. the dialogue is also excellent, &lt;oov&gt; &lt;oov&gt; between humour and drama. there are many &lt;oov&gt; lines, which have since &lt;oov&gt; their way into popular culture in one form or another.&lt;br /&gt;&lt;br /&gt;the cast help make it what it is as well, but this is really pacino's film. one of his earlier less subtle performances (something much more common from him &lt;oov&gt; this is a world entirely separate from michael &lt;oov&gt; and frank &lt;oov&gt; yet he is as watchable here as ever, in very entertaining (and intentionally &lt;oov&gt; form. it is hard to imagine another tony montana after seeing this film, in possibly one of the most &lt;oov&gt; performances ever. pfeiffer stood out as dull and uncomfortable on first viewing, but i've come to realize how she plays out the part of the bored little wife. not an exceptional effort, but unfairly &lt;oov&gt; the supporting players are very good too, particularly paul &lt;oov&gt; as the suave &lt;oov&gt; &lt;oov&gt; /&gt;&lt;br &amp;lt;oov&gt; occasionally humorous, sometimes shocking, and continually &lt;oov&gt; &lt;oov&gt; is one of the films of the eighties &lt;oov&gt; that might mean to &lt;oov&gt; an essential and accessible gangster flick, and a &lt;oov&gt; &lt;oov&gt; &lt;oov&gt;
+<span class="nb">print</span><span class="p">(</span><span class="n">text_sample</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'-'</span><span class="o">*</span><span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Probability(positive) ='</span><span class="p">,</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">([</span><span class="n">text_sample</span><span class="p">])[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'True class: </span><span class="si">%s</span><span class="s1">'</span> <span class="o">%</span> <span class="n">class_names</span><span class="p">[</span><span class="n">y_test</span><span class="p">[</span><span class="n">idx</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>every great gangster movie has <oov> of human drama. don't expect an emotional story of guilt, <oov> and despair from <oov> this is a tale of <oov> <oov> corruption, and power. the darker side of the <oov> \"american <oov> /><br &lt;oov> complaining about the <oov> of this film is missing the point. the superficial characters, cheesy music, and dated fashions further fuel the criticism of this life of diabolical <oov> nothing in the lives of these characters really matter, not on any human level at least. in fact the film practically <oov> satire, ironic considering all the <oov> <oov> that were positively inspired by the lifestyle of tony <oov> /><br />this isn't brian <oov> strongest directorial effort, it is occasionally excellent and <oov> (particularly the memorable <oov> but frequently sinks to sloppy and <oov> thankfully, it is supported by a very strong script by oliver stone (probably good therapy for him, considering the coke habit he was <oov> at the time). the themes are <oov> with the focus primarily on the life of tony <oov> and the evolution of his character as he is consumed by greed and power. the dialogue is also excellent, <oov> <oov> between humour and drama. there are many <oov> lines, which have since <oov> their way into popular culture in one form or another.<br /><br />the cast help make it what it is as well, but this is really pacino's film. one of his earlier less subtle performances (something much more common from him <oov> this is a world entirely separate from michael <oov> and frank <oov> yet he is as watchable here as ever, in very entertaining (and intentionally <oov> form. it is hard to imagine another tony montana after seeing this film, in possibly one of the most <oov> performances ever. pfeiffer stood out as dull and uncomfortable on first viewing, but i've come to realize how she plays out the part of the bored little wife. not an exceptional effort, but unfairly <oov> the supporting players are very good too, particularly paul <oov> as the suave <oov> <oov> /><br &lt;oov> occasionally humorous, sometimes shocking, and continually <oov> <oov> is one of the films of the eighties <oov> that might mean to <oov> an essential and accessible gangster flick, and a <oov> <oov> <oov>
 --------------------------------------------------
 Probability(positive) = 0.559845952262
 True class: positive
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [6]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;sample_importances&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;vectorizer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;text_sample&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;toarray&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;importances&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;flatten&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;span class="n"&gt;sample_top_indices&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argsort&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sample_importances&lt;/span&gt;&lt;span class="p"&gt;)[::&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;][:&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="n"&gt;sample_words_importance&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DataFrame&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;'most_important_words'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;vectorizer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_feature_names&lt;/span&gt;&lt;span class="p"&gt;())[&lt;/span&gt;&lt;span class="n"&gt;sample_top_indices&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
-    &lt;span class="s1"&gt;'importance'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;sample_importances&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;sample_top_indices&lt;/span&gt;&lt;span class="p"&gt;]})&lt;/span&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_importances</span> <span class="o">=</span> <span class="p">(</span><span class="n">vectorizer</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">text_sample</span><span class="p">])</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span><span class="o">*</span><span class="n">importances</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">sample_top_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">sample_importances</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">sample_words_importance</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span><span class="s1">'most_important_words'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vectorizer</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">())[</span><span class="n">sample_top_indices</span><span class="p">],</span>
+    <span class="s1">'importance'</span><span class="p">:</span> <span class="n">sample_importances</span><span class="p">[</span><span class="n">sample_top_indices</span><span class="p">]})</span>
 
-&lt;span class="n"&gt;sns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;barplot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"most_important_words"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"importance"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;sample_words_importance&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt output_prompt"&gt;Out[6]:&lt;/div&gt;
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;&lt;matplotlib.axes._subplots.axessubplot at 0x1125c5160&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_png output_subarea "&gt;
-&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZEAAAEFCAYAAAAi1toCAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"most_important_words"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">"importance"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">sample_words_importance</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[6]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre><matplotlib.axes._subplots.axessubplot at 0x1125c5160></pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZEAAAEFCAYAAAAi1toCAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAIABJREFUeJzt3XuYHGWZ9/HvJANGJMQAI66rIkj4CR5YBSGBnFBAg4RE
 ReQFFjkGFTwAu9fiynJ4F3VVDh5ZJBLZVV8RkYCABF2BkEAiKAEJhFsjiBBXGHCAKBBIMu8fz9Ok
 M+nuqVSmJjOZ3+e6cmW6nnqq7qrurrvrdFdbd3c3ZmZmZQzb2AGYmdng5SRiZmalOYmYmVlpTiJm
@@ -1616,63 +1714,63 @@ xWKlp879gXRY6g7ShrCvn3f9HGkjuwD4QkTcTzpX8yjpyZGLSOc9ZjfoWx/TV4CzcswXkZ7HsUMv
 874GuKeX8xC3kJ6Bc0uuoLuItOEnIlaQEsI3lJ4MeHJ+vZb8bJhPAP+TY34mD2+2rm0T5auzzPpQ
 vjqLaPLoX7NNje8TsSFP0gTSOYdGDoyIP/VnPH0h33Q4ukHTxRFxcX/HY5su74mYmVlpPidiZmal
 OYmYmVlpTiJmZlaak4iZmZXmJGJmZqX9f1y2za4gvwI6AAAAAElFTkSuQmCC
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h3 id="Example-specific-analysis-with-LIME"&gt;Example specific analysis with LIME&lt;a class="anchor-link" href="#Example-specific-analysis-with-LIME"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;In their article &lt;a href="https://arxiv.org/abs/1602.04938"&gt;“Why Should I Trust You?” Explaining the Predictions of Any Classifier&lt;/a&gt;, Marco Ribeiro and his collaborators introduce a new framework for machine learning models interpretation called LIME (Local Interpretable Model-agnostic Explanations).&lt;/p&gt;
-&lt;p&gt;The purpose of LIME is to give an interpretable explanation for a given input sample prediction, by approximating the model to be explained $f$ by an "explanation model" $g$ that is linear and has an interpretable domain. While your original model may operate on a complex vector space such as the TF-IDF representation of a text, or the HOG features of a picture, the explanation model's domain is a human interpretable one, such as a vector indicating the presence or absence of a few critical words in a text.&lt;/p&gt;
-&lt;p&gt;LIME requires:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;a mapping $x\rightarrow x'$ of the model input vector to an interpretable representation $\{0,1\}^{d'}$. Here, while the original $x$ may be a complex vector in $\mathbb{R}^n$, the vector $x'$ just indicates the absence/ presence of basic features (words for text, pixels for pictures).&lt;/li&gt;
-&lt;li&gt;A proximity measure function $\Pi_{x}$ measuring closeness to the sample $x$ under scrutiny. Usually a normal distribution over the distance (cosine distance for texts, L2-norm for pictures) &lt;/li&gt;
-&lt;li&gt;A choice for the interpetable model $g$. The first choice is a linear model (i.e. a linear regression for regression and a logistic regression for classification).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Technically, LIME optimizes the sum of the local fidelity $$\mathcal{L}(f, g, \Pi_x)= \sum_{z, z'} \Pi_x(z) \left[f(z) - g(z') \right]^2$$ 
-under the constraint to have less than $K$ non-zero weights. Simple examples can be found on the &lt;a href="https://marcotcr.github.io/lime/tutorials/Lime%20-%20basic%20usage%2C%20two%20class%20case.html"&gt;Github repository of the project&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [7]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;collections&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;OrderedDict&lt;/span&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;lime.lime_text&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;LimeTextExplainer&lt;/span&gt;
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Example-specific-analysis-with-LIME">Example specific analysis with LIME<a class="anchor-link" href="#Example-specific-analysis-with-LIME">¶</a></h3><p>In their article <a href="https://arxiv.org/abs/1602.04938">“Why Should I Trust You?” Explaining the Predictions of Any Classifier</a>, Marco Ribeiro and his collaborators introduce a new framework for machine learning models interpretation called LIME (Local Interpretable Model-agnostic Explanations).</p>
+<p>The purpose of LIME is to give an interpretable explanation for a given input sample prediction, by approximating the model to be explained $f$ by an "explanation model" $g$ that is linear and has an interpretable domain. While your original model may operate on a complex vector space such as the TF-IDF representation of a text, or the HOG features of a picture, the explanation model's domain is a human interpretable one, such as a vector indicating the presence or absence of a few critical words in a text.</p>
+<p>LIME requires:</p>
+<ul>
+<li>a mapping $x\rightarrow x'$ of the model input vector to an interpretable representation $\{0,1\}^{d'}$. Here, while the original $x$ may be a complex vector in $\mathbb{R}^n$, the vector $x'$ just indicates the absence/ presence of basic features (words for text, pixels for pictures).</li>
+<li>A proximity measure function $\Pi_{x}$ measuring closeness to the sample $x$ under scrutiny. Usually a normal distribution over the distance (cosine distance for texts, L2-norm for pictures) </li>
+<li>A choice for the interpetable model $g$. The first choice is a linear model (i.e. a linear regression for regression and a logistic regression for classification).</li>
+</ul>
+<p>Technically, LIME optimizes the sum of the local fidelity $$\mathcal{L}(f, g, \Pi_x)= \sum_{z, z'} \Pi_x(z) \left[f(z) - g(z') \right]^2$$ 
+under the constraint to have less than $K$ non-zero weights. Simple examples can be found on the <a href="https://marcotcr.github.io/lime/tutorials/Lime%20-%20basic%20usage%2C%20two%20class%20case.html">Github repository of the project</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">lime.lime_text</span> <span class="k">import</span> <span class="n">LimeTextExplainer</span>
 
-&lt;span class="n"&gt;explainer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;LimeTextExplainer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;class_names&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;class_names&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;explanation&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;explainer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;explain_instance&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;text_sample&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pipeline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;predict_proba&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;num_features&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+<span class="n">explainer</span> <span class="o">=</span> <span class="n">LimeTextExplainer</span><span class="p">(</span><span class="n">class_names</span><span class="o">=</span><span class="n">class_names</span><span class="p">)</span>
+<span class="n">explanation</span> <span class="o">=</span> <span class="n">explainer</span><span class="o">.</span><span class="n">explain_instance</span><span class="p">(</span><span class="n">text_sample</span><span class="p">,</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">,</span> <span class="n">num_features</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
-&lt;span class="n"&gt;weights&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;OrderedDict&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;explanation&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;as_list&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
-&lt;span class="n"&gt;lime_weights&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DataFrame&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="s1"&gt;'words'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;weights&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;keys&lt;/span&gt;&lt;span class="p"&gt;()),&lt;/span&gt; &lt;span class="s1"&gt;'weights'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;weights&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;values&lt;/span&gt;&lt;span class="p"&gt;())})&lt;/span&gt;
+<span class="n">weights</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">explanation</span><span class="o">.</span><span class="n">as_list</span><span class="p">())</span>
+<span class="n">lime_weights</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'words'</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s1">'weights'</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">values</span><span class="p">())})</span>
 
-&lt;span class="n"&gt;sns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;barplot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"words"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"weights"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;lime_weights&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_subarea output_stream output_stderr output_text"&gt;
-&lt;pre&gt;/Users/nthiebaut/anaconda/envs/nlp/lib/python3.6/re.py:212: FutureWarning: split() requires a non-empty pattern match.
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"words"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">"weights"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">lime_weights</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/Users/nthiebaut/anaconda/envs/nlp/lib/python3.6/re.py:212: FutureWarning: split() requires a non-empty pattern match.
   return _compile(pattern, flags).split(string, maxsplit)
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_png output_subarea "&gt;
-&lt;img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZEAAAEGCAYAAACkQqisAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZEAAAEGCAYAAACkQqisAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAHqJJREFUeJzt3XmYHVW57/FvJ42GoRMTbECcEAw/0CtcThADhhBlUMYA
 AiIySJhFUfAAXskBvFfk4BVQUEBCwnDgKFEIQxgiCgkZxAgHNEh4D2FQRIVWO0nLkNCkzx+rmuzs
 9N69u9K7upv+fZ4nT3rvVVXrrdpV9VatqlrV0NHRgZmZWR5D+joAMzMbuJxEzMwsNycRMzPLzUnE
@@ -1812,23 +1910,23 @@ oWaTeqg9h9Tp3f2kd0usL6kROBZ4oIvJ/AI4Iuvx9f2k92gg6TvAURFxPakb8CJ67DWryknErPfd
 BWyYvYNkDqkH25kRMZN0XeRhUlPXH0hdb5fr7A14MakL885uvC8HPiPpMWAGcEo9Z8KsFu47y8zM
 cvOZiJmZ5eYkYmZmuTmJmJlZbk4iZmaWm5OImZnl5iRiZma5OYmYmVluTiJmZpbb/wD6RV4KK4qV
 RQAAAABJRU5ErkJggg==
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;LIME managed to extract mostly the same important word as the model itself, without knowing anything about it! We now have rational numbers, allowing the human interpreter to understand what words were the most important. Also, this technique can be replicated instantly for any model, so let's try with a neural network! (next blog post :)&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>LIME managed to extract mostly the same important word as the model itself, without knowing anything about it! We now have rational numbers, allowing the human interpreter to understand what words were the most important. Also, this technique can be replicated instantly for any model, so let's try with a neural network! (next blog post :)</p>
+</div>
+</div>
+</div>
 
-&lt;script type="text/javascript"&gt;if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var mathjaxscript = document.createElement('script');
     mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
     mathjaxscript.type = 'text/javascript';
@@ -1855,5 +1953,40 @@ RQAAAABJRU5ErkJggg==
         "}); ";
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
-&lt;/script&gt;
-</summary><category term="python"></category><category term="machine learning"></category></entry></feed>
+</script>
+
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="https://nkthiebaut.github.io/tag/python.html">python</a>
+      <a href="https://nkthiebaut.github.io/tag/machine-learning.html">machine learning</a>
+    </p>
+  </div>
+
+
+
+
+</article>
+
+    <footer>
+<p>&copy; Nicolas Thiebaut </p>
+<!--<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>-->    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Data4thought: data science blog ",
+  "url" : "https://nkthiebaut.github.io",
+  "image": "https://nkthiebaut.github.io/images/PhotoThiebaut.jpg",
+  "description": "Nicolas Thiebaut's data science blog"
+}
+</script>
+</body>
+</html>
