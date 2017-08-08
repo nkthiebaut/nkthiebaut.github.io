@@ -9,13 +9,13 @@
 Blog
 ====
 
-Nicolas Thiebaut's personalData science blog.
+Nicolas Thiebaut's data science blog.
 
 Hosted on github pages.
 
 Built following `this blog post <https://www.dataquest.io/blog/how-to-setup-a-data-science-blog/>`_, with the `Flex theme <https://github.com/alexandrevicenzi/Flex>`_.
 
-For local testing: 
+For local testing:
 
 * Run ``pelican content`` to generate the HTML.
 * Switch to the output directory.
@@ -24,11 +24,9 @@ For local testing:
 
 To create master branch follow the procedure explained `here <http://ntanjerome.org/blog/how-to-setup-github-user-page-with-pelican/>`_. From the source branch:
 
-* pelican content -s publishconf.py
+* pelican content -s publishconf.py (you may have to delete existing .ipynb_checkpoints in the content folder if you get an error)
 * if branch gh-pages does not exist: git branch gh-pages
 * ghp-import output
 * git checkout master
 * git merge gh-pages
 * git push --all
-
-
