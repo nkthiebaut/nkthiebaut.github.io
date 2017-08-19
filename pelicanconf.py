@@ -21,11 +21,11 @@ THEME = os.path.join(os.getcwd(), "themes", "Flex")
 
 DEFAULT_LANG = 'en'
 # Blogroll
-LINKS = (('Pelican', 'http://getpelican.com/'),)
+# LINKS = (('Pelican', 'http://getpelican.com/'),)
 
 # Social widget
 SOCIAL = (('linkedin', 'https://www.linkedin.com/in/nthiebaut'),
-          ('github', 'https://github.com/nickthiebaut/'),
+          ('github', 'https://github.com/nkthiebaut/'),
           ('twitter', 'https://twitter.com/NicoThiebaut'),)
 
 MENUITEMS = (('Archives', '/archives.html'),
