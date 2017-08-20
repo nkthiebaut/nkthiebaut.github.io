@@ -1783,7 +1783,7 @@ $$\mathcal{L}(f, g, \Pi_x)= \sum_{z, z'} \Pi_x(z) \left[f(z) - g(z') \right]^2.$
 &lt;li&gt;The interpretable vector corresponding to $x$ is $x'=(1, 1, 1, 0, \dots)$. &lt;/li&gt;
 &lt;li&gt;In order to define a neighborhood of $x'$ we generate some sparser samples $z_1'=(1, 0, 1, 0, \dots)$ and $z_2'=(1, 0, 0, 0, \dots)$ in the vicinity of $x'$.&lt;/li&gt;
 &lt;li&gt;We compute the corresponding vectors in the original space: $z_1=(0.2, 0, 0.1, 0, \dots)$ and $z_2=(0.2, 0, 0, 0, \dots)$&lt;/li&gt;
-&lt;li&gt;We compute the $d'$ weights of the explanation model $g$ (only $K$ of them will be non-zero, were $K$ is an hyperparameter of LIME). For example if we obtain the following weights $(0, -0.5, 1.2, \dots)$, that means the presence of the word "quite" contributs negatively to the prediction, with weight $-0.5$, while the word "happy" contributes positively, with weight $1.2$.&lt;/li&gt;
+&lt;li&gt;We compute the $d'$ weights of the explanation model $g$ by minimization of dissimilarity $\mathcal{L}$  with $f$ predictions (only $K$ of the $g$ function weights will be non-zero, were $K$ is an hyperparameter of LIME). For example if we obtain the following weights $(0, -0.5, 1.2, \dots)$, that means the presence of the word "quite" contributs negatively to the prediction, with weight $-0.5$, while the word "happy" contributes positively, with weight $1.2$.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Simple examples can be found on the &lt;a href="https://marcotcr.github.io/lime/tutorials/Lime%20-%20basic%20usage%2C%20two%20class%20case.html"&gt;Github repository of the project&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
