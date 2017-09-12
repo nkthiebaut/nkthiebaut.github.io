@@ -1,0 +1,1785 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="https://nkthiebaut.github.io/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="https://nkthiebaut.github.io/theme/pygments/github.min.css">
+  <link rel="stylesheet" type="text/css" href="https://nkthiebaut.github.io/theme/font-awesome/css/font-awesome.min.css">
+
+
+    <link href="https://nkthiebaut.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Data4thought: data science blog Atom">
+
+
+    <link rel="shortcut icon" href="https://nkthiebaut.github.io/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="https://nkthiebaut.github.io/images/favicon.ico" type="image/x-icon">
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+
+<meta name="author" content="Nicolas Thiebaut" />
+<meta name="description" content="Experiments with the LIME interpretation model part 2: neural networks¶This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the first part. This second part is a quick application of the same algorithm to a deep learning (LSTM) model" />
+<meta name="keywords" content="python, machine learning, deep learning">
+<meta property="og:site_name" content="Data4thought: data science blog"/>
+<meta property="og:title" content="LIME applied to a reccurent neural network"/>
+<meta property="og:description" content="Experiments with the LIME interpretation model part 2: neural networks¶This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the first part. This second part is a quick application of the same algorithm to a deep learning (LSTM) model"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://nkthiebaut.github.io/deep-lime.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-09-12 16:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="https://nkthiebaut.github.io/author/nicolas-thiebaut.html">
+<meta property="article:section" content="posts"/>
+<meta property="article:tag" content="python"/>
+<meta property="article:tag" content="machine learning"/>
+<meta property="article:tag" content="deep learning"/>
+<meta property="og:image" content="https://nkthiebaut.github.io/images/PhotoThiebaut.jpg">
+
+  <title>Data4thought: data science blog &ndash; LIME applied to a reccurent neural network</title>
+
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="https://nkthiebaut.github.io">
+        <img src="https://nkthiebaut.github.io/images/PhotoThiebaut.jpg" alt="Data4thought" title="Data4thought">
+      </a>
+      <h1><a href="https://nkthiebaut.github.io">Data4thought</a></h1>
+
+<p>Nicolas Thiebaut's data science blog</p>
+      <nav>
+        <ul class="list">
+          <li><a href="https://nkthiebaut.github.io/pages/about.html#about">About</a></li>
+          <li><a href="https://nkthiebaut.github.io/pages/contact.html#contact">Contact</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-linkedin" href="https://www.linkedin.com/in/nthiebaut" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-github" href="https://github.com/nkthiebaut/" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/NicoThiebaut" target="_blank"><i class="fa fa-twitter"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside>
+  <main>
+
+    <nav>
+      <a href="https://nkthiebaut.github.io">    Home
+</a>
+
+      <a href="/archives.html">Archives</a>
+      <a href="/categories.html">Categories</a>
+      <a href="/tags.html">Tags</a>
+
+      <a href="https://nkthiebaut.github.io/feeds/all.atom.xml">    Atom
+</a>
+
+    </nav>
+
+<article class="single">
+  <header>
+    <h1 id="deep-lime">LIME applied to a reccurent neural network</h1>
+    <p>
+          Posted on Tue 12 September 2017 in <a href="https://nkthiebaut.github.io/category/posts.html">posts</a>
+
+
+    </p>
+  </header>
+
+
+  <div>
+    <style type="text/css">/*!
+*
+* IPython notebook
+*
+*/
+/* CSS font colors for translated ANSI colors. */
+.ansibold {
+  font-weight: bold;
+}
+/* use dark versions for foreground, to improve visibility */
+.ansiblack {
+  color: black;
+}
+.ansired {
+  color: darkred;
+}
+.ansigreen {
+  color: darkgreen;
+}
+.ansiyellow {
+  color: #c4a000;
+}
+.ansiblue {
+  color: darkblue;
+}
+.ansipurple {
+  color: darkviolet;
+}
+.ansicyan {
+  color: steelblue;
+}
+.ansigray {
+  color: gray;
+}
+/* and light for background, for the same reason */
+.ansibgblack {
+  background-color: black;
+}
+.ansibgred {
+  background-color: red;
+}
+.ansibggreen {
+  background-color: green;
+}
+.ansibgyellow {
+  background-color: yellow;
+}
+.ansibgblue {
+  background-color: blue;
+}
+.ansibgpurple {
+  background-color: magenta;
+}
+.ansibgcyan {
+  background-color: cyan;
+}
+.ansibggray {
+  background-color: gray;
+}
+div.cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  width: 100%;
+  padding: 5px;
+  /* This acts as a spacer between cells, that is outside the border */
+  margin: 0px;
+  outline: none;
+  border-left-width: 1px;
+  padding-left: 5px;
+  background: linear-gradient(to right, transparent -40px, transparent 1px, transparent 1px, transparent 100%);
+}
+div.cell.jupyter-soft-selected {
+  border-left-color: #90CAF9;
+  border-left-color: #E3F2FD;
+  border-left-width: 1px;
+  padding-left: 5px;
+  border-right-color: #E3F2FD;
+  border-right-width: 1px;
+  background: #E3F2FD;
+}
+@media print {
+  div.cell.jupyter-soft-selected {
+    border-color: transparent;
+  }
+}
+div.cell.selected {
+  border-color: #ababab;
+  border-left-width: 0px;
+  padding-left: 6px;
+  background: linear-gradient(to right, #42A5F5 -40px, #42A5F5 5px, transparent 5px, transparent 100%);
+}
+@media print {
+  div.cell.selected {
+    border-color: transparent;
+  }
+}
+div.cell.selected.jupyter-soft-selected {
+  border-left-width: 0;
+  padding-left: 6px;
+  background: linear-gradient(to right, #42A5F5 -40px, #42A5F5 7px, #E3F2FD 7px, #E3F2FD 100%);
+}
+.edit_mode div.cell.selected {
+  border-color: #66BB6A;
+  border-left-width: 0px;
+  padding-left: 6px;
+  background: linear-gradient(to right, #66BB6A -40px, #66BB6A 5px, transparent 5px, transparent 100%);
+}
+@media print {
+  .edit_mode div.cell.selected {
+    border-color: transparent;
+  }
+}
+.prompt {
+  /* This needs to be wide enough for 3 digit prompt numbers: In[100]: */
+  min-width: 14ex;
+  /* This padding is tuned to match the padding on the CodeMirror editor. */
+  padding: 0.4em;
+  margin: 0px;
+  font-family: monospace;
+  text-align: right;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+  /* Don't highlight prompt number selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Use default cursor */
+  cursor: default;
+}
+@media (max-width: 540px) {
+  .prompt {
+    text-align: left;
+  }
+}
+div.inner_cell {
+  min-width: 0;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_area {
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
+  background: #f7f7f7;
+  line-height: 1.21429em;
+}
+/* This is needed so that empty prompt areas can collapse to zero height when there
+   is no content in the output_subarea and the prompt. The main purpose of this is
+   to make sure that empty JavaScript output_subareas have no height. */
+div.prompt:empty {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+div.unrecognized_cell {
+  padding: 5px 5px 5px 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.unrecognized_cell .inner_cell {
+  border-radius: 2px;
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+  border: 1px solid #cfcfcf;
+  background: #eaeaea;
+}
+div.unrecognized_cell .inner_cell a {
+  color: inherit;
+  text-decoration: none;
+}
+div.unrecognized_cell .inner_cell a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+@media (max-width: 540px) {
+  div.unrecognized_cell > div.prompt {
+    display: none;
+  }
+}
+div.code_cell {
+  /* avoid page breaking on code cells when printing */
+}
+@media print {
+  div.code_cell {
+    page-break-inside: avoid;
+  }
+}
+/* any special styling for code cells that are currently running goes here */
+div.input {
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.input {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_prompt {
+  color: #303F9F;
+  border-top: 1px solid transparent;
+}
+div.input_area > div.highlight {
+  margin: 0.4em;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+div.input_area > div.highlight > pre {
+  margin: 0px;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+/* The following gets added to the <head> if it is detected that the user has a
+ * monospace font with inconsistent normal/bold/italic height.  See
+ * notebookmain.js.  Such fonts will have keywords vertically offset with
+ * respect to the rest of the text.  The user should select a better font.
+ * See: https://github.com/ipython/ipython/issues/1503
+ *
+ * .CodeMirror span {
+ *      vertical-align: bottom;
+ * }
+ */
+.CodeMirror {
+  line-height: 1.21429em;
+  /* Changed from 1em to our global default */
+  font-size: 14px;
+  height: auto;
+  /* Changed to auto to autogrow */
+  background: none;
+  /* Changed from white to allow our bg to show through */
+}
+.CodeMirror-scroll {
+  /*  The CodeMirror docs are a bit fuzzy on if overflow-y should be hidden or visible.*/
+  /*  We have found that if it is visible, vertical scrollbars appear with font size changes.*/
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+.CodeMirror-lines {
+  /* In CM2, this used to be 0.4em, but in CM3 it went to 4px. We need the em value because */
+  /* we have set a different line-height and want this to scale with that. */
+  padding: 0.4em;
+}
+.CodeMirror-linenumber {
+  padding: 0 8px 0 4px;
+}
+.CodeMirror-gutters {
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+}
+.CodeMirror pre {
+  /* In CM3 this went to 4px from 0 in CM2. We need the 0 value because of how we size */
+  /* .CodeMirror-lines */
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+}
+/*
+
+Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiacs.Org>
+Adapted from GitHub theme
+
+*/
+.highlight-base {
+  color: #000;
+}
+.highlight-variable {
+  color: #000;
+}
+.highlight-variable-2 {
+  color: #1a1a1a;
+}
+.highlight-variable-3 {
+  color: #333333;
+}
+.highlight-string {
+  color: #BA2121;
+}
+.highlight-comment {
+  color: #408080;
+  font-style: italic;
+}
+.highlight-number {
+  color: #080;
+}
+.highlight-atom {
+  color: #88F;
+}
+.highlight-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.highlight-builtin {
+  color: #008000;
+}
+.highlight-error {
+  color: #f00;
+}
+.highlight-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.highlight-meta {
+  color: #AA22FF;
+}
+/* previously not defined, copying from default codemirror */
+.highlight-def {
+  color: #00f;
+}
+.highlight-string-2 {
+  color: #f50;
+}
+.highlight-qualifier {
+  color: #555;
+}
+.highlight-bracket {
+  color: #997;
+}
+.highlight-tag {
+  color: #170;
+}
+.highlight-attribute {
+  color: #00c;
+}
+.highlight-header {
+  color: blue;
+}
+.highlight-quote {
+  color: #090;
+}
+.highlight-link {
+  color: #00c;
+}
+/* apply the same style to codemirror */
+.cm-s-ipython span.cm-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-atom {
+  color: #88F;
+}
+.cm-s-ipython span.cm-number {
+  color: #080;
+}
+.cm-s-ipython span.cm-def {
+  color: #00f;
+}
+.cm-s-ipython span.cm-variable {
+  color: #000;
+}
+.cm-s-ipython span.cm-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-variable-2 {
+  color: #1a1a1a;
+}
+.cm-s-ipython span.cm-variable-3 {
+  color: #333333;
+}
+.cm-s-ipython span.cm-comment {
+  color: #408080;
+  font-style: italic;
+}
+.cm-s-ipython span.cm-string {
+  color: #BA2121;
+}
+.cm-s-ipython span.cm-string-2 {
+  color: #f50;
+}
+.cm-s-ipython span.cm-meta {
+  color: #AA22FF;
+}
+.cm-s-ipython span.cm-qualifier {
+  color: #555;
+}
+.cm-s-ipython span.cm-builtin {
+  color: #008000;
+}
+.cm-s-ipython span.cm-bracket {
+  color: #997;
+}
+.cm-s-ipython span.cm-tag {
+  color: #170;
+}
+.cm-s-ipython span.cm-attribute {
+  color: #00c;
+}
+.cm-s-ipython span.cm-header {
+  color: blue;
+}
+.cm-s-ipython span.cm-quote {
+  color: #090;
+}
+.cm-s-ipython span.cm-link {
+  color: #00c;
+}
+.cm-s-ipython span.cm-error {
+  color: #f00;
+}
+.cm-s-ipython span.cm-tab {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMCAYAAAAkuj5RAAAAAXNSR0IArs4c6QAAAGFJREFUSMft1LsRQFAQheHPowAKoACx3IgEKtaEHujDjORSgWTH/ZOdnZOcM/sgk/kFFWY0qV8foQwS4MKBCS3qR6ixBJvElOobYAtivseIE120FaowJPN75GMu8j/LfMwNjh4HUpwg4LUAAAAASUVORK5CYII=);
+  background-position: right;
+  background-repeat: no-repeat;
+}
+div.output_wrapper {
+  /* this position must be relative to enable descendents to be absolute within it */
+  position: relative;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  z-index: 1;
+}
+/* class for the output area when it should be height-limited */
+div.output_scroll {
+  /* ideally, this would be max-height, but FF barfs all over that */
+  height: 24em;
+  /* FF needs this *and the wrapper* to specify full width, or it will shrinkwrap */
+  width: 100%;
+  overflow: auto;
+  border-radius: 2px;
+  -webkit-box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  display: block;
+}
+/* output div while it is collapsed */
+div.output_collapsed {
+  margin: 0px;
+  padding: 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+div.out_prompt_overlay {
+  height: 100%;
+  padding: 0px 0.4em;
+  position: absolute;
+  border-radius: 2px;
+}
+div.out_prompt_overlay:hover {
+  /* use inner shadow to get border that is computed the same on WebKit/FF */
+  -webkit-box-shadow: inset 0 0 1px #000;
+  box-shadow: inset 0 0 1px #000;
+  background: rgba(240, 240, 240, 0.5);
+}
+div.output_prompt {
+  color: #D84315;
+}
+/* This class is the outer container of all output sections. */
+div.output_area {
+  padding: 0px;
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.output_area .MathJax_Display {
+  text-align: left !important;
+}
+div.output_area 
+div.output_area 
+div.output_area img,
+div.output_area svg {
+  max-width: 100%;
+  height: auto;
+}
+div.output_area img.unconfined,
+div.output_area svg.unconfined {
+  max-width: none;
+}
+/* This is needed to protect the pre formating from global settings such
+   as that of bootstrap */
+.output {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.output_area {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+div.output_area pre {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+  color: black;
+  background-color: transparent;
+  border-radius: 0;
+}
+/* This class is for the output subarea inside the output_area and after
+   the prompt div. */
+div.output_subarea {
+  overflow-x: auto;
+  padding: 0.4em;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+  max-width: calc(100% - 14ex);
+}
+div.output_scroll div.output_subarea {
+  overflow-x: visible;
+}
+/* The rest of the output_* classes are for special styling of the different
+   output types */
+/* all text output has this class: */
+div.output_text {
+  text-align: left;
+  color: #000;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+}
+/* stdout/stderr are 'text' as well as 'stream', but execute_result/error are *not* streams */
+div.output_stderr {
+  background: #fdd;
+  /* very light red background for stderr */
+}
+div.output_latex {
+  text-align: left;
+}
+/* Empty output_javascript divs should have no height */
+div.output_javascript:empty {
+  padding: 0;
+}
+.js-error {
+  color: darkred;
+}
+/* raw_input styles */
+div.raw_input_container {
+  line-height: 1.21429em;
+  padding-top: 5px;
+}
+pre.raw_input_prompt {
+  /* nothing needed here. */
+}
+input.raw_input {
+  font-family: monospace;
+  font-size: inherit;
+  color: inherit;
+  width: auto;
+  /* make sure input baseline aligns with prompt */
+  vertical-align: baseline;
+  /* padding + margin = 0.5em between prompt and cursor */
+  padding: 0em 0.25em;
+  margin: 0em 0.25em;
+}
+input.raw_input:focus {
+  box-shadow: none;
+}
+p.p-space {
+  margin-bottom: 10px;
+}
+div.output_unrecognized {
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+}
+div.output_unrecognized a {
+  color: inherit;
+  text-decoration: none;
+}
+div.output_unrecognized a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+.rendered_html {
+  color: #000;
+  /* any extras will just be numbers: */
+}
+
+
+
+.rendered_html :link {
+  text-decoration: underline;
+}
+.rendered_html :visited {
+  text-decoration: underline;
+}
+
+
+
+
+
+
+.rendered_html h1:first-child {
+  margin-top: 0.538em;
+}
+.rendered_html h2:first-child {
+  margin-top: 0.636em;
+}
+.rendered_html h3:first-child {
+  margin-top: 0.777em;
+}
+.rendered_html h4:first-child {
+  margin-top: 1em;
+}
+.rendered_html h5:first-child {
+  margin-top: 1em;
+}
+.rendered_html h6:first-child {
+  margin-top: 1em;
+}
+
+
+
+
+
+
+
+
+.rendered_html * + ul {
+  margin-top: 1em;
+}
+.rendered_html * + ol {
+  margin-top: 1em;
+}
+
+
+.rendered_html pre,
+
+
+
+.rendered_html tr,
+.rendered_html th,
+
+.rendered_html td,
+
+
+.rendered_html * + table {
+  margin-top: 1em;
+}
+
+.rendered_html * + p {
+  margin-top: 1em;
+}
+
+.rendered_html * + img {
+  margin-top: 1em;
+}
+.rendered_html img,
+
+.rendered_html img.unconfined,
+
+div.text_cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.text_cell > div.prompt {
+    display: none;
+  }
+}
+div.text_cell_render {
+  /*font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;*/
+  outline: none;
+  resize: none;
+  width: inherit;
+  border-style: none;
+  padding: 0.5em 0.5em 0.5em 0.4em;
+  color: #000;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+a.anchor-link:link {
+  text-decoration: none;
+  padding: 0px 20px;
+  visibility: hidden;
+}
+h1:hover .anchor-link,
+h2:hover .anchor-link,
+h3:hover .anchor-link,
+h4:hover .anchor-link,
+h5:hover .anchor-link,
+h6:hover .anchor-link {
+  visibility: visible;
+}
+.text_cell.rendered .input_area {
+  display: none;
+}
+.text_cell.rendered 
+.text_cell.unrendered .text_cell_render {
+  display: none;
+}
+.cm-header-1,
+.cm-header-2,
+.cm-header-3,
+.cm-header-4,
+.cm-header-5,
+.cm-header-6 {
+  font-weight: bold;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.cm-header-1 {
+  font-size: 185.7%;
+}
+.cm-header-2 {
+  font-size: 157.1%;
+}
+.cm-header-3 {
+  font-size: 128.6%;
+}
+.cm-header-4 {
+  font-size: 110%;
+}
+.cm-header-5 {
+  font-size: 100%;
+  font-style: italic;
+}
+.cm-header-6 {
+  font-size: 100%;
+  font-style: italic;
+}
+</style>
+<style type="text/css">.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */</style>
+<style type="text/css">
+/* Temporary definitions which will become obsolete with Notebook release 5.0 */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Experiments-with-the-LIME-interpretation-model-part-2:-neural-networks">Experiments with the LIME interpretation model part 2: neural networks<a class="anchor-link" href="#Experiments-with-the-LIME-interpretation-model-part-2:-neural-networks">¶</a></h1><p>This is the <strong>second part of my blog post on the LIME interpretation model</strong>. For a reminder of what LIME is and its purpose, please read the <a href="https://nkthiebaut.github.io/lime-of-words.html">first part</a>. This second part is a quick <strong>application of the same algorithm to a deep learning (LSTM) model</strong>, while the first part was focused on explaining the predictions of a random forest.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'../content/labeledTrainData.tsv'</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">'</span><span class="se">\t</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[1]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>id</th>
+<th>sentiment</th>
+<th>review</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>5814_8</td>
+<td>1</td>
+<td>With all this stuff going down at the moment w...</td>
+</tr>
+<tr>
+<th>1</th>
+<td>2381_9</td>
+<td>1</td>
+<td>\The Classic War of the Worlds\" by Timothy Hi...</td>
+</tr>
+<tr>
+<th>2</th>
+<td>7759_3</td>
+<td>0</td>
+<td>The film starts with a manager (Nicholas Bell)...</td>
+</tr>
+<tr>
+<th>3</th>
+<td>3630_4</td>
+<td>0</td>
+<td>It must be assumed that those who praised this...</td>
+</tr>
+<tr>
+<th>4</th>
+<td>9495_8</td>
+<td>1</td>
+<td>Superbly trashy and wondrously unpretentious 8...</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
+
+<span class="n">texts_train</span><span class="p">,</span> <span class="n">texts_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> \
+    <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"review"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">'sentiment'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Modelling-with-LSTM">Modelling with LSTM<a class="anchor-link" href="#Modelling-with-LSTM">¶</a></h2><p>In this example of LIME usage I use a Long Short-Term Memory (LSTM) network to predict the sentiment (positive or negative) associated with an IMDB movie review. LSTM is a specific kind of recurrent neural network that is well explained rather informally <a href="http://www.wildml.com/2015/10/recurrent-neural-network-tutorial-part-4-implementing-a-grulstm-rnn-with-python-and-theano/">here</a>, and more in a more detailed way <a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">there</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Preprocessing">Preprocessing<a class="anchor-link" href="#Preprocessing">¶</a></h3><p>In order to preprocess text in a convenient way that can be easily handled by the LIME library, I build a scikit-learn <a href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">Pipeline</a> object that handles a list of texts as input and returns the prediction of a neural network, thanks to the <a href="https://keras.io">Keras</a> scikit-learn API.</p>
+<p>Pipelines combine various Transformer objects to transform data from raw input to a predicted output. In our case we have to define 2 custom Transformers to translate input text in a form that can be handled by our LSTM. The first transformer takes a list of texts as input and outputs a list of indices lists, for instance <code>[["the cute cat"], ["the dog"]] -> [[1, 2, 3], [1, 4]].</code></p>
+<p>The second transformer harmonizes input lengths to a given <em>maxlen</em>, padding with zeros if the sequence is too short, and cropping the beginning of the sequence if it is too long.</p>
+<p>After application of those 2 Transformers we end up with a matrix of shape <em>(n_samples, maxlen)</em>, readily usable by Keras models.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vocab_size</span> <span class="o">=</span> <span class="mi">20000</span>  <span class="c1"># Max number of different word, i.e. model input dimension</span>
+<span class="n">maxlen</span> <span class="o">=</span> <span class="mi">80</span>  <span class="c1"># Max number of words kept at the end of each text</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">keras.preprocessing.text</span> <span class="k">import</span> <span class="n">Tokenizer</span>
+<span class="kn">from</span> <span class="nn">keras.preprocessing.sequence</span> <span class="k">import</span> <span class="n">pad_sequences</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">TransformerMixin</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span>
+
+<span class="k">class</span> <span class="nc">TextsToSequences</span><span class="p">(</span><span class="n">Tokenizer</span><span class="p">,</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">""" Sklearn transformer to convert texts to indices list </span>
+<span class="sd">    (e.g. [["the cute cat"], ["the dog"]] -> [[1, 2, 3], [1, 4]])"""</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_on_texts</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+    
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts</span><span class="p">))</span>
+        
+<span class="n">sequencer</span> <span class="o">=</span> <span class="n">TextsToSequences</span><span class="p">(</span><span class="n">num_words</span><span class="o">=</span><span class="n">vocab_size</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Using TensorFlow backend.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Padder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">""" Pad and crop uneven lists to the same length. </span>
+<span class="sd">    Only the end of lists longernthan the maxlen attribute are</span>
+<span class="sd">    kept, and lists shorter than maxlen are left-padded with zeros"""</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxlen</span> <span class="o">=</span> <span class="n">maxlen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_index</span> <span class="o">=</span> <span class="kc">None</span>
+        
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_index</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maxlen</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+    
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maxlen</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">[</span><span class="n">X</span> <span class="o">></span> <span class="bp">self</span><span class="o">.</span><span class="n">max_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">X</span>
+
+<span class="n">padder</span> <span class="o">=</span> <span class="n">Padder</span><span class="p">(</span><span class="n">maxlen</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="LSTM-construction-and-training">LSTM construction and training<a class="anchor-link" href="#LSTM-construction-and-training">¶</a></h3><p>We now simply have to chain our preprocessing Transformers and our LSTM model. Here I have chosen a rather standard network with 128 hidden units, and dropout rate of 50 %. We only train during 2 epochs.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">keras.models</span> <span class="k">import</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Embedding</span><span class="p">,</span> <span class="n">Bidirectional</span><span class="p">,</span> <span class="n">LSTM</span>
+<span class="kn">from</span> <span class="nn">keras.wrappers.scikit_learn</span> <span class="k">import</span> <span class="n">KerasClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">make_pipeline</span>
+
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">max_features</span> <span class="o">=</span> <span class="n">vocab_size</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">create_model</span><span class="p">(</span><span class="n">max_features</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Embedding</span><span class="p">(</span><span class="n">max_features</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Bidirectional</span><span class="p">(</span><span class="n">LSTM</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">recurrent_dropout</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'sigmoid'</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">'adam'</span><span class="p">,</span> <span class="s1">'binary_crossentropy'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+<span class="n">sklearn_lstm</span> <span class="o">=</span> <span class="n">KerasClassifier</span><span class="p">(</span><span class="n">build_fn</span><span class="o">=</span><span class="n">create_model</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> 
+                               <span class="n">max_features</span><span class="o">=</span><span class="n">max_features</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">sequencer</span><span class="p">,</span> <span class="n">padder</span><span class="p">,</span> <span class="n">sklearn_lstm</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
+history = pipeline.fit(texts_train, y_train)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Epoch 1/2
+18750/18750 [==============================] - 235s - loss: 0.5142 - acc: 0.7501      
+Epoch 2/2
+18750/18750 [==============================] - 232s - loss: 0.3316 - acc: 0.8647     
+CPU times: user 20min 29s, sys: 4min 3s, total: 24min 32s
+Wall time: 8min 2s
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">metrics</span>
+<span class="n">y_preds</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">texts_test</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Accuracy: </span><span class="si">{:.2f}</span><span class="s1"> %'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_preds</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>6250/6250 [==============================] - 25s      128/6250 [..............................] - ETA: 30s
+Accuracy: 83.73 %
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Performances are similar to the <em>TF-IDF + Random forest</em> model of the previous post (82% accuracy). Hence we do not have enough data to leverage the modelling power of our LSTM, but this example is enough to illustrate the usage of LIME for a deep learning model. As before we choose an example and compute feature importance with the LIME package.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># We choose a sample from test set</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">text_sample</span> <span class="o">=</span> <span class="n">texts_test</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+<span class="n">class_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'negative'</span><span class="p">,</span> <span class="s1">'positive'</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">text_sample</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'-'</span><span class="o">*</span><span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Probability(positive) ='</span><span class="p">,</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">([</span><span class="n">text_sample</span><span class="p">])[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'True class: </span><span class="si">%s</span><span class="s1">'</span> <span class="o">%</span> <span class="n">class_names</span><span class="p">[</span><span class="n">y_test</span><span class="p">[</span><span class="n">idx</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This film pulls you in from the get-go because it grabs our attention by acknowledging, yeah, that this story is opening with a cliché  a funeral.<br /><br />In hands other than Judi's I wouldn't have given it an 8 as this material has been done over and over again: The great reunion of a once famous, pick one please, team, army platoon, theatre group, singers, band.<br /><br />But this movie never stoops to cheap sentimentalization, and when you think it is going to it swoops off in another direction. A case in point is the flowers that are sent by an admirer to Judi.<br /><br />The band members are an interesting group and ride above the clichés too. One is in jail, one has found religion, one is an alkie, and one has sunk into dementia. But the joie de vivre rediscovered by Judi, ignited by her granddaughter's interest, carries us along and makes us overlook the sometimes simplistic nature of the plot.<br /><br />The cast are a who's who of talent, Leslie Caron, the incomparable jazzist Cleo Laine with her amazing high notes, a last performance from Joan Sims, brava Joan, a cute as a button flirtatious Ian Holm having a ball, and Olympia Dukakis as a money-grabbing divorcée living in the highlands of Scotland with her ghillie and her whiskey, The closing scene is standard Hollywoodland fare, the judgmental children of the star converted to fun-loving supporters, the old lovers reunited, the youngsters swept up in the old timers' music. Life should be this simple. But I would watch it again, and intend to, with my own granddaughter. For in the right hands, sometimes one just loves these brazen old clichés. 8 out of 10.
+--------------------------------------------------
+1/1 [==============================] - 0s
+Probability(positive) = 0.954757
+True class: positive
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [12]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">lime.lime_text</span> <span class="k">import</span> <span class="n">LimeTextExplainer</span>
+
+<span class="n">explainer</span> <span class="o">=</span> <span class="n">LimeTextExplainer</span><span class="p">(</span><span class="n">class_names</span><span class="o">=</span><span class="n">class_names</span><span class="p">)</span>
+<span class="n">explanation</span> <span class="o">=</span> <span class="n">explainer</span><span class="o">.</span><span class="n">explain_instance</span><span class="p">(</span><span class="n">text_sample</span><span class="p">,</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">,</span> <span class="n">num_features</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">weights</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">explanation</span><span class="o">.</span><span class="n">as_list</span><span class="p">())</span>
+<span class="n">lime_weights</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'words'</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s1">'weights'</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">values</span><span class="p">())})</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"words"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">"weights"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">lime_weights</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Sample </span><span class="si">{}</span><span class="s1"> features weights given by LIME'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/Users/nthiebaut/anaconda/envs/nlp/lib/python3.6/re.py:212: FutureWarning: split() requires a non-empty pattern match.
+  return _compile(pattern, flags).split(string, maxsplit)
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>5000/5000 [==============================] - 19s      128/5000 [..............................] - ETA: 17s
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZEAAAEzCAYAAADw9T6yAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+AAALEgAACxIB0t1+/AAAIABJREFUeJzt3XmcXfP9x/HXJEMiMiKpsava+ilaoQlNNCStpbVH6ZZS
+QmyNlqL4NZZSpUWitlAhpUotIUTsSywJqvYgPsRSS9GhiYRESDK/Pz7fSa4rM7lz5t4zM5n38/HI
+I/fec+89n3Pn3vM5372qvr4eERGRLDq1dgAiItJ+KYmIiEhmSiIiIpKZkoiIiGSmJCIiIpkpiYiI
+SGbVrR2AlJ+Z9QPOAL5EXCi8CRzj7s/nsO96oNbd32/m66qAvwLPufvZjTznIuD7wNXuPiJDbOsB
+Z7v7Xs19bWsys9uIv98LTTznchr57MzsJOAZd7+5DLGcCkx397+19L2a2Mcg4AJ3/3rG13+F+Cy6
+N/Xe6fYk4Ep3/3nR8yYBW7p79/R+rwBTl7C7rdz90yxxLiuURJYxZtYFmAjs6O5Ppsf2AW43s/Xc
+fUGrBrgEZrYxcCHQD3iuiaceAnzZ3d/KuKt1Acv42lbj7ju38C2+CzSagJoZy0nleJ825B1gVzPr
+5u5zAMxsSd+Tue6+ee7RtQNKIsuebsDKQOFV2FXALKBzKimcQ5ywa4AqYJi7T0lXs3OBLYHVgeuA
+OmC3dH+Yu9+XnlcPbAzUAncBv3L3zwoDMbMDgV8QpaEPgMPd/cUlxDycKIW80dhBmdlDKdbbzewX
+wKvABcCXgeWAa9z99PTc3wKDga7AisAxwATgUmAtM7uTSEiLrlYLr17NbH/gwPTaD939O40di5kN
+AEYBndNncoa731AU+1PAb9z9HjP7CXA50NPd55rZGOCpFNufgIHpvZ5Kn+ksM3sd2NvdHzez41Ns
+s4EHgcHu/pW0q63N7GFgNSIZDwH2B/oCZ5nZAuLv2WS8KeYl7qehxEN8n3Z3913T878G3Jv+Hl8F
+ziVKwp2B89x9bLry/0P6230d6AIMd/dJxfsHupvZOGBDYCZwMPAW8DbwLXd/Ke33bqJkkbWU9T+i
+lDEYuDo99vN0+9CM79mhqE1kGePuM4BjgTvM7FUzuxIYCtyTit3fAtYE+rv7JsAVwPEFb7EF0J84
+8fwa+MjdtyZOCoXP6w1sD2yS/h1SGIeZDQT2A7Zx9y2AM4EbG4n5cHe/cinHtU26+R13fwi4Ehjr
+7n2ArYDtzexH6Spye2Cgu28GjABOTSWwYcAr7v69pvaVbAoMSgmkqWM5BRiV4jiAuOovNp6ohiP9
+PwPYxsw6Abuk9zoemA/0cffewH+APxa+iZl9j0gKWwJ9iIuAQmulY/8qsDbwA3e/EHicSGLjS4m3
+hP0A/AMYYGarp/tDiQuBKmAccHzax0DgmFTFCvH9G5k+x8uA3y3hvQHWSXFuTpzQr0wlhSuIvyNm
+tgFRYpjYyHuU6m/AvgX3f8zihNJgBTN7uujfhS3c7zJBJZFlkLuPSle4A4FtgeOA48xsK3d/xMxO
+AA5JP8JBxNVmg1tSieJdM/sYuCM9/grQq+B5l7v7RwBm9jfiSu6Cgu27EFeRD5stqhnoZWa93P1/
+LTk+M1sxHVsvM/t9erg7sLm7X2dm+wE/M7MNiRLXF+rGS/Csu89Ktxs9FqK0dqGZ7QbcA/x2Ce81
+HriGKBFtQ5QEdiA+91fc/V0z25UoQe6Q9rE88N+i99kZuN7dZ6bP4UJgu4LtNxVUyTwHrLqEWEqJ
+d2n7wd1np5LCPmZ2DrAPMIBIYBsAYws+qxWIi5NpwL/d/en0+JNEslqSZ9394XT7cuAiM+sBjAYe
+NLMRROnk0jJU0d6S3n9VYCPgRaKEUkjVWY1QSWQZY2bfNrPfuPtsd5/o7scSV9ULiRPULsCt6ek3
+AxcTV48N5hW95Wcs2fyC252A4h9yZ+LqcfP04/smUbqZ0eyD+qLORMxbF7x/P+B0M/sm8DCwElHN
+9ic+f3wN6oseX75o+0elHIu7/wX4BnA38D3g2XSyW8TdpwLLm9nuwHTipLUjsDtwQ8E+jijYx1bA
+3kUxzS+KufgzL/xbFR9fQyxLjbeE/TS4lKj6+T7wgru/lo5jZsNxFPxt/ppeM3dpMTayz3rgs1SN
+9SywB/CzFEOLpBL6DcBPiRLn5S19z45ESWTZUweckOrqG6xB1O9PJa6Ab3H3i4B/ESWIzhn282Mz
+62JmXYkf3i1F2+8Cfmpma6T7hxJ15i2WSgiPAkcBmNnKwBTixLIt8Li7jwIe4PPHN59oP4GoZ1/e
+zDZJ9/dsYpeNHktqg9jC3S8nroxXBnou4T3GEwntrtQu1IM4CTYkkTuBw81s+VTNNYboYVfoVmCv
+gpP+gcTJdWkWHXeJ8Za0H3d/lEgCJ6V4ARz4JHXmwMzWIdpQ+pQQZ6HeZtZw5X8IMLmhlEV0wjgL
++Ke7/6eZ79uYvxGlom1ZXPqWEiiJLGPSldpg4qr8VTN7gajCONjdnSh5DDSzZ4FHiGqq9dKJqznm
+AA8RiekhFl9pNsRxJ3HSvDvtawhRR1+uaaOHAP3MbCrwT+Af7n4VUVe/SjruJ4gSRS8zqwGeBxaY
+2WNEw/CxREP9v2jiZLyUYzkWODU1nk8CTnH315fwNuOBrxElANL/77j7m+n+74HXiQb1F4iT89FF
+cdxHnKwfMbPHiUQ0h6W7BTg7VfMtNd5m7mcMsD5wU3rtp0QyH5Y+q7uAE919SglxFpoGnGxmzxAl
+tv0Ktk0kqigvbuL1K5rZR0X/vtHYk939EeJCa6K7z1/CU5bUJvJ0QaLrsKo0Fbw0lzUxJkEqx8z6
+ElV456X7RxE9lX7cHveTlZltTSSvr5fxokQyUsO6SPvxEtFB4mCi5PQGUSXVXvfTbGZ2BdEZ5OdK
+IG2DSiIiIpKZ2kRERCQzJREREclMSURERDLrUA3rdXWz1QAkItJMtbU1jQ0KVUlERESyUxIREZHM
+lERERCQzJREREclMSURERDJTEhERkcyUREREJDMlERERyaxDDTb8gnE357evvffIb18iIjnJNYmk
+hY9GA72JZViHufv0oud0IxbsOTCtAIeZPUksIgTwmrsPTetnX05MVf0cMNzdF+ZyICIiAuRfnTUY
+6Oru/YHjgZGFG9NiOA8CGxQ81hWocvdB6d/QtGkUcIK7b0OsAqdLfRGRnOWdRAaQ1i9O6zP3Ldre
+hVjr+sWCx3oD3czsLjO7z8z6pcf7EGtoA9wObF+xqEVEZInybhNZCfiw4P4CM6tuWNO4YR1mMyt8
+zRzgbOBSYCNiTWwjSicNEyrOJtaBblLPnt2oru686H5d9uNottramhz3JiKSj7yTyCyg8GzaqSGB
+NOElYHpKGC+Z2QfAGkBh+0cNMHNpO58xY04zwy2furrZrbZvEZGWaOoiOO/qrCnAzgCpWmpqCa85
+gNR2YmZrEqWZd4CnzGxQes5OwEPlDlZERJqWdxIZD3xiZg8D5wC/NrMhZnZwE6+5DFjZzCYD1wIH
+pNLL0cApZvYIsDwwrsKxi4hIkar6+o6zTtMXFqXSOBERkaXSolQiIlIRSiIiIpKZkoiIiGSmJCIi
+IpkpiYiISGZKIiIikpmSiIiIZKYkIiIimSmJiIhIZkoiIiKSmZKIiIhkpiQiIiKZKYmIiEhmSiIi
+IpKZkoiIiGSmJCIiIpkpiYiISGbVee7MzDoBo4HewDxgmLtPL3pON+Bu4EB3f9HMlgPGAl8BugCn
+ufsEM9sCmAi8nF56kbtfm8+RiIgI5JxEgMFAV3fvb2b9gJHAonVjzawvcDGwdsFr9gE+cPd9zawX
+8DQwAegDjHL3kblFLyIin5N3ddYA4A4Ad38U6Fu0vQuwJ/BiwWPXAyem21XA/HS7D7CLmT1oZpeZ
+WU3FohYRkSXKuySyEvBhwf0FZlbt7vMB3H0KgJkteoK7f5QeqwHGASekTY8Bl7r7E2Y2AjgZOKap
+nffs2Y3q6s6L7te19GiaobZWOU5Elj15J5FZQOHZtFNDAmmKma0DjAdGu/vV6eHx7j6z4TZw/tLe
+Z8aMOc0Mt3zq6ma32r5FRFqiqYvgvKuzpgA7A6Q2kalLe4GZrQbcBRzn7mMLNt1pZlul29sBT5Q5
+VhERWYq8SyLjgR3M7GGifWOomQ0Burv7JY285rdAT+BEM2toG9kJOAw438w+A94FDq5s6CIiUqyq
+vr6+tWPITV3d7M8f7Lib89v53nss/TkiIm1QbW1NVWPbNNhQREQyUxIREZHMlERERCQzJREREclM
+SURERDJTEhERkcyUREREJDMlERERyUxJREREMlMSERGRzJREREQkMyURERHJTElEREQyUxIREZHM
+lERERCQzJREREclMSURERDLLdXlcM+sEjAZ6A/OAYe4+veg53YC7gQPd/cXGXmNmGwKXA/XAc8Bw
+d1+Y28GIiEjuJZHBQFd37w8cD4ws3GhmfYEHgQ1KeM0o4AR334ZYr13rz4qI5CzXkggwALgDwN0f
+TUmjUBdgT+DKEl7TB3gg3b4d2BEY39TOe/bsRnV150X367IdQya1tTU57k1EJB95J5GVgA8L7i8w
+s2p3nw/g7lMAzGyprwGq3L0+PTYb6LG0nc+YMacFobdMXd3sVtu3iEhLNHURnHd11iygMJpODQkk
+w2sK2z9qgJnlCVFEREqVdxKZAuwMYGb9gKkteM1TZjYo3d4JeKiskYqIyFLlXZ01HtjBzB4mGsOH
+mtkQoLu7X1Lqa9LjRwNjzGx5YBowrrKhi4hIsar6+vqlP2sZUVc3+/MHO+7m/Ha+tzqPiUj7VFtb
+U9XYNg02FBGRzJREREQkMyURERHJTElEREQyUxIREZHMlERERCQzJREREclsqYMNzWw5YAiwO7AR
+Md3IdOBm4Bp3/6yiEYqISJvVZEnEzHYhpmbflFi7Yx/gp8BYYDNgipntXuEYRUSkjVpaSWQjYNsl
+lDamAbelKUcOr0hkIiLS5jV72hMzWwlYx92fr0xIlaNpT0REmq+paU9KmoDRzIYBWwPHAU8Bs83s
+Bnc/oTwhiohIe1Rq76zDgGOI9pCbgW8A369UUCIi0j6U3MXX3f9HrOtxa1oUaoWKRSUiIu1CqUnk
+eTObCKwP3GNm1wGPVy4sERFpD0pNIgcAZwL93P1T4ErgFxWLSkRE2oVSVzZ8yN37F9y/DXiaaBsR
+EZEOqskkYmb3AYPS7QXE8rQA84EJzd2ZmXUCRgO9gXnAMHefXrB9N+Ck9P5j3X2Mme0P7J+e0hXY
+HFgdWA+YCLyctl3k7tc2NyYREcmuySTi7t8FMLNz3f2IMuxvMNDV3fubWT9gJLBH2sdywDnAlsDH
+xGj4Ce5+OTFaHjO7kEguM82sDzDK3UeWIS4REcmg1Oqs35jZTsAqLC6N4O5/a+b+BgB3pNc+amZ9
+C7ZtDEx39xkAZjYZ2Ba4Pt3vC2zq7sPT8/vEw7YHURo50t1nN7Xznj27UV3dedH9umYG3xK1tTU5
+7k1EJB+lJpHrgDWI6U4aRn3XA81NIisBHxbcX2Bm1anLcPG22UCPgvu/BU4puP8YcKm7P2FmI4CT
+ibEsjZoxY04zwy2furom85uISJvV1EVwqUnka+7+tTLEMgsojKZTSiBL2lYDzAQws5UBc/dJBdvH
+u/vMhtvA+WWIT0REmqHULr6vmNmXy7C/KcSARVKbyNSCbdOAjcysV5rYcVvgkbRtW+Deove608y2
+Sre3A54oQ3wiItIMS+udNYmotloVmGpmzxA9p4DFDe/NMB7YwcweJtpWhprZEKC7u19iZkcBdxLJ
+bay7v90QCvBq0XsdBpxvZp8B7wIHNzMWERFpoSZn8TWzgU292N0fKHtEFaRZfEVEmq+pWXybrM5y
+9wdSoqgv+rcQ+Di1VYiISAdVasP6SUBfol2iihiA+Dqwkpmd6O7/qEh0IiLSppWaRKqAzdz9DQAz
+WxP4K5FM7geUREREOqBSe2et2ZBAANz9P8Aa7j6LgsGHIiLSsZRaEnnYzK4GriISz0+AR8xsF+Cj
+SgUnIiJtW6klkUOAh4lutEOBycBwopF938qEJiIibd3Sxoms7u7vAmsSs/YWzty7prvfVsngRESk
+bVtaddalwK5AQzffqqL/169odCIi0qYtbSr4XdP/6+UTjoiItCclNaybWU9iedwNgB8CZwFHFUyA
+KCIiHVCpDetjgH8BXyKmaH+H6KklIiIdWKlJZD13vwRY6O6fuvsIYO0KxiUiIu1AqUlkvpn1IC1I
+ZWYbEfNniYhIB1bqYMOTielNvmxmNwH9gQMqFZSIiLQPpSaRu4HHgW8BnYFD3P29ikUlIiLtQqnV
+Wa8BFwA9gclKICIiAqWXRNYHBgA7AUeZ2cfARHf/U3N2ZmadgNFAb2AeMMzdpxds342Ydn4+sbLh
+mPT4k8Qa7ACvuftQM9sQuJxop3kOGO7uaqcREclRSSURd58PPE90850CrAvsnWF/g4Gu7t4fOB4Y
+2bDBzJYDzgF2BAYCB5vZambWFahy90Hp39D0klHACe6+DTGCXksHiojkrKQkYmYvAM8C3wbuIdYW
+2TLD/gYAdwC4+6PEQlcNNgamu/sMd/+UmORxW6LU0s3M7jKz+8ysX3p+H2I6FoDbge0zxCMiIi1Q
+anXWOcB2xCJUqwGrmdkkd3+5mftbCfiw4P4CM6tOJZ3ibbOBHsAc4GxiHq+NgNvNzIjSSX3Rc5vU
+s2c3qqs7L7pf18zgW6K2tibHvYmI5KOkJJLaJsakNo2fEe0WFxE9tZpjFlB4Nu2UEsiSttUAM4GX
+iBJKPfCSmX0ArMHnx6k0PLdJM2bMaWa45VNXN7vV9i0i0hJNXQSXWp11iJldB7xKtIWcTbSLNNcU
+YOf0nv2AqQXbpgEbmVkvM1ueqMp6hBiPMjK9Zk2ixPIO8JSZDUqv3Ql4KEM8IiLSAqVWZ20KXAbs
+6+7zWrC/8cAOZvYw0Rg+1MyGAN3d/RIzOwq4k0huY939bTO7DLjczCYTPbEOcPf5ZnY0UTpankhA
+41oQl4iIZFBVX1/f6EYzOwP4U2Oz9ZpZL+A4dz+uQvGVVV3d7M8f7Lib89v53uo8JiLtU21tTVVj
+25ZWErkOuMnM/gM8CLxFjOFYF/guseLhkWWKU0RE2pmlLUr1FDDIzL4D7E6scrgQeAX4i7vfV/kQ
+RUSkrSq1d9YkYFKFYxERkXam1JUNvwecBvQiGsQBcHetsS4i0oGV2jvrfOAoYo6qxlviRUSkQyk1
+ibzv7hMrGomIiLQ7pSaRh8xsFDHv1ScND7r7gxWJSkRE2oVSk8hW6f8tCh6rJ7r5yjLggYk/zGU/
+A3e9Ppf9iEg+Su2d9Z1KByIiIu1Pqb2zBgC/AboTvbM6A+u6+1cqF5qIiLR1pS6PeylwE5F0LgRe
+JubBEhGRDqzUJDLX3f8K3A/MAA4iVh8UEZEOrNQk8kmabNGBfmltjxUrF5aIiLQHpSaRUcC1wC3A
+z83seeDxikUlIiLtQklJxN2vB3Z099nE2ub7APtWMjAREWn7Sl3ZsCdwiZndB3QFfkkJa5qLiMiy
+rdTBhmOAu4hBh7OJ5Wn/DuxSobhEWs1+k8/NZT9XDDgil/2IVFKpSWS9tHztYe7+KTDCzJ5p7s7M
+rBMwGugNzAOGufv0gu27AScRC1+NdfcxZrYcMBb4CtAFOM3dJ5jZFsBEorsxwEXufm1zYxJpi4Y+
+MCG3ff114O657UuWPaUmkflm1oM0g6+ZbUQsTtVcg4Gu7t7fzPoBI4E90nsuB5wDbAl8DEwxswnA
+zsAH7r5v6iH2NDCBaJsZ5e4jM8QhIiJlUGoSOZkYI7KOmd0E9AcOyLC/AcQkjrj7o2bWt2DbxsB0
+d58BYGaTgW2B64Fx6TlVRCkFIomYme1BlEaOTA3/IlImBz/Y7AqHTC7Ztncu+5HyKzWJPEGMUN8N
++DJwI3ESv7WZ+1sJ+LDg/gIzq3b3+UvYNhvo4e4fAZhZDZFMTkjbHwMudfcnzGwEkeiOaWrnPXt2
+o7q686L7dc0MviVqa2ty3Fvbpc9hsbbyWbSFOJqK4cLx7+UWx/A9V8ttX8uKUpPIbcCzRBtEg6pG
+ntuUWUDht6VTSiBL2lYDzAQws3WIJDba3a9O28e7+8yG28TCWU2aMWNOhpDLo65OhSTQ51CorXwW
+bSGOthADNB3HWzfPzSWGtfdYodFtC696KZcYADr97KuLbjeV5EtNIrj7gS0LCYApRGnmutQmMrVg
+2zRgo9Tu8RFRlXW2ma1G9Aw73N3vLXj+nWb2S3d/DNiOKC2JiEiOSk0iN5nZMOA+FrdJ4O5vNHN/
+44EdzOxhoiQz1MyGAN1T76+jgDuJ8Stj3f1tMzsX6AmcaGYnpvfZCTgMON/MPgPeBQ5uZiwiItJC
+pSaRHsDxwPsFj9UD6zdnZ+6+EDi06OEXC7bfQkytUviaI4Aldah/Evh2c/YvIiLlVWoS2QtY1d3z
+qRQUEZF2odQJGF8lqpREREQWKbUkUg+8YGbPAZ82POjuWmNdRKQDKzWJ/KGiUYiISLtUUhJx9wcq
+HYiIiLQ/pbaJiIiIfIGSiIiIZKYkIiIimSmJiIhIZkoiIiKSmZKIiIhkpiQiIiKZKYmIiEhmSiIi
+IpKZkoiIiGSmJCIiIpkpiYiISGYlr7FeDmbWCRgN9AbmAcPcfXrB9t2Ak4gleMe6+5jGXmNmGwKX
+E9PUPwcMTysniohITvIuiQwGurp7f2K53ZENG8xsOeAcYEdgIHCwma3WxGtGASe4+zbEeu175HYU
+IiIC5J9EBgB3ALj7o0Dfgm0bA9PdfYa7fwpMBrZt4jV9gIYp6m8Htq949CIi8jm5VmcBKwEfFtxf
+YGbV7j5/CdtmAz0aew1Q5e71Rc9tUs+e3aiu7rz4gcP2yXIMZfXihfkVoL42/OZGt+099I7c4mjM
+7677Xn77+tGdjW67bc8TcoujMRP3/llrhwDA+L0GtHYIDN+zprVDAKB2WBuI48g+rR3BF+SdRGYB
+hX+JTimBLGlbDTCzsdeY2cIlPLdJM2bMyRT0sqKubnZrh9Bm6LMQKV1tbeMJNO/qrCnAzgBm1g+Y
+WrBtGrCRmfUys+WJqqxHmnjNU2Y2KN3eCXio4tGLiMjn5F0SGQ/sYGYPE43hQ81sCNDd3S8xs6OA
+O4nkNtbd3zazL7wmvdfRwJiUcKYB43I+FhGRDi/XJJK64B5a9PCLBdtvAW4p4TW4+0tELy4REWkl
+GmwoIiKZKYmIiEhmSiIiIpKZkoiIiGSmJCIiIpkpiYiISGZKIiIikpmSiIiIZKYkIiIimSmJiIhI
+ZkoiIiKSmZKIiIhkpiQiIiKZKYmIiEhmSiIiIpKZkoiIiGSmJCIiIpnlurKhma0A/B1YFZgN7Ofu
+dUXPOQg4BJgPnObuE82sR3rdSsDywFHu/oiZ7QmcDbyZXn6yuz+Qz9GIiEjeJZHDgKnuvg3wN+CE
+wo1mtjrwK+DbwPeAM8ysC3AUcK+7DwT2By5ML+kDHOvug9I/JRARkRzlWhIBBgBnptu3AycWbd8K
+mOLu84B5ZjYd2Aw4B5iXnlMNfJJu9wG2MLMjgceA49x9fgXjFxGRAhVLImZ2IPDrooffAz5Mt2cD
+PYq2r1SwfdFz3H1mes/ViWqtI9P2u4GbgNeAi4FDgQsai6lnz25UV3du9rFU0gc57qu2tibHvbVt
++ixEyqNiScTdLwMuK3zMzG4EGn69NcDMopfNKtj+ueeY2TeAa4BjCqqtxhYkmJuBvZqKacaMOc0/
+kGVIXd3s1g6hzdBnIVK6pi668m4TmQLsnG7vBDxUtP0xYBsz65oa0zcGnjOzTYDrgSHufjuAmVUB
+z5rZ2um12wFPVPoARERksbzbRC4CrjCzycCnwBAAMzsKmO7uE8zsPCK5dAJGuPsnZnYG0BU418wA
+PnT3PcxsGHCjmc0FXgDG5Hw8IiIdWlV9fX1rx5CburrZbe5gP7hun9z29aUf/T23fWVx4aS9c9vX
+8O+My21fIu1dbW1NVWPbNNhQREQyUxIREZHM8m4TEWmUqphE2h+VREREJDMlERERyUxJREREMlMS
+ERGRzJREREQkMyURERHJTElEREQyUxIREZHMlERERCQzJREREclMSURERDJTEhERkcy0noiIiDRJ
+64mIiEhF5DoVvJmtAPwdWBWYDezn7nVFzzkIOASYD5zm7hPTeupvAS+npz3i7v9nZv2Ac9Nz73L3
+U3I6FBERIf/1RA4Dprr778zsJ8AJwBENG81sdeBXQF9iTfXJZnY3sA7wpLvvVvR+FwN7Aa8Ct5rZ
+Fu7+VA7HISIi5J9EBgBnptu3AycWbd8KmOLu84B5ZjYd2AxYH1jLzCYBc4FfA+8AXdz9FQAzuxPY
+HlASERHJScWSiJkdSJzsC70HfJhuzwZ6FG1fqWB74XPeAc5w9+vNbABRJbYnMKvoues3FVPPnt2o
+ru7cnMMQEZEmVCyJuPtlwGWFj5nZjUBNulsDzCx62ayC7YXPeYFo98DdJ5vZmkTSWNJzGzVjxpzm
+HYSIiFBbW9Potrx7Z00Bdk63dwIeKtr+GLCNmXU1sx7AxsBzwMnAkQBm1ht4090/BD41sw1Sw/v3
+lvB+IiJSQXm3iVwEXGFmk4FPgSEAZnYUMN3dJ5jZeUQy6ASMcPdPzOyPwN/NbBeiRLJ/er9DgauA
+zkTvrH/mejQiIh2cBhuKiEiTmhps2KGSiIiIlJdGrIuISGZKIiIikpmSiIiIZKYkIiIimSmJiIhI
+ZkoiIiKSmZKIiIhkpiQiIiKZKYkshZlVmdnmZrZZa8fS3qU5zr5wu4Xv2Wa/w2Z2bpqqp0Mr/BuV
+6+9eDsXfnUrE1pa/n+WyzB9gS6Qv1c3AUcBpZnbEUl7SJpjZhW0tVjPr7O71ZtbdzFZw9xZPlZDe
+c6GZrWxm3zCzmrZykjKzamLC0aPM7NutGEer/sbNrJO7L0y3G74DrX7eKYprR4AUW1m/Pw37aCvM
+7AtrYbT076FpT5qQJobs7e77mdn2xIqL17j7660bWdPMbFugr7uPKvyxtGI8VekHujZwHvBP4Hx3
+b/Hc/GZlBCHBAAAS6klEQVT2ZeAvwJvAQiLp31GOJNWCmDql5LYacD6wOnCyu0/KOY7O7r6gYJZr
+B2a4e5NLJlRo/+cRy2L/zN3nt+b3suDvUwX8AdgCuMLdr0nbq1ry/Ukn5VFAPfAk8C93f7EMobdI
+wXGvAxwMdAEuc3dvyfsqiTQhXaEcBJwKHA18HfgE+I+7/6g1YyuWfhA7EWvRvwVcBwxv6RekXMys
+hjjBjyRmYjbgeeABYEGWH2262h8DXE6sJfM3IqFc4e4flyfybFIC+TtwIzHL9F7AKe5+f85xdAL+
+AXwAVBHfjQvSUgp57f8S4CNimeuPgANTImnRybqFcVUBtwHPECf75YBn3P3Khu1ZYzOzccCLwKPA
+JsR545y2sHS3mdUSM5+fQyzLsSXwI3d/I+t7tnqxso17FLgGOBfYyN37uvsAoGvK5m3JFsC3gb8C
+/Ykv8c/NrHNrVfEU7Xct4vs2G/gtcRV0HNC9OT/WlDga1BMnxs2B3xNXVz2A77Ys8myKjndr4C13
+v8jdLwCuBM41s345xPGDgrtHEN/jI4HeREJbu9IxFPg/oMrdjySWblgIXGBm1ZWoPmqGrwPvu/vx
+xEXi68BuZvZDiKqtFrz3m8BId59IJPCHgQPTYnq5K/qMvw08DUwjVoK9CtjDzLpkfX8lkSa4+yx3
+vwG4APiXma1gZrsSJ6rZrRtdMLNOZnY8UEtc6f+USCIrEiWT+ta42ktF5/rUXvFV4BXiqvxLxHow
+E4k1ZUpe08bMeqUr2NXNbHfgq8DVxIlqEvAxsCuxEmauCo634cf4OrCw4GJjDnHV+06F41gFONrM
+/pAemgdsQJTWTidKf3tVcP/Fde5vAFMB3L2OWHhuM+CsPEsihXGlk+pMYJCZfdvd5xJVfasA3zez
+dTPu48h0sytwFoC7vwncBywA1sh+BNkUfC+7p4emExd0NxEXc48TFzyZ15ZSdVYJzGx9YnXFj4kT
+16/cPfcTVbFUVTCOWP1xDjCQiO3ltP064H53H91K8a1FJI5HgD7Ab4BeRHLbCjjA3Z8v8b2GERc9
+k4kqrGnAhkQSeRPYl7jKPs3dp5b3SJYaW0Nd81pEXfhc4gd6PNCNOJF/A/h5JdvTCtqevkK0QTwK
+jCY+s9eBA4AbiM/ozgrsv6ENpBOwD1F15sA9wB+JC6+DiKvzzYFj3X1+ueNYQlwNf5+GqrX3ie9l
+T+K7dAHwE+CX6d9od3+wmfvoDjyV3u8s4G7gVXc/OG0/F5jm7heX56hKiqnhuNcEriCWK59ClNhX
+JX433wWOaMlvRkmkRGa2MlECme/ub7d2PABmNgDY0d1PMrM7gHuJk+td7v6pmQ0F1nP3k1ohti5E
+o/INRHH+SeKEfypxZTzL3d8t8b0GAHsTV4+bApPd/dzU2eEY4FJ3H5d6fc0t/9GUFGMt0d5zL3Fl
+1w0YQVz11QIvuPv0Cu6/s7svKLi/LnAmUfK4BDiDuNC4090nVDCOKqI97lOiVHgg8Czwc2BN4ELi
+d3QysHuObTNVRLU0wL+AYUSif4/4Ts0lSonnAfs1t43AzL5DVKm+A7xKXEDcCbwNvATsBuzj7q+2
++GCaF9fKwC3A2UTVbxWwGnGeWAt4tKUxqTqrRO4+093/3YYSSBXxxd/BzCYSJ7D7gUOAbukk3plo
+08krpkVVBu4+D3gX2J5IJNsTV6J7uvtLpSaQ5E1gAHASUR22upl9yd3vIRLVz82sphUTSGfgRGAD
+d7/C3Q8B/ktclb7h7hMqnEA6NZQAzOwGMxtFdAQ5FtgIOMjdhwKHVyKBmNk2qeMERInjXXf/GdAv
+3R/o7icQHQ36Et/VQyudQMxsmJmtnu4eQbQFHZcaz88C/gx8jSixDSROtEdkbGR+iSj1DQHWA053
+9x2JE/j/gKF5JZCiLrtfAv5DnAt+RbSDbEJciF1djpiURNqZdKL4PXHSeh64i6gq+YjocXFxSnjz
+iO57uVS7paqUBWa2Zvrxbk5c7WxJlEJWI6o4nszw9m+nfy8S7R0fALua2arufivwE3fPtY2q4Ydq
+ZsunEsBFQLWZnQrg7kcTV7wV/40VdFc9nag+Gk1U1ZxGJN6tzcwq0f5gZgas7O6zLQbkzgT6p/1N
+I9pffpdO5k60C/0gbau06e7+bmqXqkux/czMVk6N3qcRjevvEb+dn7j7s1l2lC4ub3L3z4BfAOuY
+2Vh3v9Hd/5JXL0n7/NipTdPDDwLLE1V1jxHnix7l2qeqs9qRdKIYQ3QzXki0KwwE9gBWAv7t7nfn
+3XWyoO51JaKN5jOiMfUdYBZxBbgpcGrWpGZmPYk2kLOIkskr6d9VeY83KKprHs3iZHEVUYX0qrsf
+m1cc6faJRGntSHefZmbdiPaZw4Fqd/+kwrHsTVRT3kuUQDYH/uzuz5lZd3f/qJL7L4pluXQyx8z2
+Jzpy/IL4Dm5BVDdd5+6z0nPK/ntJ1ZunAb9z94p2pljCvhvGTr1NJM67iYbzrwM/JKrVyjZuRUmk
+HTGzXwOD3H2PdP8PRAL5Tur50hoxNZxQV0mxVLn7pWa2H/AVopvrZWa2opdh7IaZbUdUQ0wFfunu
+H7T0PTPG8SWimu4coqrgd0RJ4BmibvxQ4INKJXP7/IC5XkS1xQlET6DxxDicC4DdgfcqeVGReiX1
+IsZavEWUNr+V/g0DPkml1Ipf3BQ17t9GlNj7AdsQ7TB9gG8SXXArWjVtrTCg0j4/dupDYuzUn4nv
+xfLA3NRjrGxUndW+zAA+MbODANx9BNFV9mutEYxFX/+FtngA0xCi6mRD4FqiJLJ+uhIty+A/d78X
++BHw27wTiJkNSFd5ECfMe4mr2uFEG8QKxEl0iLu/X8EEUlXQ2+h6oi1sC6Lk8V2iAfl3wP81s+2p
+1P0XzoXVgxiRfwvRceLLxEn7X0T7w8cNDf45JJCqggTyZ6I0tJ67nw88AfyJSHBn5dG2mVcCscbH
+Tp1K9IZbA9g0tUWWNYGASiJtXvpBnEF00awnetisC/zX3f/SSjFVEY3I01M10/8RVUt/J+rg3wcm
+pMe6NVQbtHepl9jxLD7Wc4kxAQcB3YmqrJ0rmdwKe2GZ2XCimuIu4gR+CvAy0evoZeCM1DZWiTiq
+iLaQGRYzO4wgRkD3J6ZYucDd/12JfZcQ2w1EEvuA+P6dm6paR6a4nmmNuCrBYuzU/1Kb01bE330d
+ogTyJ6Iq6y9E9/JXKhGDSiJtmC2emqGKuPJdm2gXeAP4ehqX0Br6p38Q9eBbAT1SaWMMUY21K1G1
+1e4TiC0e8fs2sDFxpd3QjbOeaIs4neiBU8kEslxBL6yRRKP1q6mR+lDipPF14mS5GTCk6Cq1pfsv
+PF8MBf6R4phJXDRY6jF3Zp4JxL44wPEcd/8jccH1vpltQMwYcMYylkCGAXub2SZE1eruRAePrxB/
+ny2J6rxDK5VAQCWRNs3MtiTmGTo0/YD3JIqppxMn7bJXVZQQ0zeIMQ8LLMam/Ia4Cj8cuN7db7IY
+7DbH3f+bd3zlVlDH3tXdPzGzLYjeLTsRJ+5NiK7M8ytRVVAQxwruPtcWTxr4AdHBYgSwXWpM/xaw
+vLs/ZGZ9iTne/lOm/RdOpvh9omfghsTFzQiiTWS6uw/Os2OHfX4g4R+JkeF/dvf3UmP/4cQg4dGp
+J98ywdrQ2CklkTYo/SAOZXG32MHuPjU1Kv+GmDAt9yt8M1uRqLIwYgDZ+sTo1x8QI2CPIboV35x3
+bJWUemFdSpwwG6qK9iUG0E0FflHJ3k9mtjOwgrvfYGY/JqquVklVSUcQDcaDGrqnlrtB18zWdfd/
+p+/lBKI7OUSX63OIedA2ALp4zhNMpviqiOqb6cDKLK5S24oY8Le1uz+ad1yVZDGY9Aaik8D9xMzY
+Z7v7BxZr2BxCzJhc8a7vqs5qm64kBudBFMmvMLNDiNG0o1qriihVVy0gegENcfc/E/XwNxJXxmcS
+ddHtnpnta2ZdUq+z04GxxNxkZxHJ8yLi5H16hRNIZ+Iq8wYzO5hoSL8UuCdd8Z9LdCVdpeE1ZU4g
+3wdOSCWw/YlS6E+IqrM1iIGE/3X3R9z9fstpQsWi/exLlAZ/T3wP/0ecWF8BvrWsJZCkzYydUhJp
+QyxWUdwVeMndf0CMQbiemExxDrC/u9/VCnEV1jnfQczB9JKZDXf3a4kT6ljgn+WqPmlNFqOvpxJt
+UecBm7j7OI/ZeK8ljnVzd7/NKzsSvTo1os+2mHByAPBHjxHxk4DnUyIZ5e73VegE/iQxSHBvYDvi
+IgKPac3fIqr2FsmjGitVrRXu5z5iQN016f9TgBrgS+7+r/SaNrFYWbl4zDm2P7Af0Q7Wmxgp/71U
+Em3xWj2lUnVWG5G+5NcQCWNV4EJ3vyJ1KT2WGIn+XCvEVbiQzdHp4bFED5DvEt077wJudff3846v
+UtLfY39gMNGQfrW7/zptGwbcnUfjcapCuo640p5CdOWd5+4nmtl5wLXuPqXCMdQS3bcHEt/NhvnQ
+/kJMpTK5kvsviqVhksmGz2Ua0dX6GaIK+N0U6yl5xtWaWnvslJJIG2FmJwBruPvwVAe+O7Ei2mVm
+1qVSXTVLjK0X8YM9g6hr3po4wXZJ9291bxuLX5WTxcJSPyTme9oMeNzTrKw5xnAu0QPsdyxuf9gG
+uMFjjY684liFGPX9XaJb84PAJHe/PccYCrs3H05cyMwlLrweJL6XXyZWH70lr7jaAjPbmBhI+Hre
++1YSaQPSgK3jiEayXxP1nIOJLpzHtkYVUWEPGzPbhlin5E9EFdsEokfWhZVsD2gL0slzCDCIaAMY
+7DHXUl77P4I4Ma5FjERfh5gh+OpKVqU1EksvYgT6KkQ32tym8yjqhfV7YoT+qUTJ43gisT1EtB/N
+zbOHWEenJNJGpEF7BxETo12TemOt2hrdZAt+sDVE98g1iG6l2xDdjJcj6p33dfcZeceXNzNblUjo
+N+ed0FNVUg2xjs27xKj0U9z9gTzjKIhnVWIA3+s57rOhCquK6LyxIjFm6iFiapcqomfgtctiibit
+UxJpQ9JV7yHEld6JnuOkdQUxNPxgVwduJ7oOPk/8UBtmae1LLH6VacbT9siK1uvIed/diJLgT4gS
+wG2tEUdrKKrCOo+YTPIXFqtljiB6Jp1PzM+V6zxVEpRE2ph05dnd3V9rhX03lEBWJManfEasi7FV
++n8SkeBe82xrLkhG6Sp8Jc9pEae2oKgKay+iTeZ/wLnu/qCZ9SbG7RzXGm0BEpREBPjcD3YNot3j
+E+Avqe//D4gG1cnuntsiVyIpgdwIvEZMOdOb6I11SUokuU4zL1+kcSICLFrYaGWiF9D9xKjsHczs
+G+5+I1G1Nan1IpQO6mSiV9yvgaeJ7+UPgeMsFpdSAmllKol0cAVtINVEF9LVicGEXYjqg57AWHef
+2ophSgdlZv2JRvTBxKDW9YlxU79y9/taMzYJKol0YA0jf9PkgvOJsSBziPrnj4jBZO8RvYJEWsNT
+RJf3acS093sRs9JWaoS+NJNKIh1U0Uj0kUQ/+/FEd9LNiB/vGGJ2WvV6kVaTuhWfRqxKeLLH+ujS
+RiiJdGCpDeRa4K9EV8mhxBXfa8RcScd2pN5A0naZ2QpAjbv/VwMJ2xYlkQ6mYF2IamI9iDPdffe0
+bVNiwsEdgeWW9dHoItJyahPpQFIV1gKLFRHHEaOg3zSzA9JT1iTGhnRXAhGRUqgk0sGkUfHXARcD
+nxKzwu5BVGOtChypnlgiUqqyrb8s7cb6RPKYQUxcN4GY1uQ84I08J9UTkfZP1Vkdz8vECn2bE+uD
+TCMmfXxSCUREmkvVWR1UWsimP7ATMMzdp7VySCLSDqk6q+N6kpgf6x/u/kprByMi7ZNKIiIikpna
+REREJDMlERERyUxJREREMlMSERGRzJREREQkMyURkTbOzO43s0GtHYfIkiiJiIhIZhpsKFJGZjYV
++JG7TzOzq4BZ7n6YmfUDTgImA/sAC4C7iKVe1wHuAN4nBoDuAlwK9AVeB1ZJ7702cBWwIrCQWCL2
+0fyOTuSLVBIRKa9bge3S7c2AAen2TsBEYHdihb4tiPVcDk3bDdjH3bcHfgng7hsDvwI2SM85EJjo
+7n2J5NPw3iKtRklEpLxuBbYzs02I2ZEXpOVddyJKFv9w97lpTfuxLE44/3X319PtQcR0/bj7y8DD
+6fF7gGPM7GpgLeCCyh+OSNOURETK62FihuTtgfuBB4ilhpcHZhY9t4rFVcpzCx6v5/O/zfkA7j4F
+2AS4E/gxcEt5QxdpPiURkTJy9wXAP4lqqPuB+4ARwG3p9k/NbIW0PPFQYNIS3uYeYIiZdTKzdYGt
+AczsTGBfd78COBz4ZoUPR2SplEREyu9WYEV3f5EoiaxGtGVMJNpFHiequv4NnL+E148GZhFrvYwB
+nkuPnw/sZWZPA+OBwyp5ECKl0Cy+IiKSmUoiIiKSmZKIiIhkpiQiIiKZKYmIiEhmSiIiIpKZkoiI
+iGSmJCIiIpn9P8Fo2amCxTrqAAAAAElFTkSuQmCC
+">
+</img></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As for the first model, we get an ensemble of 10 explanation features that make sense. While we were having a way to interpret individual predictions with the random forest model, here LIME has no simple specific equivalent for recurrent neural networks.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">¶</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['$','$'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        " linebreaks: { automatic: true, width: '95% container' }, " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="https://nkthiebaut.github.io/tag/python.html">python</a>
+      <a href="https://nkthiebaut.github.io/tag/machine-learning.html">machine learning</a>
+      <a href="https://nkthiebaut.github.io/tag/deep-learning.html">deep learning</a>
+    </p>
+  </div>
+
+
+
+
+</article>
+
+    <footer>
+<p>&copy; Nicolas Thiebaut </p>
+<!--<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
+</p>-->    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Data4thought: data science blog ",
+  "url" : "https://nkthiebaut.github.io",
+  "image": "https://nkthiebaut.github.io/images/PhotoThiebaut.jpg",
+  "description": "Nicolas Thiebaut's data science blog"
+}
+</script>
+</body>
+</html>
