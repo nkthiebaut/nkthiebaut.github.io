@@ -24,9 +24,12 @@ For local testing:
 
 To create master branch follow the procedure explained `here <http://ntanjerome.org/blog/how-to-setup-github-user-page-with-pelican/>`_. From the source branch:
 
+* Add modified files (git add -u) and commit
+* Remove .ipynb_checpoints if they exist
 * pelican content -s publishconf.py (you may have to delete existing .ipynb_checkpoints in the content folder if you get an error)
 * if branch gh-pages does not exist: git branch gh-pages
 * ghp-import output
+* commit gh-pages branch
 * git checkout master
 * git merge gh-pages
 * git push --all
