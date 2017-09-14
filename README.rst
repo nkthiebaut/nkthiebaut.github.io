@@ -32,4 +32,4 @@ To create master branch follow the procedure explained `here <http://ntanjerome.
 * git checkout master
 * git merge gh-pages
 * git push --all
-*git checkout source
+* git checkout source
