@@ -101,8 +101,6 @@ def github(publish_drafts=False): # 2
                 local('rm -rf output/drafts')
     except Exception:
         pass
-
     local('ghp-import output')  # 4
     local("git push -f origin {github_pages_branch}:master".format(**env)) # 5
     local('rm -rf output')  # 6
-    local('git checkout source')  # 7
