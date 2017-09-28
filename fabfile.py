@@ -103,6 +103,6 @@ def github(publish_drafts=False): # 2
         pass
 
     local('ghp-import output')  # 4
-    local("git push origin {github_pages_branch}:master".format(**env)) # 5
+    local("git push -f origin {github_pages_branch}:master".format(**env)) # 5
     local('rm -rf output')  # 6
     local('git checkout source')  # 7
