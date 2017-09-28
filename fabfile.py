@@ -108,3 +108,9 @@ def github(publish_drafts=False): # 2
     local('ghp-import output')  # 4
     local("git push -f origin {github_pages_branch}:master".format(**env)) # 5
     local('rm -rf output')  # 6
+
+def publish_gh():
+    gh_pages()
+    enter_dns_file()
+    github()
+
