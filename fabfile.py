@@ -93,6 +93,10 @@ def gh_pages():
     local("ghp-import -b {github_pages_branch} {deploy_path}".format(**env))
     local("git push origin {github_pages_branch}".format(**env))
 
+def enter_dns_file():  # 1
+    with open('output/CNAME', 'w') as f:
+        f.write('data4thought.com')
+
 def github(publish_drafts=False): # 2
 
     try:  # 3
