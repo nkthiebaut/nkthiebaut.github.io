@@ -34,3 +34,6 @@ To create master branch follow the procedure explained `here <http://ntanjerome.
 * git merge gh-pages
 * git push --all
 * git checkout source
+
+Alternative with the Fabric library:
+* from the root folder: ``fab publish_gh``
