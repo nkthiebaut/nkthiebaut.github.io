@@ -24,11 +24,11 @@
 
 
 <meta name="author" content="Nicolas Thiebaut" />
-<meta name="description" content="Interpreting recurrent neural networks with LIME¶This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the first part. This second part is a quick application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest." />
+<meta name="description" content="Interpreting recurrent neural networks with LIME¶This is the second part of my blog post on the LIME interpretation model. For a introduction on LIME and its purpose, please read the first part. This second part is an application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest." />
 <meta name="keywords" content="python, machine learning, deep learning">
 <meta property="og:site_name" content="Data4thought: data science blog"/>
 <meta property="og:title" content="LIME of words (part 2/2)"/>
-<meta property="og:description" content="Interpreting recurrent neural networks with LIME¶This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the first part. This second part is a quick application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest."/>
+<meta property="og:description" content="Interpreting recurrent neural networks with LIME¶This is the second part of my blog post on the LIME interpretation model. For a introduction on LIME and its purpose, please read the first part. This second part is an application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest."/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://nkthiebaut.github.io/deep-lime.html"/>
 <meta property="og:type" content="article"/>
@@ -1074,8 +1074,41 @@ h6:hover .anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Interpreting-recurrent-neural-networks-with-LIME">Interpreting recurrent neural networks with LIME<a class="anchor-link" href="#Interpreting-recurrent-neural-networks-with-LIME">¶</a></h1><p>This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the <a href="https://nkthiebaut.github.io/lime-of-words.html">first part</a>. This second part is a quick application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest.</p>
+<h1 id="Interpreting-recurrent-neural-networks-with-LIME">Interpreting recurrent neural networks with LIME<a class="anchor-link" href="#Interpreting-recurrent-neural-networks-with-LIME">¶</a></h1><p>This is the second part of my blog post on the LIME interpretation model. For a introduction on LIME and its purpose, please read the <a href="https://nkthiebaut.github.io/lime-of-words.html">first part</a>. This second part is an application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest.</p>
 <p>As a reminder we use movie reviews from <a href="www.imdb.com">IMDB</a> to predict the sentiment of the review (positive if the author of the comment gave 7 stars and above, negative elsewise).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">B</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[6]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>(4, 1)</pre>
+</div>
+</div>
 </div>
 </div>
 </div>
