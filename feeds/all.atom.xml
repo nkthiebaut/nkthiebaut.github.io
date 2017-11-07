@@ -971,46 +971,12 @@ h6:hover .anchor-link {
 
 .ansi-bold { font-weight: bold; }
 &lt;/style&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h1 id="Interpreting-recurrent-neural-networks-with-LIME"&gt;Interpreting recurrent neural networks with LIME&lt;a class="anchor-link" href="#Interpreting-recurrent-neural-networks-with-LIME"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;This is the second part of my blog post on the LIME interpretation model. For a introduction on LIME and its purpose, please read the &lt;a href="https://nkthiebaut.github.io/lime-of-words.html"&gt;first part&lt;/a&gt;. This second part is an application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest.&lt;/p&gt;
+&lt;h1 id="Interpreting-recurrent-neural-networks-with-LIME"&gt;Interpreting recurrent neural networks with LIME&lt;a class="anchor-link" href="#Interpreting-recurrent-neural-networks-with-LIME"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the &lt;a href="https://nkthiebaut.github.io/lime-of-words.html"&gt;first part&lt;/a&gt;. This second part is a quick application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest.&lt;/p&gt;
 &lt;p&gt;As a reminder we use movie reviews from &lt;a href="www.imdb.com"&gt;IMDB&lt;/a&gt; to predict the sentiment of the review (positive if the author of the comment gave 7 stars and above, negative elsewise).&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [5]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;randn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;axis&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;keepdims&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [6]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt output_prompt"&gt;Out[6]:&lt;/div&gt;
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;(4, 1)&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1107,8 +1073,7 @@ h6:hover .anchor-link {
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -1116,8 +1081,7 @@ h6:hover .anchor-link {
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -1217,8 +1181,7 @@ h6:hover .anchor-link {
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -1305,8 +1268,7 @@ Test accuracy: 82.90 %
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -1602,14 +1564,13 @@ WgUwYB9335q4/S3uvhZwFHFbAIh7Z0x09w2J5NPw3CJtRklEpLxuA7Yys7WBF4AvzWwZIolsCPzd
 GMuYSIyLPE50df0bOL+R/S8CZgAvAaOImy+Rtt3VzJ4GxgOHVfJFiJRCF2AUEZHM1BIREZHMlERE
 RCQzJREREclMSURERDJTEhERkcyUREREJDMlERERyUxJREREMvt/6Uzrah27eA8AAAAASUVORK5C
 YII=
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
+" /&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -1617,8 +1578,7 @@ YII=
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -1626,8 +1586,7 @@ YII=
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -2638,13 +2597,11 @@ h6:hover .anchor-link {
 
 .ansi-bold { font-weight: bold; }
 &lt;/style&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h1 id="Experiments-with-the-LIME-interpretation-model"&gt;Experiments with the LIME interpretation model&lt;a class="anchor-link" href="#Experiments-with-the-LIME-interpretation-model"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;In this blog post I will share some experiments on the LIME (Local Interpretable Model-agnostic Explanations) interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called &lt;a href="https://arxiv.org/abs/1602.04938"&gt;“Why Should I Trust You?” Explaining the Predictions of Any Classifier&lt;/a&gt;. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It brings a way to investigate a model predictions beyond the sole classification or regression standard metrics.&lt;/p&gt;
-&lt;p&gt;It also may provide explanations to individuals when they are refused a loan or job on the basis of a scoring model, or in other critical situations like the ones listed &lt;a href="https://weaponsofmathdestructionbook.com"&gt;in this very good book&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id="Experiments-with-the-LIME-interpretation-model"&gt;Experiments with the LIME interpretation model&lt;a class="anchor-link" href="#Experiments-with-the-LIME-interpretation-model"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;In this blog post I will share some experiments on the LIME (Local Interpretable Model-agnostic Explanations) interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called &lt;a href="https://arxiv.org/abs/1602.04938"&gt;“Why Should I Trust You?” Explaining the Predictions of Any Classifier&lt;/a&gt;. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It brings a way to investigate a model predictions beyond the sole classification or regression standard metrics. It also may provide explanations to individuals when they are refused a loan or job on the basis of a scoring model, or in other critical situations like the one listed &lt;a href="https://weaponsofmathdestructionbook.com"&gt;in this very good book&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;In order to set the playground I first build a quick model on the &lt;a href="www.imdb.com"&gt;IMDB&lt;/a&gt; sentiment analysis dataset, which contains movie reviews with an associated sentiment (0 for negative, 1 for positive). Data was downloaded &lt;a href="https://www.kaggle.com/c/word2vec-nlp-tutorial/download/labeledTrainData.tsv.zip"&gt;on kaggle&lt;/a&gt;, let's have a look at it.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -2728,8 +2685,7 @@ h6:hover .anchor-link {
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -2784,8 +2740,7 @@ Vocabulary size after rare words tagging: 25341
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -2831,8 +2786,7 @@ F1-score: 83.19 %
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -2842,8 +2796,7 @@ F1-score: 83.19 %
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -3108,14 +3061,13 @@ jiwxnwrcSnY+9+UK4N6KfoIbgHcCN5SL+NxNHuCJiNfIA/8pku4n+0U+1f0JyjUdDgB+U2J+odzf
 23ttcyGPhjKbRWU0FBFx1MBGYlY/z7OwQUXShmSfQE+2mhOvmlcm543uYdPpEXF6f8djcyfXLMzM
 rJL7LMzMrJKThZmZVXKyMDOzSk4WZmZWycnCzMwqOVmYmVml/wf/Wfn7y2jUBAAAAABJRU5ErkJg
 gg==
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
+" /&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -3398,14 +3350,13 @@ N+s2xvRD4Bsl5lOAm8lO795cCNzdRz/E9cBbgevLJJd3kQd+JL1MJoSTImIa2e/ysa4bkPQE2Yl/
 dYn52fJ8T++1zac8OsusH5XRWUj65sBGYtYavk7Ehr2ImEj2OXRnW0n/18p4+kO56HBcN4tOlXRq
 q+Ox+ZfPRMzMrDL3iZiZWWVOImZmVpmTiJmZVeYkYmZmlTmJmJlZZU4iZmZW2f8DGrpm1aWpmTsA
 AAAASUVORK5CYII=
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
+" /&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
@@ -3419,7 +3370,7 @@ AAAASUVORK5CYII=
 &lt;li&gt;A &lt;strong&gt;choice for the interpetable model $g$&lt;/strong&gt;. The first choice is a linear model (i.e. a linear regression for regression and a logistic regression for classification).&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Technically, for a given sample $x\in\mathbb{R}^d$ to be explained we determine the corresponding interpretable vector $x'\in\{0,1\}^{d'}$ in the explanable feature space. We generate a set of $N$ artificial points $z_i'$ around it, by randomly cancelling coordinates or $x'$ (cancellations are chosen with a uniform distribution). We then fit a simple model $g$ (K-LASSO, i.e. a logistic regression with at most $K$ non-zero weights) that must reproduce the predictions of $f$ at best by minimizing the dissimilarity function&lt;/p&gt;
-$$\mathcal{L}(f, g, \Pi_x)= \sum_{z, z'} \Pi_x(z) \left[f(z) - g(z') \right]^2.$$&lt;p&gt;Note that the dissimilarity between the investigated mode $f$ and the interpretable model $g$ is 0 when $f$ and $g$ give the exact same predictions (which is why $\mathcal{L}$ minimization is also called "local fidelity maximization"). Also, dissimilarities are weighted by the $\Pi_x$ proximity between random samples $z$ and the original sample $x$ under investigation, such that predictions discrepancies far away from $x$ are less penalized.&lt;/p&gt;
+&lt;p&gt;$$\mathcal{L}(f, g, \Pi_x)= \sum_{z, z'} \Pi_x(z) \left[f(z) - g(z') \right]^2.$$ Note that the dissimilarity between the investigated mode $f$ and the interpretable model $g$ is 0 when $f$ and $g$ give the exact same predictions (which is why $\mathcal{L}$ minimization is also called "local fidelity maximization"). Also, dissimilarities are weighted by the $\Pi_x$ proximity between random samples $z$ and the original sample $x$ under investigation, such that predictions discrepancies far away from $x$ are less penalized.&lt;/p&gt;
 &lt;p&gt;Let's take an example:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Suppose we investigate the prediction of a a sentiment classification model $f$ for the sentence "am quite happy", that is scored $0.7$ by $f$.&lt;/li&gt;
@@ -3680,14 +3631,13 @@ Kq58/zPZDHUbcCtwOHB98fg7EbFgRAwm5+2a3MZmbgF2iIiBEfFJ4MsAEXEcsLOk84H9gC80eHfM
 OuUkYlZ/1wELS3qMrImMIvsyJpH9IveRTV3/B5zaxvvPAGYBjwJjgenF66cC20TE38gbae3dyJ0w
 q4WnPTEzs9JcEzEzs9KcRMzMrDQnETMzK81JxMzMSnMSMTOz0pxEzMysNCcRMzMrzUnEzMxK+/9i
 JmbmgeWyiwAAAABJRU5ErkJggg==
-"&gt;
-&lt;/img&gt;&lt;/div&gt;
+" /&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;
-&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
