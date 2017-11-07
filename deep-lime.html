@@ -1,19 +1,7 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Global Site Tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106456784-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-	        function gtag(){dataLayer.push(arguments)};
-	        gtag('js', new Date());
-
-		  gtag('config', 'UA-106456784-1');
-</script>
-
-
   <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
 
     <link rel="stylesheet" type="text/css" href="https://nkthiebaut.github.io/theme/stylesheet/style.min.css">
@@ -36,11 +24,11 @@
 
 
 <meta name="author" content="Nicolas Thiebaut" />
-<meta name="description" content="Interpreting recurrent neural networks with LIME¶This is the second part of my blog post on the LIME interpretation model. For a introduction on LIME and its purpose, please read the first part. This second part is an application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest." />
+<meta name="description" content="Interpreting recurrent neural networks with LIME¶This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the first part. This second part is a quick application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest." />
 <meta name="keywords" content="python, machine learning, deep learning">
 <meta property="og:site_name" content="Data4thought: data science blog"/>
 <meta property="og:title" content="LIME of words (part 2/2)"/>
-<meta property="og:description" content="Interpreting recurrent neural networks with LIME¶This is the second part of my blog post on the LIME interpretation model. For a introduction on LIME and its purpose, please read the first part. This second part is an application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest."/>
+<meta property="og:description" content="Interpreting recurrent neural networks with LIME¶This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the first part. This second part is a quick application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest."/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://nkthiebaut.github.io/deep-lime.html"/>
 <meta property="og:type" content="article"/>
@@ -69,7 +57,6 @@
         <ul class="list">
           <li><a href="https://nkthiebaut.github.io/pages/about.html#about">About</a></li>
           <li><a href="https://nkthiebaut.github.io/pages/contact.html#contact">Contact</a></li>
-          <li><a href="https://nkthiebaut.github.io/pages/links.html#links">Links</a></li>
 
         </ul>
       </nav>
@@ -1082,46 +1069,12 @@ h6:hover .anchor-link {
 
 .ansi-bold { font-weight: bold; }
 </style>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Interpreting-recurrent-neural-networks-with-LIME">Interpreting recurrent neural networks with LIME<a class="anchor-link" href="#Interpreting-recurrent-neural-networks-with-LIME">¶</a></h1><p>This is the second part of my blog post on the LIME interpretation model. For a introduction on LIME and its purpose, please read the <a href="https://nkthiebaut.github.io/lime-of-words.html">first part</a>. This second part is an application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest.</p>
+<h1 id="Interpreting-recurrent-neural-networks-with-LIME">Interpreting recurrent neural networks with LIME<a class="anchor-link" href="#Interpreting-recurrent-neural-networks-with-LIME">¶</a></h1><p>This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the <a href="https://nkthiebaut.github.io/lime-of-words.html">first part</a>. This second part is a quick application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest.</p>
 <p>As a reminder we use movie reviews from <a href="www.imdb.com">IMDB</a> to predict the sentiment of the review (positive if the author of the comment gave 7 stars and above, negative elsewise).</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In [5]:</div>
-<div class="inner_cell">
-<div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In [6]:</div>
-<div class="inner_cell">
-<div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">B</span><span class="o">.</span><span class="n">shape</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="output_wrapper">
-<div class="output">
-<div class="output_area">
-<div class="prompt output_prompt">Out[6]:</div>
-<div class="output_text output_subarea output_execute_result">
-<pre>(4, 1)</pre>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -1218,8 +1171,7 @@ h6:hover .anchor-link {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1227,8 +1179,7 @@ h6:hover .anchor-link {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1328,8 +1279,7 @@ h6:hover .anchor-link {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1416,8 +1366,7 @@ Test accuracy: 82.90 %
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1713,14 +1662,13 @@ WgUwYB9335q4/S3uvhZwFHFbAIh7Z0x09w2J5NPw3CJtRklEpLxuA7Yys7WBF4AvzWwZIolsCPzd
 GMuYSIyLPE50df0bOL+R/S8CZgAvAaOImy+Rtt3VzJ4GxgOHVfJFiJRCF2AUEZHM1BIREZHMlERE
 RCQzJREREclMSURERDJTEhERkcyUREREJDMlERERyUxJREREMvt/6Uzrah27eA8AAAAASUVORK5C
 YII=
-">
-</img></div>
+" />
 </div>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1728,8 +1676,7 @@ YII=
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1737,8 +1684,7 @@ YII=
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1790,103 +1736,17 @@ YII=
 <section>
     <p id="post-share-links">
         Share on:
-	<span class="fa fa-twitter"></span>
+        <a href="https://sharetodiaspora.github.io/?title=LIME%20of%20words%20%28part%202/2%29&url=https%3A//nkthiebaut.github.io/deep-lime.html" target="_blank" title="Share on Diaspora">Diaspora*</a>
+        ❄
         <a href="https://twitter.com/intent/tweet?text=LIME%20of%20words%20%28part%202/2%29&url=https%3A//nkthiebaut.github.io/deep-lime.html" target="_blank" title="Share on Twitter">Twitter</a>
-	<span class="fa fa-facebook"></span>
+        ❄
         <a href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/deep-lime.html" target="_blank" title="Share on Facebook">Facebook</a>
-        <span class="fa fa-google"></span>
+        ❄
         <a href="https://plus.google.com/share?url=https%3A//nkthiebaut.github.io/deep-lime.html" target="_blank" title="Share on Google Plus">Google+</a>
-        <span class="fa fa-at"></span>
+        ❄
         <a href="mailto:?subject=LIME%20of%20words%20%28part%202/2%29&amp;body=https%3A//nkthiebaut.github.io/deep-lime.html" target="_blank" title="Share via Email">Email</a>
     </p>
 </section>
-
-	<style>
-#pcs-comment-form input,
-#pcs-comment-form textarea {
-	width: 100%;
-}
-#pcs-comment-form-display-replyto {
-	border: solid 1px black;
-	padding: 2px;
-}
-#pcs-comment-form-display-replyto p {
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
-}
-#pcs-comments ul {
-	list-style: none;
-}
-#pcs-comments .comment-left {
-	display: table-cell;
-	padding-right: 10px;
-}
-#pcs-comments .comment-body {
-	display: table-cell;
-	vertical-align: top;
-	width: 100%;
-}
-</style>
-
-	<section id="pcs-comments">
-	<header>
-		<h2>Comments</h2>
-		<hr/>
-	</header>
-		<p>There are no comments yet.</p>
-	<section>
-	<form id="pcs-comment-form" action="#">
-		<legend>Add a Comment</legend>
-		<input type="hidden" id="pcs-comment-form-input-replyto">
-		<fieldset>
-			<label for="pcs-comment-form-input-name">Name</label>
-			<input  id="pcs-comment-form-input-name" type="text" placeholder="Enter your name or nickname" />
-		</fieldset>
-		<fieldset>
-			<label for="pcs-comment-form-input-website">Website</label>
-			<input  id="pcs-comment-form-input-website" type="text" placeholder="Enter your website (optional)" />
-		</fieldset>
-		<fieldset>
-			<label   for="pcs-comment-form-input-textarea">Your Comment</label>
-			<textarea id="pcs-comment-form-input-textarea" rows="5" style="resize:vertical;" placeholder="Your comment"></textarea>
-			<p>You can use the <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a> syntax to format your comment.</p>
-			<div style="display: none; " id="pcs-comment-form-display-replyto"></div>
-		</fieldset>
-
-		<button type="submit"
-				id="pcs-comment-form-button-submit"
-				>Post via email</button>
-
-	</form>
-</section>
-
-</section>
-
-			<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="https://nkthiebaut.github.io/theme/js/comments.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			CommentSystem.email_user   = "nkthiebaut";
-			CommentSystem.email_domain = "gmail.com";
-			CommentSystem.display_replyto_html = function(comment_content, article_slug, author) { 
-				return ''
-					+ '<button style="float:right;" onclick="CommentSystem.cancelReply(); return false;" title="Cancel the reply">'
-					+ 	'×'
-					+ '</button>'
-					+ '<p>This comment will be posted as a reply to \'<a title="'+comment_content+'" href="#comment-'+article_slug+'">'+author+'</a>\'</p>';
-			};
-
-			$('#pcs-comment-form').on("submit",
-				function( event )
-				{
-					event.preventDefault();
-					$(location).attr('href', CommentSystem.getMailtoLink("deep-lime"));
-				}
-			);
-		});
-	</script>
-
-
 
 
 
@@ -1894,12 +1754,22 @@ YII=
 </article>
 
     <footer>
-<p>&copy; Nicolas Thiebaut . Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme </p>
+<p>&copy; Nicolas Thiebaut </p>
 <!--<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
 </p>-->    </footer>
   </main>
 
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-106456784-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
 
 
 

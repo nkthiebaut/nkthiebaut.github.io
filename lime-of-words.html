@@ -1,19 +1,7 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Global Site Tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106456784-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-	        function gtag(){dataLayer.push(arguments)};
-	        gtag('js', new Date());
-
-		  gtag('config', 'UA-106456784-1');
-</script>
-
-
   <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
 
     <link rel="stylesheet" type="text/css" href="https://nkthiebaut.github.io/theme/stylesheet/style.min.css">
@@ -36,11 +24,11 @@
 
 
 <meta name="author" content="Nicolas Thiebaut" />
-<meta name="description" content="Experiments with the LIME interpretation model¶In this blog post I will share some experiments on the LIME (Local Interpretable Model-agnostic Explanations) interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called “Why Should I Trust You?” Explaining the Predictions of Any Classifier. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It brings a way to investigate a model predictions beyond the sole classification or regression standard metrics." />
+<meta name="description" content="Experiments with the LIME interpretation model¶In this blog post I will share some experiments on the LIME (Local Interpretable Model-agnostic Explanations) interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called “Why Should I Trust You?” Explaining the Predictions of Any Classifier. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It brings a way to investigate a model predictions beyond the sole classification or regression standard metrics. It also may provide explanations to individuals when they are refused a loan or job on the basis of a scoring model, or in other critical situations like the one listed in this very good book" />
 <meta name="keywords" content="python, machine learning">
 <meta property="og:site_name" content="Data4thought: data science blog"/>
 <meta property="og:title" content="LIME of words (part 1/2)"/>
-<meta property="og:description" content="Experiments with the LIME interpretation model¶In this blog post I will share some experiments on the LIME (Local Interpretable Model-agnostic Explanations) interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called “Why Should I Trust You?” Explaining the Predictions of Any Classifier. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It brings a way to investigate a model predictions beyond the sole classification or regression standard metrics."/>
+<meta property="og:description" content="Experiments with the LIME interpretation model¶In this blog post I will share some experiments on the LIME (Local Interpretable Model-agnostic Explanations) interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called “Why Should I Trust You?” Explaining the Predictions of Any Classifier. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It brings a way to investigate a model predictions beyond the sole classification or regression standard metrics. It also may provide explanations to individuals when they are refused a loan or job on the basis of a scoring model, or in other critical situations like the one listed in this very good book"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://nkthiebaut.github.io/lime-of-words.html"/>
 <meta property="og:type" content="article"/>
@@ -68,7 +56,6 @@
         <ul class="list">
           <li><a href="https://nkthiebaut.github.io/pages/about.html#about">About</a></li>
           <li><a href="https://nkthiebaut.github.io/pages/contact.html#contact">Contact</a></li>
-          <li><a href="https://nkthiebaut.github.io/pages/links.html#links">Links</a></li>
 
         </ul>
       </nav>
@@ -1081,13 +1068,11 @@ h6:hover .anchor-link {
 
 .ansi-bold { font-weight: bold; }
 </style>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Experiments-with-the-LIME-interpretation-model">Experiments with the LIME interpretation model<a class="anchor-link" href="#Experiments-with-the-LIME-interpretation-model">¶</a></h1><p>In this blog post I will share some experiments on the LIME (Local Interpretable Model-agnostic Explanations) interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called <a href="https://arxiv.org/abs/1602.04938">“Why Should I Trust You?” Explaining the Predictions of Any Classifier</a>. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It brings a way to investigate a model predictions beyond the sole classification or regression standard metrics.</p>
-<p>It also may provide explanations to individuals when they are refused a loan or job on the basis of a scoring model, or in other critical situations like the ones listed <a href="https://weaponsofmathdestructionbook.com">in this very good book</a>.</p>
+<h1 id="Experiments-with-the-LIME-interpretation-model">Experiments with the LIME interpretation model<a class="anchor-link" href="#Experiments-with-the-LIME-interpretation-model">¶</a></h1><p>In this blog post I will share some experiments on the LIME (Local Interpretable Model-agnostic Explanations) interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called <a href="https://arxiv.org/abs/1602.04938">“Why Should I Trust You?” Explaining the Predictions of Any Classifier</a>. Its purpose is to explain a model prediction for a specific sample in a human-interpretable way. It brings a way to investigate a model predictions beyond the sole classification or regression standard metrics. It also may provide explanations to individuals when they are refused a loan or job on the basis of a scoring model, or in other critical situations like the one listed <a href="https://weaponsofmathdestructionbook.com">in this very good book</a>.</p>
 <p>In order to set the playground I first build a quick model on the <a href="www.imdb.com">IMDB</a> sentiment analysis dataset, which contains movie reviews with an associated sentiment (0 for negative, 1 for positive). Data was downloaded <a href="https://www.kaggle.com/c/word2vec-nlp-tutorial/download/labeledTrainData.tsv.zip">on kaggle</a>, let's have a look at it.</p>
 </div>
 </div>
@@ -1171,8 +1156,7 @@ h6:hover .anchor-link {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1227,8 +1211,7 @@ Vocabulary size after rare words tagging: 25341
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1274,8 +1257,7 @@ F1-score: 83.19 %
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1285,8 +1267,7 @@ F1-score: 83.19 %
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1551,14 +1532,13 @@ jiwxnwrcSnY+9+UK4N6KfoIbgHcCN5SL+NxNHuCJiNfIA/8pku4n+0U+1f0JyjUdDgB+U2J+odzf
 23ttcyGPhjKbRWU0FBFx1MBGYlY/z7OwQUXShmSfQE+2mhOvmlcm543uYdPpEXF6f8djcyfXLMzM
 rJL7LMzMrJKThZmZVXKyMDOzSk4WZmZWycnCzMwqOVmYmVml/wf/Wfn7y2jUBAAAAABJRU5ErkJg
 gg==
-">
-</img></div>
+" />
 </div>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1841,14 +1821,13 @@ N+s2xvRD4Bsl5lOAm8lO795cCNzdRz/E9cBbgevLJJd3kQd+JL1MJoSTImIa2e/ysa4bkPQE2Yl/
 dYn52fJ8T++1zac8OsusH5XRWUj65sBGYtYavk7Ehr2ImEj2OXRnW0n/18p4+kO56HBcN4tOlXRq
 q+Ox+ZfPRMzMrDL3iZiZWWVOImZmVpmTiJmZVeYkYmZmlTmJmJlZZU4iZmZW2f8DGrpm1aWpmTsA
 AAAASUVORK5CYII=
-">
-</img></div>
+" />
 </div>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -1862,7 +1841,7 @@ AAAASUVORK5CYII=
 <li>A <strong>choice for the interpetable model $g$</strong>. The first choice is a linear model (i.e. a linear regression for regression and a logistic regression for classification).</li>
 </ul>
 <p>Technically, for a given sample $x\in\mathbb{R}^d$ to be explained we determine the corresponding interpretable vector $x'\in\{0,1\}^{d'}$ in the explanable feature space. We generate a set of $N$ artificial points $z_i'$ around it, by randomly cancelling coordinates or $x'$ (cancellations are chosen with a uniform distribution). We then fit a simple model $g$ (K-LASSO, i.e. a logistic regression with at most $K$ non-zero weights) that must reproduce the predictions of $f$ at best by minimizing the dissimilarity function</p>
-$$\mathcal{L}(f, g, \Pi_x)= \sum_{z, z'} \Pi_x(z) \left[f(z) - g(z') \right]^2.$$<p>Note that the dissimilarity between the investigated mode $f$ and the interpretable model $g$ is 0 when $f$ and $g$ give the exact same predictions (which is why $\mathcal{L}$ minimization is also called "local fidelity maximization"). Also, dissimilarities are weighted by the $\Pi_x$ proximity between random samples $z$ and the original sample $x$ under investigation, such that predictions discrepancies far away from $x$ are less penalized.</p>
+<p>$$\mathcal{L}(f, g, \Pi_x)= \sum_{z, z'} \Pi_x(z) \left[f(z) - g(z') \right]^2.$$ Note that the dissimilarity between the investigated mode $f$ and the interpretable model $g$ is 0 when $f$ and $g$ give the exact same predictions (which is why $\mathcal{L}$ minimization is also called "local fidelity maximization"). Also, dissimilarities are weighted by the $\Pi_x$ proximity between random samples $z$ and the original sample $x$ under investigation, such that predictions discrepancies far away from $x$ are less penalized.</p>
 <p>Let's take an example:</p>
 <ul>
 <li>Suppose we investigate the prediction of a a sentiment classification model $f$ for the sentence "am quite happy", that is scored $0.7$ by $f$.</li>
@@ -2123,14 +2102,13 @@ Kq58/zPZDHUbcCtwOHB98fg7EbFgRAwm5+2a3MZmbgF2iIiBEfFJ4MsAEXEcsLOk84H9gC80eHfM
 OuUkYlZ/1wELS3qMrImMIvsyJpH9IveRTV3/B5zaxvvPAGYBjwJjgenF66cC20TE38gbae3dyJ0w
 q4WnPTEzs9JcEzEzs9KcRMzMrDQnETMzK81JxMzMSnMSMTOz0pxEzMysNCcRMzMrzUnEzMxK+/9i
 JmbmgeWyiwAAAABJRU5ErkJggg==
-">
-</img></div>
+" />
 </div>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -2179,103 +2157,17 @@ JmbmgeWyiwAAAABJRU5ErkJggg==
 <section>
     <p id="post-share-links">
         Share on:
-	<span class="fa fa-twitter"></span>
+        <a href="https://sharetodiaspora.github.io/?title=LIME%20of%20words%20%28part%201/2%29&url=https%3A//nkthiebaut.github.io/lime-of-words.html" target="_blank" title="Share on Diaspora">Diaspora*</a>
+        ❄
         <a href="https://twitter.com/intent/tweet?text=LIME%20of%20words%20%28part%201/2%29&url=https%3A//nkthiebaut.github.io/lime-of-words.html" target="_blank" title="Share on Twitter">Twitter</a>
-	<span class="fa fa-facebook"></span>
+        ❄
         <a href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/lime-of-words.html" target="_blank" title="Share on Facebook">Facebook</a>
-        <span class="fa fa-google"></span>
+        ❄
         <a href="https://plus.google.com/share?url=https%3A//nkthiebaut.github.io/lime-of-words.html" target="_blank" title="Share on Google Plus">Google+</a>
-        <span class="fa fa-at"></span>
+        ❄
         <a href="mailto:?subject=LIME%20of%20words%20%28part%201/2%29&amp;body=https%3A//nkthiebaut.github.io/lime-of-words.html" target="_blank" title="Share via Email">Email</a>
     </p>
 </section>
-
-	<style>
-#pcs-comment-form input,
-#pcs-comment-form textarea {
-	width: 100%;
-}
-#pcs-comment-form-display-replyto {
-	border: solid 1px black;
-	padding: 2px;
-}
-#pcs-comment-form-display-replyto p {
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
-}
-#pcs-comments ul {
-	list-style: none;
-}
-#pcs-comments .comment-left {
-	display: table-cell;
-	padding-right: 10px;
-}
-#pcs-comments .comment-body {
-	display: table-cell;
-	vertical-align: top;
-	width: 100%;
-}
-</style>
-
-	<section id="pcs-comments">
-	<header>
-		<h2>Comments</h2>
-		<hr/>
-	</header>
-		<p>There are no comments yet.</p>
-	<section>
-	<form id="pcs-comment-form" action="#">
-		<legend>Add a Comment</legend>
-		<input type="hidden" id="pcs-comment-form-input-replyto">
-		<fieldset>
-			<label for="pcs-comment-form-input-name">Name</label>
-			<input  id="pcs-comment-form-input-name" type="text" placeholder="Enter your name or nickname" />
-		</fieldset>
-		<fieldset>
-			<label for="pcs-comment-form-input-website">Website</label>
-			<input  id="pcs-comment-form-input-website" type="text" placeholder="Enter your website (optional)" />
-		</fieldset>
-		<fieldset>
-			<label   for="pcs-comment-form-input-textarea">Your Comment</label>
-			<textarea id="pcs-comment-form-input-textarea" rows="5" style="resize:vertical;" placeholder="Your comment"></textarea>
-			<p>You can use the <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a> syntax to format your comment.</p>
-			<div style="display: none; " id="pcs-comment-form-display-replyto"></div>
-		</fieldset>
-
-		<button type="submit"
-				id="pcs-comment-form-button-submit"
-				>Post via email</button>
-
-	</form>
-</section>
-
-</section>
-
-			<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="https://nkthiebaut.github.io/theme/js/comments.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			CommentSystem.email_user   = "nkthiebaut";
-			CommentSystem.email_domain = "gmail.com";
-			CommentSystem.display_replyto_html = function(comment_content, article_slug, author) { 
-				return ''
-					+ '<button style="float:right;" onclick="CommentSystem.cancelReply(); return false;" title="Cancel the reply">'
-					+ 	'×'
-					+ '</button>'
-					+ '<p>This comment will be posted as a reply to \'<a title="'+comment_content+'" href="#comment-'+article_slug+'">'+author+'</a>\'</p>';
-			};
-
-			$('#pcs-comment-form').on("submit",
-				function( event )
-				{
-					event.preventDefault();
-					$(location).attr('href', CommentSystem.getMailtoLink("lime-of-words"));
-				}
-			);
-		});
-	</script>
-
-
 
 
 
@@ -2283,12 +2175,22 @@ JmbmgeWyiwAAAABJRU5ErkJggg==
 </article>
 
     <footer>
-<p>&copy; Nicolas Thiebaut . Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme </p>
+<p>&copy; Nicolas Thiebaut </p>
 <!--<p>    Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a>
 </p>-->    </footer>
   </main>
 
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-106456784-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
 
 
 
