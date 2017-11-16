@@ -40,4 +40,3 @@ MARKUP = ('md', 'ipynb')
 
 PLUGIN_PATHS = ['./plugins']
 PLUGINS = ['ipynb.markup', 'share_post.share_post']
-
