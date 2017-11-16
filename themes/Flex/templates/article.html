@@ -51,18 +51,15 @@
 <section>
     <p id="post-share-links">
         Share on:
-        <a href="{{article.share_post['diaspora']}}" target="_blank" title="Share on Diaspora">Diaspora*</a>
-        ❄
-        <a href="{{article.share_post['twitter']}}" target="_blank" title="Share on Twitter">Twitter</a>
-        ❄
-        <a href="{{article.share_post['facebook']}}" target="_blank" title="Share on Facebook">Facebook</a>
-        ❄
-        <a href="{{article.share_post['google-plus']}}" target="_blank" title="Share on Google Plus">Google+</a>
-        ❄
-        <a href="{{article.share_post['email']}}" target="_blank" title="Share via Email">Email</a>
+        <a href="{{article.share_post['linkedin']}}" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square"></i>
+</a>
+<a href="{{article.share_post['twitter']}}" target="_blank" title="Share on Twitter"><i class="fa fa-twitter"></i></a>
+        <a href="{{article.share_post['facebook']}}" target="_blank" title="Share on Facebook"><i class="fa fa-facebook"></i></a>
+        <a href="{{article.share_post['email']}}" target="_blank" title="Share via Email"><i class="fa fa-envelope"></i></a>
     </p>
 </section>
 {% endif %}
+  {% include "partial/disqus.html" %}
 
   {% if ADD_THIS_ID %}
   <div class="center social-share">
@@ -93,7 +90,6 @@
     </script>
   {% endif %}
 
-  {% include "partial/disqus.html" %}
 </article>
 {% endblock %}
 
