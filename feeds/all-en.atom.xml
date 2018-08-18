@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/all-en.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2017-09-12T16:00:00+02:00</updated><entry><title>LIME of words (part 2/2)</title><link href="https://nkthiebaut.github.io/deep-lime.html" rel="alternate"></link><published>2017-09-12T16:00:00+02:00</published><updated>2017-09-12T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-09-12:deep-lime.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/all-en.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2017-09-12T16:00:00+02:00</updated><entry><title>LIME of words: interpreting Recurrent Neural Networks predictions</title><link href="https://nkthiebaut.github.io/deep-lime.html" rel="alternate"></link><published>2017-09-12T16:00:00+02:00</published><updated>2017-09-12T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-09-12:/deep-lime.html</id><summary type="html">
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h1 id="Interpreting-recurrent-neural-networks-with-LIME"&gt;Interpreting recurrent neural networks with LIME&lt;a class="anchor-link" href="#Interpreting-recurrent-neural-networks-with-LIME"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the &lt;a href="https://nkthiebaut.github.io/lime-of-words.html"&gt;first part&lt;/a&gt;. This second part is a quick application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -1625,7 +1630,12 @@ YII=
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</summary><category term="python"></category><category term="machine learning"></category><category term="deep learning"></category></entry><entry><title>LIME of words (part 1/2)</title><link href="https://nkthiebaut.github.io/lime-of-words.html" rel="alternate"></link><published>2017-08-07T16:00:00+02:00</published><updated>2017-08-07T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-08-07:lime-of-words.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
+</content><category term="python"></category><category term="machine learning"></category><category term="deep learning"></category></entry><entry><title>LIME of words: how to interpret your machine learning model predictions</title><link href="https://nkthiebaut.github.io/lime-of-words.html" rel="alternate"></link><published>2017-08-07T16:00:00+02:00</published><updated>2017-08-07T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-08-07:/lime-of-words.html</id><summary type="html">
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h1 id="Experiments-with-the-LIME-interpretation-model"&gt;Experiments with the LIME interpretation model&lt;a class="anchor-link" href="#Experiments-with-the-LIME-interpretation-model"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;In this blog post I will share experiments on the LIME (Local Interpretable Model-agnostic Explanations) interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called &lt;a href="https://arxiv.org/abs/1602.04938"&gt;“Why Should I Trust You?” Explaining the Predictions of Any Classifier&lt;/a&gt;. The purpose of this method is to explain a model prediction for a specific sample in a human-interpretable way.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -3675,4 +3685,4 @@ JmbmgeWyiwAAAABJRU5ErkJggg==
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</summary><category term="python"></category><category term="machine learning"></category></entry></feed>
+</content><category term="python"></category><category term="machine learning"></category></entry></feed>
