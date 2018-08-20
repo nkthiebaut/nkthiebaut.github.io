@@ -27,7 +27,7 @@
 <meta name="description" content="Few-shot learning on textual data with siamese neural networks¶ If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and obtain decent results" />
 <meta name="keywords" content="python, machine learning, deep learning, natural language processing">
 <meta property="og:site_name" content="Data4thought: data science blog"/>
-<meta property="og:title" content="Few-shot learning in Natural Language Processing: learning many-classes classification from few examples"/>
+<meta property="og:title" content="Few-shot learning in NLP: learning many-classes classification from few examples"/>
 <meta property="og:description" content="Few-shot learning on textual data with siamese neural networks¶ If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and obtain decent results"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://nkthiebaut.github.io/fewshot_learning_nlp.html"/>
@@ -42,7 +42,7 @@
 <meta property="article:tag" content="natural language processing"/>
 <meta property="og:image" content="https://nkthiebaut.github.io/images/PhotoThiebaut.jpg">
 
-  <title>Data4thought: data science blog &ndash; Few-shot learning in Natural Language Processing: learning many-classes classification from few examples</title>
+  <title>Data4thought: data science blog &ndash; Few-shot learning in NLP: learning many-classes classification from few examples</title>
 
 </head>
 <body>
@@ -89,7 +89,7 @@
 
 <article class="single">
   <header>
-    <h1 id="fewshot_learning_nlp">Few-shot learning in Natural Language Processing: learning many-classes classification from few examples</h1>
+    <h1 id="fewshot_learning_nlp">Few-shot learning in NLP: learning many-classes classification from few examples</h1>
     <p>
           Posted on Sun 19 August 2018 in <a href="https://nkthiebaut.github.io/category/posts.html">posts</a>
 
@@ -1094,7 +1094,7 @@ h6:hover .anchor-link {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [3]:</div>
+<div class="prompt input_prompt">In [36]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>
@@ -1107,7 +1107,17 @@ h6:hover .anchor-link {
 
 <span class="c1"># Load it in a pandas DataFrame and drop a useless column</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">'</span><span class="se">\t</span><span class="s1">'</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'Shown in My Next Move'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+<span class="c1"># Remove occupations for which we have only one example, because</span>
+<span class="c1"># We can't even have a train a test examples for those</span>
+<span class="n">occupations_counts</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<span class="n">multi_examples_occupations</span> <span class="o">=</span> <span class="n">occupations_counts</span><span class="p">[</span><span class="n">occupations_counts</span> <span class="o">></span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">multi_examples_occupations</span><span class="p">)]</span>
+
+<span class="c1"># Lower all job titles for simplicity</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1115,7 +1125,7 @@ h6:hover .anchor-link {
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[3]:</div>
+<div class="prompt output_prompt">Out[36]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
 <style scoped="">
@@ -1143,27 +1153,102 @@ h6:hover .anchor-link {
 <tr>
 <th>0</th>
 <td>11-1011.00</td>
-<td>Chief Diversity Officer (CDO)</td>
+<td>chief diversity officer (cdo)</td>
 </tr>
 <tr>
 <th>1</th>
 <td>11-1011.00</td>
-<td>Chief Executive Officer (CEO)</td>
+<td>chief executive officer (ceo)</td>
 </tr>
 <tr>
 <th>2</th>
 <td>11-1011.00</td>
-<td>Chief Financial Officer (CFO)</td>
+<td>chief financial officer (cfo)</td>
 </tr>
 <tr>
 <th>3</th>
 <td>11-1011.00</td>
-<td>Chief Nursing Officer</td>
+<td>chief nursing officer</td>
 </tr>
 <tr>
 <th>4</th>
 <td>11-1011.00</td>
-<td>Chief Operating Officer (COO)</td>
+<td>chief operating officer (coo)</td>
+</tr>
+<tr>
+<th>5</th>
+<td>11-1011.00</td>
+<td>executive director</td>
+</tr>
+<tr>
+<th>6</th>
+<td>11-1011.00</td>
+<td>executive vice president (evp)</td>
+</tr>
+<tr>
+<th>7</th>
+<td>11-1011.00</td>
+<td>operations vice president</td>
+</tr>
+<tr>
+<th>8</th>
+<td>11-1011.00</td>
+<td>president</td>
+</tr>
+<tr>
+<th>9</th>
+<td>11-1011.00</td>
+<td>vice president</td>
+</tr>
+<tr>
+<th>10</th>
+<td>11-1011.03</td>
+<td>corporate sustainability process manager</td>
+</tr>
+<tr>
+<th>11</th>
+<td>11-1011.03</td>
+<td>director of sustainability</td>
+</tr>
+<tr>
+<th>12</th>
+<td>11-1011.03</td>
+<td>director of sustainability programs</td>
+</tr>
+<tr>
+<th>13</th>
+<td>11-1011.03</td>
+<td>director of sustainable design</td>
+</tr>
+<tr>
+<th>14</th>
+<td>11-1011.03</td>
+<td>supply chain manager, sustainability and energy</td>
+</tr>
+<tr>
+<th>15</th>
+<td>11-1011.03</td>
+<td>sustainability coordinator</td>
+</tr>
+<tr>
+<th>16</th>
+<td>11-1011.03</td>
+<td>sustainability director</td>
+</tr>
+<tr>
+<th>17</th>
+<td>11-1011.03</td>
+<td>vice president, corporate social responsibilit...</td>
+</tr>
+<tr>
+<th>18</th>
+<td>11-1021.00</td>
+<td>business manager</td>
+</tr>
+<tr>
+<th>19</th>
+<td>11-1021.00</td>
+<td>facilities manager</td>
 </tr>
 </tbody>
 </table>
@@ -1184,7 +1269,7 @@ h6:hover .anchor-link {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [65]:</div>
+<div class="prompt input_prompt">In [23]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>  <span class="c1"># Count the number of different modalities in each column</span>
@@ -1195,10 +1280,10 @@ h6:hover .anchor-link {
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[65]:</div>
+<div class="prompt output_prompt">Out[23]:</div>
 <div class="output_text output_subarea output_execute_result">
-<pre>O*NET-SOC Code         956
-Reported Job Title    7174
+<pre>O*NET-SOC Code         954
+Reported Job Title    7172
 dtype: int64</pre>
 </div>
 </div>
@@ -1209,25 +1294,21 @@ dtype: int64</pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>So we have 956 categories ("occupations") for 7174 examples, i.e. 7.5 examples per category on average. We are definitely in the few-shot learning setting.</p>
-<p>Before proceeding with modelling let's create a train and test sets.</p>
+<p>So we have 954 categories ("occupations") for 7172 examples, i.e. 7.5 examples per category on average. We are definitely in the few-shot learning setting.</p>
+<p>Before proceeding with modelling let's create a train and test sets, by putting one example in the test set for each class.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [27]:</div>
+<div class="prompt input_prompt">In [46]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_set</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'O*NET-SOC Code'</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+<span class="n">train_set</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">test_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">])]</span>
 
-<span class="n">df</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-<span class="n">occupations</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-<span class="n">occupations_train</span><span class="p">,</span> <span class="n">occupations_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">occupations</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-<span class="n">df_train</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">occupations_train</span><span class="p">)]</span>
-<span class="n">df_test</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">occupations_test</span><span class="p">)]</span>
-<span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">],</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span>
-<span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">df_test</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">],</span> <span class="n">df_test</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span>
+<span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">],</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span>
+<span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">],</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -1244,7 +1325,7 @@ dtype: int64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [28]:</div>
+<div class="prompt input_prompt">In [38]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">zeugma</span> <span class="k">import</span> <span class="n">EmbeddingTransformer</span>
@@ -1256,10 +1337,21 @@ dtype: int64</pre>
 </div>
 </div>
 </div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Using TensorFlow backend.
+</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [62]:</div>
+<div class="prompt input_prompt">In [47]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">make_pipeline</span>
@@ -1276,12 +1368,11 @@ dtype: int64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [64]:</div>
+<div class="prompt input_prompt">In [54]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Note that the model is fitted directly on the test set,</span>
-<span class="c1"># because it has not adjustable parameters</span>
-<span class="n">baseline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">baseline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Train accuracy (baseline): </span><span class="si">{:.2f}</span><span class="s1"> %'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">baseline</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">'Test accuracy (baseline): </span><span class="si">{:.2f}</span><span class="s1"> %'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">baseline</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)))</span>
 </pre></div>
 </div>
@@ -1292,7 +1383,8 @@ dtype: int64</pre>
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Test accuracy (baseline): 87.18 %
+<pre>Train accuracy (baseline): 79.42 %
+Test accuracy (baseline): 12.26 %
 </pre>
 </div>
 </div>
@@ -1303,7 +1395,8 @@ dtype: int64</pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Not bad for a simple baseline model, and it may seem hard to beat with a deep learning model due to the high chances of overfitting with such a small datasets, but here come siamese networks to the rescue.</p>
+<p>Definitely not great but not too bad for a simple baseline model, considering a random guess would have a $\frac{1}{n_{\text{classes}}} \simeq 0.1 \%$ accuracy.</p>
+<p>It may seem hard to beat this simple baseline with a deep learning model due to the high chances of overfitting with such a small datasets, but here come siamese networks to the rescue.</p>
 </div>
 </div>
 </div>
@@ -1369,11 +1462,11 @@ dtype: int64</pre>
 <section>
     <p id="post-share-links">
         Share on:
-        <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html&title=Few-shot%20learning%20in%20Natural%20Language%20Processing%3A%20learning%20many-classes%20classification%20from%20few%20examples&summary=Few-shot%20learning%20on%20textual%20data%20with%20siamese%20neural%20networks%C2%B6%0A%0A%0A%0A%0A%0A%0A%0AIf%20you%27re%20doing%20machine%20learning%20and%20meet%20a%20classification%20problem%20with%20many%20categories%20and%20few%20examples%20per%20category%2C%20it%20is%20usually%20thought%20that%20you%27re%20in%20trouble.%20Unfortunately%2C%20acquiring%20new%20data%20to%20solve%20this%20issue%20is%20not%20always%20easy%20or%20even%20doable.%0AThis%20problem%20of%20learning%20with%20only%20a%20few%20examples%20per%20category%20is%20called%20%22few-shot%20learning%22%2C%20and%20%22one-shot%20learning%22%20in%20the%20extreme%20case%20of%20only%20one%20example%20per%20class%20%28yes%2C%20you%20can%20even%20do%20this%20and%20obtain%20decent%20results&source=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square"></i>
+        <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html&title=Few-shot%20learning%20in%20NLP%3A%20learning%20many-classes%20classification%20from%20few%20examples&summary=Few-shot%20learning%20on%20textual%20data%20with%20siamese%20neural%20networks%C2%B6%0A%0A%0A%0A%0A%0A%0A%0AIf%20you%27re%20doing%20machine%20learning%20and%20meet%20a%20classification%20problem%20with%20many%20categories%20and%20few%20examples%20per%20category%2C%20it%20is%20usually%20thought%20that%20you%27re%20in%20trouble.%20Unfortunately%2C%20acquiring%20new%20data%20to%20solve%20this%20issue%20is%20not%20always%20easy%20or%20even%20doable.%0AThis%20problem%20of%20learning%20with%20only%20a%20few%20examples%20per%20category%20is%20called%20%22few-shot%20learning%22%2C%20and%20%22one-shot%20learning%22%20in%20the%20extreme%20case%20of%20only%20one%20example%20per%20class%20%28yes%2C%20you%20can%20even%20do%20this%20and%20obtain%20decent%20results&source=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square"></i>
 </a>
-<a href="https://twitter.com/intent/tweet?text=Few-shot%20learning%20in%20Natural%20Language%20Processing%3A%20learning%20many-classes%20classification%20from%20few%20examples&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on Twitter"><i class="fa fa-twitter"></i></a>
+<a href="https://twitter.com/intent/tweet?text=Few-shot%20learning%20in%20NLP%3A%20learning%20many-classes%20classification%20from%20few%20examples&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on Twitter"><i class="fa fa-twitter"></i></a>
         <a href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on Facebook"><i class="fa fa-facebook"></i></a>
-        <a href="mailto:?subject=Few-shot%20learning%20in%20Natural%20Language%20Processing%3A%20learning%20many-classes%20classification%20from%20few%20examples&amp;body=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share via Email"><i class="fa fa-envelope"></i></a>
+        <a href="mailto:?subject=Few-shot%20learning%20in%20NLP%3A%20learning%20many-classes%20classification%20from%20few%20examples&amp;body=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share via Email"><i class="fa fa-envelope"></i></a>
     </p>
 </section>
 <div id="disqus_thread"></div>
