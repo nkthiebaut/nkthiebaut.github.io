@@ -4,15 +4,7 @@
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h1 id="Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;Few-shot learning on textual data with siamese neural networks&lt;a class="anchor-link" href="#Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;¶&lt;/a&gt;&lt;/h1&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;obtain decent results&lt;/a&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
+&lt;h1 id="Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;Few-shot learning on textual data with siamese neural networks&lt;a class="anchor-link" href="#Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques to deal with this situation.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -988,15 +980,8 @@ h6:hover .anchor-link {
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h1 id="Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;Few-shot learning on textual data with siamese neural networks&lt;a class="anchor-link" href="#Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;¶&lt;/a&gt;&lt;/h1&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;obtain decent results&lt;/a&gt;!).&lt;/p&gt;
+&lt;h1 id="Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;Few-shot learning on textual data with siamese neural networks&lt;a class="anchor-link" href="#Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques to deal with this situation.&lt;/p&gt;
+&lt;p&gt;This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;obtain decent results&lt;/a&gt;!).&lt;/p&gt;
 &lt;p&gt;Most of the machine learning research on one-shot learning involves images, but some &lt;a href="https://arxiv.org/abs/1710.10280"&gt;recent research papers&lt;/a&gt; address the same problem in the Natural Language Processing (NLP) realm.&lt;/p&gt;
 &lt;p&gt;In this blog post, I will use siamese neural network to tackle few-shot learning , following a &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;method that was originally applied to images&lt;/a&gt; and that is nicely explained &lt;a href="https://sorenbouma.github.io/blog/oneshot/"&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;A nice example of a few-shot learning problem in NLP is job title classification. If you want to group job titles in different categories or "occupations" (e.g. gather "Programmer" and "Software engineer" in an occupation, and " in another one), then unless you have hundreds of job titles examples per occupation you are facing a few-shot learning problem. The U.S government provides such a job title taxonomy: the &lt;a href="https://www.bls.gov/soc/"&gt;Standard Occupational Classification&lt;/a&gt;. I'll use it as a toy dataset understand how few-shot learning with siamese neural networks works.&lt;/p&gt;
