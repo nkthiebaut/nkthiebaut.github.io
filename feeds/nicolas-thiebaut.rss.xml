@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>Data4thought: data science blog - Nicolas Thiebaut</title><link>https://nkthiebaut.github.io/</link><description>Nicolas Thiebaut's data science blog</description><lastBuildDate>Tue, 12 Sep 2017 16:00:00 +0200</lastBuildDate><item><title>LIME of words: interpreting Recurrent Neural Networks predictions</title><link>https://nkthiebaut.github.io/deep-lime.html</link><description>
+<rss version="2.0"><channel><title>Data4thought: data science blog - Nicolas Thiebaut</title><link>https://nkthiebaut.github.io/</link><description>Nicolas Thiebaut's data science blog</description><lastBuildDate>Sun, 19 Aug 2018 22:00:00 +0200</lastBuildDate><item><title>Few-shot learning in Natural Language Processing: learning many-classes classification from few examples</title><link>https://nkthiebaut.github.io/fewshot_learning_nlp.html</link><description>
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h1 id="Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;Few-shot learning on textual data with siamese neural networks&lt;a class="anchor-link" href="#Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;¶&lt;/a&gt;&lt;/h1&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable.&lt;/p&gt;
+&lt;p&gt;This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;obtain decent results&lt;/a&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Nicolas Thiebaut</dc:creator><pubDate>Sun, 19 Aug 2018 22:00:00 +0200</pubDate><guid isPermaLink="false">tag:nkthiebaut.github.io,2018-08-19:/fewshot_learning_nlp.html</guid><category>python</category><category>machine learning</category><category>deep learning</category><category>natural language processing</category></item><item><title>LIME of words: interpreting Recurrent Neural Networks predictions</title><link>https://nkthiebaut.github.io/deep-lime.html</link><description>
 &lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
