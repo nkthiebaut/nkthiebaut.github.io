@@ -50,5 +50,4 @@ Automated publishing with MAKE
 * Remove .ipynb_checkpoints from the content folder if they exist
 * Commit and push everything: ``git add -u && git commit -m 'Publish pelican content' && git push --all``
 * from the root folder: ``make github``
-* Merge and push master for content publising: ``git checkout master && git push origin master``
 * Get back to the source branch; ``git checkout source``
