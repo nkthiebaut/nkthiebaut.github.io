@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog - Nicolas Thiebaut</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/nicolas-thiebaut.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2018-08-19T22:00:00+02:00</updated><entry><title>Few-shot learning in NLP: learning many-classes classification from few examples</title><link href="https://nkthiebaut.github.io/fewshot_learning_nlp.html" rel="alternate"></link><published>2018-08-19T22:00:00+02:00</published><updated>2018-08-19T22:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2018-08-19:/fewshot_learning_nlp.html</id><summary type="html">
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog - Nicolas Thiebaut</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/nicolas-thiebaut.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2018-08-19T22:00:00+02:00</updated><entry><title>Few-shot learning in NLP: many-classes classification from few examples</title><link href="https://nkthiebaut.github.io/fewshot_learning_nlp.html" rel="alternate"></link><published>2018-08-19T22:00:00+02:00</published><updated>2018-08-19T22:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2018-08-19:/fewshot_learning_nlp.html</id><summary type="html">
 &lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
@@ -12,8 +12,7 @@
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable.&lt;/p&gt;
-&lt;p&gt;This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;obtain decent results&lt;/a&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
+&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;obtain decent results&lt;/a&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -997,8 +996,7 @@ h6:hover .anchor-link {
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable.&lt;/p&gt;
-&lt;p&gt;This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;obtain decent results&lt;/a&gt;!).&lt;/p&gt;
+&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;obtain decent results&lt;/a&gt;!).&lt;/p&gt;
 &lt;p&gt;Most of the machine learning research on one-shot learning involves images, but some &lt;a href="https://arxiv.org/abs/1710.10280"&gt;recent research papers&lt;/a&gt; address the same problem in the Natural Language Processing (NLP) realm.&lt;/p&gt;
 &lt;p&gt;In this blog post, I will use siamese neural network to tackle few-shot learning , following a &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;method that was originally applied to images&lt;/a&gt; and that is nicely explained &lt;a href="https://sorenbouma.github.io/blog/oneshot/"&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;A nice example of a few-shot learning problem in NLP is job title classification. If you want to group job titles in different categories or "occupations" (e.g. gather "Programmer" and "Software engineer" in an occupation, and " in another one), then unless you have hundreds of job titles examples per occupation you are facing a few-shot learning problem. The U.S government provides such a job title taxonomy: the &lt;a href="https://www.bls.gov/soc/"&gt;Standard Occupational Classification&lt;/a&gt;. I'll use it as a toy dataset understand how few-shot learning with siamese neural networks works.&lt;/p&gt;
@@ -1318,18 +1316,10 @@ Test accuracy (baseline): 12.26 %
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="Few-shot-learning-with-siamese-neural-networks"&gt;Few-shot learning with siamese neural networks&lt;a class="anchor-link" href="#Few-shot-learning-with-siamese-neural-networks"&gt;¶&lt;/a&gt;&lt;/h2&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;The nearest neighbor model of the previous section is preforming quite well despite its simplicity, because it uses word embeddings learnt on the twitter dataset. This is the basic principle of &lt;a href="https://en.wikipedia.org/wiki/Transfer_learning"&gt;transfer learning&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="Few-shot-learning-with-siamese-neural-networks"&gt;Few-shot learning with siamese neural networks&lt;a class="anchor-link" href="#Few-shot-learning-with-siamese-neural-networks"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The nearest neighbor model of the previous section is preforming quite well despite its simplicity, because it uses word embeddings learnt on the twitter dataset. This is the basic principle of &lt;a href="https://en.wikipedia.org/wiki/Transfer_learning"&gt;transfer learning&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Nevertheless, the embedding space used to determine nearest neighbors knows nothing about job titles in particular. There must be a way to learn an embedding space in which jobs belonging to the same occupation category are closer. This is where siamese networks come into play.&lt;/p&gt;
 &lt;p&gt;The main idea of siamese networks is to learn such a representation by training a model to discriminate between pairs of examples that are in the same category, and pairs of examples that come from different categories.&lt;/p&gt;
-&lt;p&gt;We'll learn about it the next blog article, stay tuned!&lt;/p&gt;
+&lt;p&gt;To be continued, stay tuned!&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;

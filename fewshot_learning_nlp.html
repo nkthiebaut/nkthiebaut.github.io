@@ -27,7 +27,7 @@
 <meta name="description" content="Few-shot learning on textual data with siamese neural networks¶ If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and obtain decent results" />
 <meta name="keywords" content="python, machine learning, deep learning, natural language processing">
 <meta property="og:site_name" content="Data4thought: data science blog"/>
-<meta property="og:title" content="Few-shot learning in NLP: learning many-classes classification from few examples"/>
+<meta property="og:title" content="Few-shot learning in NLP: many-classes classification from few examples"/>
 <meta property="og:description" content="Few-shot learning on textual data with siamese neural networks¶ If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and obtain decent results"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://nkthiebaut.github.io/fewshot_learning_nlp.html"/>
@@ -42,7 +42,7 @@
 <meta property="article:tag" content="natural language processing"/>
 <meta property="og:image" content="https://nkthiebaut.github.io/images/PhotoThiebaut.jpg">
 
-  <title>Data4thought: data science blog &ndash; Few-shot learning in NLP: learning many-classes classification from few examples</title>
+  <title>Data4thought: data science blog &ndash; Few-shot learning in NLP: many-classes classification from few examples</title>
 
 </head>
 <body>
@@ -89,7 +89,7 @@
 
 <article class="single">
   <header>
-    <h1 id="fewshot_learning_nlp">Few-shot learning in NLP: learning many-classes classification from few examples</h1>
+    <h1 id="fewshot_learning_nlp">Few-shot learning in NLP: many-classes classification from few examples</h1>
     <p>
           Posted on Sun 19 August 2018 in <a href="https://nkthiebaut.github.io/category/posts.html">posts</a>
 
@@ -1083,8 +1083,7 @@ h6:hover .anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable.</p>
-<p>This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and <a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf">obtain decent results</a>!).</p>
+<p>If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and <a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf">obtain decent results</a>!).</p>
 <p>Most of the machine learning research on one-shot learning involves images, but some <a href="https://arxiv.org/abs/1710.10280">recent research papers</a> address the same problem in the Natural Language Processing (NLP) realm.</p>
 <p>In this blog post, I will use siamese neural network to tackle few-shot learning , following a <a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf">method that was originally applied to images</a> and that is nicely explained <a href="https://sorenbouma.github.io/blog/oneshot/">here</a>.</p>
 <p>A nice example of a few-shot learning problem in NLP is job title classification. If you want to group job titles in different categories or "occupations" (e.g. gather "Programmer" and "Software engineer" in an occupation, and " in another one), then unless you have hundreds of job titles examples per occupation you are facing a few-shot learning problem. The U.S government provides such a job title taxonomy: the <a href="https://www.bls.gov/soc/">Standard Occupational Classification</a>. I'll use it as a toy dataset understand how few-shot learning with siamese neural networks works.</p>
@@ -1404,18 +1403,10 @@ Test accuracy (baseline): 12.26 %
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Few-shot-learning-with-siamese-neural-networks">Few-shot learning with siamese neural networks<a class="anchor-link" href="#Few-shot-learning-with-siamese-neural-networks">¶</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The nearest neighbor model of the previous section is preforming quite well despite its simplicity, because it uses word embeddings learnt on the twitter dataset. This is the basic principle of <a href="https://en.wikipedia.org/wiki/Transfer_learning">transfer learning</a>.</p>
+<h2 id="Few-shot-learning-with-siamese-neural-networks">Few-shot learning with siamese neural networks<a class="anchor-link" href="#Few-shot-learning-with-siamese-neural-networks">¶</a></h2><p>The nearest neighbor model of the previous section is preforming quite well despite its simplicity, because it uses word embeddings learnt on the twitter dataset. This is the basic principle of <a href="https://en.wikipedia.org/wiki/Transfer_learning">transfer learning</a>.</p>
 <p>Nevertheless, the embedding space used to determine nearest neighbors knows nothing about job titles in particular. There must be a way to learn an embedding space in which jobs belonging to the same occupation category are closer. This is where siamese networks come into play.</p>
 <p>The main idea of siamese networks is to learn such a representation by training a model to discriminate between pairs of examples that are in the same category, and pairs of examples that come from different categories.</p>
-<p>We'll learn about it the next blog article, stay tuned!</p>
+<p>To be continued, stay tuned!</p>
 </div>
 </div>
 </div>
@@ -1462,11 +1453,11 @@ Test accuracy (baseline): 12.26 %
 <section>
     <p id="post-share-links">
         Share on:
-        <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html&title=Few-shot%20learning%20in%20NLP%3A%20learning%20many-classes%20classification%20from%20few%20examples&summary=Few-shot%20learning%20on%20textual%20data%20with%20siamese%20neural%20networks%C2%B6%0A%0A%0A%0A%0A%0A%0A%0AIf%20you%27re%20doing%20machine%20learning%20and%20meet%20a%20classification%20problem%20with%20many%20categories%20and%20few%20examples%20per%20category%2C%20it%20is%20usually%20thought%20that%20you%27re%20in%20trouble.%20Unfortunately%2C%20acquiring%20new%20data%20to%20solve%20this%20issue%20is%20not%20always%20easy%20or%20even%20doable.%0AThis%20problem%20of%20learning%20with%20only%20a%20few%20examples%20per%20category%20is%20called%20%22few-shot%20learning%22%2C%20and%20%22one-shot%20learning%22%20in%20the%20extreme%20case%20of%20only%20one%20example%20per%20class%20%28yes%2C%20you%20can%20even%20do%20this%20and%20obtain%20decent%20results&source=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square"></i>
+        <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html&title=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&summary=Few-shot%20learning%20on%20textual%20data%20with%20siamese%20neural%20networks%C2%B6%0A%0A%0A%0A%0A%0A%0A%0AIf%20you%27re%20doing%20machine%20learning%20and%20meet%20a%20classification%20problem%20with%20many%20categories%20and%20few%20examples%20per%20category%2C%20it%20is%20usually%20thought%20that%20you%27re%20in%20trouble.%20Unfortunately%2C%20acquiring%20new%20data%20to%20solve%20this%20issue%20is%20not%20always%20easy%20or%20even%20doable.%20This%20problem%20of%20learning%20with%20only%20a%20few%20examples%20per%20category%20is%20called%20%22few-shot%20learning%22%2C%20and%20%22one-shot%20learning%22%20in%20the%20extreme%20case%20of%20only%20one%20example%20per%20class%20%28yes%2C%20you%20can%20even%20do%20this%20and%20obtain%20decent%20results&source=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square"></i>
 </a>
-<a href="https://twitter.com/intent/tweet?text=Few-shot%20learning%20in%20NLP%3A%20learning%20many-classes%20classification%20from%20few%20examples&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on Twitter"><i class="fa fa-twitter"></i></a>
+<a href="https://twitter.com/intent/tweet?text=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on Twitter"><i class="fa fa-twitter"></i></a>
         <a href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on Facebook"><i class="fa fa-facebook"></i></a>
-        <a href="mailto:?subject=Few-shot%20learning%20in%20NLP%3A%20learning%20many-classes%20classification%20from%20few%20examples&amp;body=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share via Email"><i class="fa fa-envelope"></i></a>
+        <a href="mailto:?subject=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&amp;body=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share via Email"><i class="fa fa-envelope"></i></a>
     </p>
 </section>
 <div id="disqus_thread"></div>
