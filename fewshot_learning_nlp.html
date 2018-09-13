@@ -24,11 +24,11 @@
 
 
 <meta name="author" content="Nicolas Thiebaut" />
-<meta name="description" content="Few-shot learning on textual data with siamese neural networks¶If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques to deal with this situation." />
+<meta name="description" content="Few-shot learning on textual data with siamese neural networks¶If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble 😨. Acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques exist to deal with this situation 🕺." />
 <meta name="keywords" content="python, machine learning, deep learning, natural language processing">
 <meta property="og:site_name" content="Data4thought: data science blog"/>
 <meta property="og:title" content="Few-shot learning in NLP: many-classes classification from few examples"/>
-<meta property="og:description" content="Few-shot learning on textual data with siamese neural networks¶If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques to deal with this situation."/>
+<meta property="og:description" content="Few-shot learning on textual data with siamese neural networks¶If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble 😨. Acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques exist to deal with this situation 🕺."/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://nkthiebaut.github.io/fewshot_learning_nlp.html"/>
 <meta property="og:type" content="article"/>
@@ -1075,18 +1075,18 @@ h6:hover .anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Few-shot-learning-on-textual-data-with-siamese-neural-networks">Few-shot learning on textual data with siamese neural networks<a class="anchor-link" href="#Few-shot-learning-on-textual-data-with-siamese-neural-networks">¶</a></h1><p>If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble. Unfortunately, acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques to deal with this situation.</p>
+<h1 id="Few-shot-learning-on-textual-data-with-siamese-neural-networks">Few-shot learning on textual data with siamese neural networks<a class="anchor-link" href="#Few-shot-learning-on-textual-data-with-siamese-neural-networks">¶</a></h1><p>If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble 😨. Acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques exist to deal with this situation 🕺.</p>
 <p>This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and <a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf">obtain decent results</a>!).</p>
 <p>Most of the machine learning research on one-shot learning involves images, but some <a href="https://arxiv.org/abs/1710.10280">recent research papers</a> address the same problem in the Natural Language Processing (NLP) realm.</p>
-<p>In this blog post, I will use siamese neural network to tackle few-shot learning , following a <a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf">method that was originally applied to images</a> and that is nicely explained <a href="https://sorenbouma.github.io/blog/oneshot/">here</a>.</p>
-<p>A nice example of a few-shot learning problem in NLP is job title classification. If you want to group job titles in different categories or "occupations" (e.g. gather "Programmer" and "Software engineer" in an occupation, and " in another one), then unless you have hundreds of job titles examples per occupation you are facing a few-shot learning problem. The U.S government provides such a job title taxonomy: the <a href="https://www.bls.gov/soc/">Standard Occupational Classification</a>. I'll use it as a toy dataset understand how few-shot learning with siamese neural networks works.</p>
+<p>In this blog post, I will use siamese neural network to tackle few-shot learning, following a <a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf">method that was originally applied to images</a> and that is nicely explained <a href="https://sorenbouma.github.io/blog/oneshot/">here</a>.</p>
+<p>Job title classification provides a good example of a few-shot learning problem in NLP. Say you want to group job titles in different categories or "occupations" (e.g. gather "Programmer" and "Software engineer" in an occupation, and "Sales manager" in another one), then unless you have hundreds of job titles examples per occupation you are facing a few-shot learning problem. The U.S government provides such a job title/occupations taxonomy: the <a href="https://www.bls.gov/soc/">Standard Occupational Classification</a>. I'll use it as a toy dataset understand how few-shot learning with siamese neural networks works.</p>
 <p>Let's start by downloading the taxonomy and check what's in there.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [36]:</div>
+<div class="prompt input_prompt">In [61]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>
@@ -1106,6 +1106,8 @@ h6:hover .anchor-link {
 <span class="n">multi_examples_occupations</span> <span class="o">=</span> <span class="n">occupations_counts</span><span class="p">[</span><span class="n">occupations_counts</span> <span class="o">></span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">multi_examples_occupations</span><span class="p">)]</span>
 
+<span class="n">df</span><span class="p">[</span><span class="s1">'SOC minor group'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+
 <span class="c1"># Lower all job titles for simplicity</span>
 <span class="n">df</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
@@ -1117,7 +1119,7 @@ h6:hover .anchor-link {
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[36]:</div>
+<div class="prompt output_prompt">Out[61]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
 <style scoped="">
@@ -1139,6 +1141,7 @@ h6:hover .anchor-link {
 <th></th>
 <th>O*NET-SOC Code</th>
 <th>Reported Job Title</th>
+<th>SOC minor group</th>
 </tr>
 </thead>
 <tbody>
@@ -1146,101 +1149,121 @@ h6:hover .anchor-link {
 <th>0</th>
 <td>11-1011.00</td>
 <td>chief diversity officer (cdo)</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>1</th>
 <td>11-1011.00</td>
 <td>chief executive officer (ceo)</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>2</th>
 <td>11-1011.00</td>
 <td>chief financial officer (cfo)</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>3</th>
 <td>11-1011.00</td>
 <td>chief nursing officer</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>4</th>
 <td>11-1011.00</td>
 <td>chief operating officer (coo)</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>5</th>
 <td>11-1011.00</td>
 <td>executive director</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>6</th>
 <td>11-1011.00</td>
 <td>executive vice president (evp)</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>7</th>
 <td>11-1011.00</td>
 <td>operations vice president</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>8</th>
 <td>11-1011.00</td>
 <td>president</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>9</th>
 <td>11-1011.00</td>
 <td>vice president</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>10</th>
 <td>11-1011.03</td>
 <td>corporate sustainability process manager</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>11</th>
 <td>11-1011.03</td>
 <td>director of sustainability</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>12</th>
 <td>11-1011.03</td>
 <td>director of sustainability programs</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>13</th>
 <td>11-1011.03</td>
 <td>director of sustainable design</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>14</th>
 <td>11-1011.03</td>
 <td>supply chain manager, sustainability and energy</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>15</th>
 <td>11-1011.03</td>
 <td>sustainability coordinator</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>16</th>
 <td>11-1011.03</td>
 <td>sustainability director</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>17</th>
 <td>11-1011.03</td>
 <td>vice president, corporate social responsibilit...</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>18</th>
 <td>11-1021.00</td>
 <td>business manager</td>
+<td>11-1</td>
 </tr>
 <tr>
 <th>19</th>
 <td>11-1021.00</td>
 <td>facilities manager</td>
+<td>11-1</td>
 </tr>
 </tbody>
 </table>
@@ -1261,7 +1284,7 @@ h6:hover .anchor-link {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [23]:</div>
+<div class="prompt input_prompt">In [2]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>  <span class="c1"># Count the number of different modalities in each column</span>
@@ -1272,7 +1295,7 @@ h6:hover .anchor-link {
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[23]:</div>
+<div class="prompt output_prompt">Out[2]:</div>
 <div class="output_text output_subarea output_execute_result">
 <pre>O*NET-SOC Code         954
 Reported Job Title    7172
@@ -1293,14 +1316,14 @@ dtype: int64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [46]:</div>
+<div class="prompt input_prompt">In [63]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_set</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'O*NET-SOC Code'</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_set</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'SOC minor group'</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 <span class="n">train_set</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">test_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">])]</span>
 
-<span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">],</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span>
-<span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">],</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span>
+<span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">],</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">'SOC minor group'</span><span class="p">]</span>
+<span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">],</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">'SOC minor group'</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -1310,21 +1333,21 @@ dtype: int64</pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Building-a-baseline">Building a baseline<a class="anchor-link" href="#Building-a-baseline">¶</a></h2><p>Before experimenting with fancy models, let's establish a strong baseline. We can start by using word embeddings to get a vector representation of each job title, and use a nearest neighbor classifier that is a less likely to overfit than tree-based models or parametric classifiers.</p>
-<p>To get the representation of a sentence from pre-trained word embeddings I'll use <a href="https://github.com/nkthiebaut/zeugma">Zeugma</a>, an NLP python library I've written that provides pre-trained word embeddings in the form <a href="http://scikit-learn.org/stable/modules/pipeline.html">scikit-learn transformers</a>.</p>
+<h2 id="Building-a-baseline-🐣">Building a baseline 🐣<a class="anchor-link" href="#Building-a-baseline-🐣">¶</a></h2><p>Before experimenting with fancy models, let's establish a strong baseline. We can start by using word embeddings to get a vector representation of each job title, and use a nearest neighbor classifier that is a less likely to overfit than tree-based models or parametric classifiers.</p>
+<p>To get the representation of a sentence from pre-trained word embeddings I'll use <a href="https://github.com/nkthiebaut/zeugma">Zeugma</a>, an NLP python library I've written that conveniently provides pre-trained word embeddings in the form of <a href="http://scikit-learn.org/stable/modules/pipeline.html">scikit-learn transformers</a>.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [38]:</div>
+<div class="prompt input_prompt">In [4]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">zeugma</span> <span class="k">import</span> <span class="n">EmbeddingTransformer</span>
 
 <span class="c1"># We'll use the GloVe pre-trained embeddings, using the sum of the word embeddings</span>
 <span class="c1"># of a job title as the embedding vector</span>
-<span class="n">embedding</span> <span class="o">=</span> <span class="n">EmbeddingTransformer</span><span class="p">(</span><span class="s1">'glove'</span><span class="p">,</span> <span class="n">aggregation</span><span class="o">=</span><span class="s1">'sum'</span><span class="p">)</span>
+<span class="n">embedding</span> <span class="o">=</span> <span class="n">EmbeddingTransformer</span><span class="p">(</span><span class="s1">'glove-twitter-200'</span><span class="p">,</span> <span class="n">aggregation</span><span class="o">=</span><span class="s1">'sum'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1343,7 +1366,7 @@ dtype: int64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [47]:</div>
+<div class="prompt input_prompt">In [5]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">make_pipeline</span>
@@ -1360,12 +1383,12 @@ dtype: int64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [54]:</div>
+<div class="prompt input_prompt">In [64]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">baseline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Train accuracy (baseline): </span><span class="si">{:.2f}</span><span class="s1"> %'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">baseline</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Test accuracy (baseline): </span><span class="si">{:.2f}</span><span class="s1"> %'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">baseline</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Train accuracy (baseline): {100*baseline.score(x_train, y_train):.2f} %'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Test accuracy (baseline): {100*baseline.score(x_test, y_test):.2f} %'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1375,8 +1398,8 @@ dtype: int64</pre>
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Train accuracy (baseline): 79.42 %
-Test accuracy (baseline): 12.26 %
+<pre>Train accuracy (baseline): 84.94 %
+Test accuracy (baseline): 31.91 %
 </pre>
 </div>
 </div>
@@ -1388,7 +1411,117 @@ Test accuracy (baseline): 12.26 %
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Definitely not great but not too bad for a simple baseline model, considering a random guess would have a $\frac{1}{n_{\text{classes}}} \simeq 0.1 \%$ accuracy.</p>
-<p>It may seem hard to beat this simple baseline with a deep learning model due to the high chances of overfitting with such a small datasets, but here come siamese networks to the rescue.</p>
+<p>It may seem hard to beat this simple baseline with a deep learning model due to the high chances of overfitting with such a small dataset, but here come siamese networks to the rescue.</p>
+<h2 id="Few-shot-learning-with-siamese-neural-networks-👯‍♀️">Few-shot learning with siamese neural networks 👯‍♀️<a class="anchor-link" href="#Few-shot-learning-with-siamese-neural-networks-👯‍♀️">¶</a></h2><p>The nearest neighbor model of the previous section is preforming quite well despite its simplicity, because it uses word embeddings learnt on the a <a href="https://nlp.stanford.edu/projects/glove/">huge NLP dataset from Twitter</a>. Using word representations learnt in an unsupervised setting on a bigger dataset is the basic principle of <a href="https://en.wikipedia.org/wiki/Transfer_learning">transfer learning</a> and reduces the overfit by allowing smaller models to perform well, utltimately giving better performances on the test set.</p>
+<p>Although the pre-trained embeddings are valuable, the embedding space used to determine nearest neighbors knows nothing about job titles in particular. There must be a way to learn an embedding space in which jobs belonging to the same occupation category are closer. This is where siamese networks come into play.</p>
+<p>The main idea of siamese networks is to learn such a representation by training a model to discriminate between pairs of examples that are in the same category, and pairs of examples that come from different categories.</p>
+<h3 id="Building-the-pairs-dataset">Building the pairs dataset<a class="anchor-link" href="#Building-the-pairs-dataset">¶</a></h3><p>Let's create positive samples with pairs of job titles corresponding to the same SOC, and negative examples with pairs of job titles sampled from different SOC codes.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [129]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">sample</span>
+
+<span class="n">jobs_left</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">jobs_right</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">target</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">soc_codes</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">'SOC minor group'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">soc_codes</span><span class="p">:</span>
+    <span class="n">similar_jobs</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="n">train_set</span><span class="p">[</span><span class="s1">'SOC minor group'</span><span class="p">]</span> <span class="o">==</span> <span class="n">code</span><span class="p">][</span><span class="s1">'Reported Job Title'</span><span class="p">]</span>
+    <span class="c1"># Pick 1000 random pairs from the SOC group's job titles combinations </span>
+    <span class="n">group_pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">similar_jobs</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> 
+    <span class="n">positive_pairs</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">group_pairs</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_pairs</span><span class="p">)</span> <span class="o">></span> <span class="mi">2000</span> <span class="k">else</span> <span class="n">group_pairs</span>
+    <span class="n">jobs_left</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">positive_pairs</span><span class="p">])</span>
+    <span class="n">jobs_right</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">positive_pairs</span><span class="p">])</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mf">1.</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">positive_pairs</span><span class="p">))</span>
+    
+    <span class="n">other_jobs</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">'SOC minor group'</span><span class="p">]</span> <span class="o">!=</span> <span class="n">code</span><span class="p">][</span><span class="s1">'Reported Job Title'</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">positive_pairs</span><span class="p">)):</span>
+        <span class="n">jobs_left</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">similar_jobs</span><span class="p">))</span>
+        <span class="n">jobs_right</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">other_jobs</span><span class="p">))</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+        <span class="s1">'job_left'</span><span class="p">:</span> <span class="n">jobs_left</span><span class="p">,</span>
+        <span class="s1">'job_right'</span><span class="p">:</span> <span class="n">jobs_right</span><span class="p">,</span>
+        <span class="s1">'target'</span><span class="p">:</span> <span class="n">target</span>
+    <span class="p">})</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Shuffle dataset</span>
+
+<span class="n">dataset</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[129]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>job_left</th>
+<th>job_right</th>
+<th>target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>96427</th>
+<td>staff genetic counselor</td>
+<td>certified professional midwife</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>213759</th>
+<td>double end tenon operator</td>
+<td>fitness instructor</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>115334</th>
+<td>certified executive chef (cec)</td>
+<td>cost analyst</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>192141</th>
+<td>lubricator</td>
+<td>trades helper</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>182783</th>
+<td>repair technician</td>
+<td>substation mechanic</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1396,10 +1529,395 @@ Test accuracy (baseline): 12.26 %
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Few-shot-learning-with-siamese-neural-networks">Few-shot learning with siamese neural networks<a class="anchor-link" href="#Few-shot-learning-with-siamese-neural-networks">¶</a></h2><p>The nearest neighbor model of the previous section is preforming quite well despite its simplicity, because it uses word embeddings learnt on the twitter dataset. This is the basic principle of <a href="https://en.wikipedia.org/wiki/Transfer_learning">transfer learning</a>.</p>
-<p>Nevertheless, the embedding space used to determine nearest neighbors knows nothing about job titles in particular. There must be a way to learn an embedding space in which jobs belonging to the same occupation category are closer. This is where siamese networks come into play.</p>
-<p>The main idea of siamese networks is to learn such a representation by training a model to discriminate between pairs of examples that are in the same category, and pairs of examples that come from different categories.</p>
-<p>To be continued, stay tuned!</p>
+<p>Here we see that the pair "professor" and "spanish instructor" belong to the same job occupation category, while "sports writer" and "animal scientist" are in different occupations. Note that we end up with a much bigger dataset by creating pairs. Indeed the number of the created siamese dataset has 218,669 while the original dataset has only 8,921 samples. Of course we have only artifically increased the dataset size because we have not generated new data, but we'll see that this technique is still very powerful.</p>
+<h3 id="Modelling">Modelling<a class="anchor-link" href="#Modelling">¶</a></h3><p>The general architecture of the model is based on <a href="https://medium.com/mlreview/implementing-malstm-on-kaggles-quora-question-pairs-competition-8b31b0b16a07">this very good tutorial</a>. I first lighly preprocess the job titles, turn them into index sequences and pad them to get a valide input for the incoming neural network classifier. Once again I use convenient transformers from the <a href="https://github.com/nkthiebaut/zeugma">Zeugma</a> to do so.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [130]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">make_pipeline</span><span class="p">,</span> <span class="n">FeatureUnion</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">FunctionTransformer</span>
+<span class="kn">from</span> <span class="nn">zeugma</span> <span class="k">import</span> <span class="n">TextsToSequences</span><span class="p">,</span> <span class="n">Padder</span><span class="p">,</span> <span class="n">ItemSelector</span>
+
+<span class="n">max_words_job_title</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># To avoid very long job titles we limit them to 10 words</span>
+<span class="n">vocab_size</span> <span class="o">=</span> <span class="mi">10000</span>  <span class="c1"># Number of most-frequent words kept in the vocabulary</span>
+
+<span class="k">def</span> <span class="nf">preprocess_job_titles</span><span class="p">(</span><span class="n">job_titles</span><span class="p">):</span>
+    <span class="sd">""" Return a list of clean job titles """</span>
+    <span class="k">def</span> <span class="nf">preprocess_job_title</span><span class="p">(</span><span class="n">raw_job_title</span><span class="p">):</span>
+        <span class="sd">""" Clean a single job title"""</span>
+        <span class="n">job_title</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">'\(.*\)'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="n">raw_job_title</span><span class="p">)</span>  <span class="c1"># Remove everything between parenthesis</span>
+        <span class="k">return</span> <span class="n">job_title</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">preprocess_job_title</span><span class="p">(</span><span class="n">jt</span><span class="p">)</span> <span class="k">for</span> <span class="n">jt</span> <span class="ow">in</span> <span class="n">job_titles</span><span class="p">]</span>
+    
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span>
+    <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">preprocess_job_titles</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>  <span class="c1"># Preprocess the text</span>
+    <span class="n">TextsToSequences</span><span class="p">(</span><span class="n">num_words</span><span class="o">=</span><span class="n">vocab_size</span><span class="p">),</span>  <span class="c1"># Turn word sequences into indexes sequences</span>
+    <span class="n">Padder</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="n">max_words_job_title</span><span class="p">),</span>  <span class="c1"># Pad shorter job titles with a dummy index</span>
+<span class="p">)</span>
+
+<span class="c1"># Note that the preprocessing pipeline must be fit on both the right and left examples</span>
+<span class="c1"># simultaneously</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">'job_left'</span><span class="p">])</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">'job_right'</span><span class="p">]));</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [131]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x_left</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">'job_left'</span><span class="p">])</span>
+<span class="n">x_right</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">'job_right'</span><span class="p">])</span>
+<span class="n">x_pairs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_left</span><span class="p">,</span> <span class="n">x_right</span><span class="p">]</span>   <span class="c1"># this will be the input of the siamese network</span>
+
+<span class="n">y_pairs</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">'target'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [132]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># We re-use the same embedding as with the baseline model</span>
+<span class="n">embedding_layer</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_keras_embedding</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now that we have created the pairs dataset and preprocessed the job titles we can turn to the siamese model itself. It consists of a cloned sequential network, the input of which is a pair of vectors <code>x_left</code> and <code>x_right</code>. The last layer of the sequential network for <code>x_left</code> is the vector representation of the left job title, and same thing for <code>x_right</code> the right input job title. The representations of the right and left inputs are used to compute the similarity between the job titles: $$\text{sim}\left(x_{l}, x_{r}\right) = \exp \left(-\| f(x_l) - f(x_r) \|_1\right),$$</p>
+<p>where $\text{sim} \in [0, 1]$, $\|\cdot\|_1$ is the $L_1$ norm, and $f$ is the function corresponding to the application of the cloned sequential network to the left/right input.</p>
+<p>This setting is called the <a href="https://www.quora.com/What-is-Manhattan-LSTM">Manhattan LSTM</a> becasue the we'll use LSTMs as the sequential network, and the L1 norm used to compute the distance between two samples of a pair is also called the <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Manhattan distance</a>. Here is the corresponding code.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [133]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">LSTM</span><span class="p">,</span> <span class="n">Bidirectional</span>
+<span class="kn">from</span> <span class="nn">keras</span> <span class="k">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Dropout</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">Subtract</span>
+<span class="kn">from</span> <span class="nn">keras</span> <span class="k">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
+
+<span class="k">def</span> <span class="nf">exponent_neg_manhattan_distance</span><span class="p">(</span><span class="n">arms_difference</span><span class="p">):</span>
+    <span class="sd">""" Compute the exponent of the opposite of the L1 norm of a vector, to get the left/right inputs</span>
+<span class="sd">    similarity from the inputs differences. This function is used to turned the unbounded</span>
+<span class="sd">    L1 distance to a similarity measure between 0 and 1"""</span>
+    <span class="k">return</span> <span class="n">K</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">arms_difference</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">siamese_lstm</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="n">max_words_job_title</span><span class="p">,</span> <span class="n">embedding_layer</span><span class="o">=</span><span class="n">embedding_layer</span><span class="p">):</span>
+    <span class="sd">""" Define, compile and return a siamese LSTM model """</span>
+    <span class="n">input_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_length</span><span class="p">,)</span>
+    <span class="n">left_input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">input_shape</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'left_input'</span><span class="p">)</span>
+    <span class="n">right_input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">input_shape</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'right_input'</span><span class="p">)</span>
+
+    <span class="c1"># Define a single sequential model for both arms.</span>
+    <span class="c1"># In this example I've chosen a stack of 2 bidirectional LSTMs with a bit of dropout</span>
+    <span class="n">seq</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'sequential_network'</span><span class="p">)</span>
+    <span class="n">seq</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embedding_layer</span><span class="p">)</span>
+    <span class="n">seq</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Bidirectional</span><span class="p">(</span><span class="n">LSTM</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">recurrent_dropout</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
+    <span class="n">seq</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Bidirectional</span><span class="p">(</span><span class="n">LSTM</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">recurrent_dropout</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)))</span>
+    
+    <span class="n">left_output</span> <span class="o">=</span> <span class="n">seq</span><span class="p">(</span><span class="n">left_input</span><span class="p">)</span>
+    <span class="n">right_output</span> <span class="o">=</span> <span class="n">seq</span><span class="p">(</span><span class="n">right_input</span><span class="p">)</span>
+
+    <span class="c1"># Here we subtract the neuron values of the last layer from the left arm </span>
+    <span class="c1"># with the corresponding values from the right arm</span>
+    <span class="n">subtracted</span> <span class="o">=</span> <span class="n">Subtract</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'pair_representations_difference'</span><span class="p">)([</span><span class="n">left_output</span><span class="p">,</span> <span class="n">right_output</span><span class="p">])</span>
+    <span class="n">malstm_distance</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">(</span><span class="n">exponent_neg_manhattan_distance</span><span class="p">,</span> 
+                             <span class="n">name</span><span class="o">=</span><span class="s1">'masltsm_distance'</span><span class="p">)(</span><span class="n">subtracted</span><span class="p">)</span>
+
+    <span class="n">siamese_net</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">left_input</span><span class="p">,</span> <span class="n">right_input</span><span class="p">],</span> <span class="n">outputs</span><span class="o">=</span><span class="n">malstm_distance</span><span class="p">)</span>
+    <span class="n">siamese_net</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s2">"binary_crossentropy"</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">siamese_net</span>
+
+<span class="n">siamese_lstm</span> <span class="o">=</span> <span class="n">siamese_lstm</span><span class="p">()</span>
+
+<span class="c1"># Print a summary of the model mainly to know the number of trainable parameters</span>
+<span class="n">siamese_lstm</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+left_input (InputLayer)         (None, 10)           0                                            
+__________________________________________________________________________________________________
+right_input (InputLayer)        (None, 10)           0                                            
+__________________________________________________________________________________________________
+sequential_network (Sequential) (None, 64)           238879696   left_input[0][0]                 
+                                                                 right_input[0][0]                
+__________________________________________________________________________________________________
+pair_representations_difference (None, 64)           0           sequential_network[1][0]         
+                                                                 sequential_network[2][0]         
+__________________________________________________________________________________________________
+masltsm_distance (Lambda)       (None, 1)            0           pair_representations_difference[0
+==================================================================================================
+Total params: 238,879,696
+Trainable params: 176,896
+Non-trainable params: 238,702,800
+__________________________________________________________________________________________________
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [134]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">SVG</span>
+<span class="kn">from</span> <span class="nn">keras.utils.vis_utils</span> <span class="k">import</span> <span class="n">model_to_dot</span>
+
+<span class="c1"># Let's get a very minimalist visual representation of our siamese model</span>
+<span class="n">SVG</span><span class="p">(</span><span class="n">model_to_dot</span><span class="p">(</span><span class="n">siamese_lstm</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">prog</span><span class="o">=</span><span class="s1">'dot'</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'svg'</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[134]:</div>
+<div class="output_svg output_subarea output_execute_result">
+<svg height="264pt" viewbox="0.00 0.00 313.91 264.00" width="314pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g class="graph" id="graph0" transform="scale(1 1) rotate(0) translate(4 260)">
+<title>G
+<polygon fill="#ffffff" points="-4,4 -4,-260 309.9106,-260 309.9106,4 -4,4" stroke="transparent"></polygon>
+<!-- 114503186864 -->
+<g class="node" id="node1">
+<title>114503186864
+<polygon fill="none" points="0,-219.5 0,-255.5 140.0176,-255.5 140.0176,-219.5 0,-219.5" stroke="#000000"></polygon>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="70.0088" y="-233.3">left_input: InputLayer</text>
+</g>
+<!-- 114503187424 -->
+<g class="node" id="node3">
+<title>114503187424
+<polygon fill="none" points="54.9482,-146.5 54.9482,-182.5 247.0693,-182.5 247.0693,-146.5 54.9482,-146.5" stroke="#000000"></polygon>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="151.0088" y="-160.3">sequential_network: Sequential</text>
+</g>
+<!-- 114503186864&#45;&gt;114503187424 -->
+<g class="edge" id="edge1">
+<title>114503186864->114503187424
+<path d="M90.0313,-219.4551C100.059,-210.4177 112.3597,-199.3319 123.2802,-189.4899" fill="none" stroke="#000000"></path>
+<polygon fill="#000000" points="125.8507,-191.885 130.9359,-182.5904 121.1644,-186.6852 125.8507,-191.885" stroke="#000000"></polygon>
+</g>
+<!-- 114503186584 -->
+<g class="node" id="node2">
+<title>114503186584
+<polygon fill="none" points="158.1069,-219.5 158.1069,-255.5 305.9106,-255.5 305.9106,-219.5 158.1069,-219.5" stroke="#000000"></polygon>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="232.0088" y="-233.3">right_input: InputLayer</text>
+</g>
+<!-- 114503186584&#45;&gt;114503187424 -->
+<g class="edge" id="edge2">
+<title>114503186584->114503187424
+<path d="M211.9863,-219.4551C201.9585,-210.4177 189.6579,-199.3319 178.7373,-189.4899" fill="none" stroke="#000000"></path>
+<polygon fill="#000000" points="180.8532,-186.6852 171.0817,-182.5904 176.1669,-191.885 180.8532,-186.6852" stroke="#000000"></polygon>
+</g>
+<!-- 114471908856 -->
+<g class="node" id="node4">
+<title>114471908856
+<polygon fill="none" points="27.4883,-73.5 27.4883,-109.5 274.5293,-109.5 274.5293,-73.5 27.4883,-73.5" stroke="#000000"></polygon>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="151.0088" y="-87.3">pair_representations_difference: Subtract</text>
+</g>
+<!-- 114503187424&#45;&gt;114471908856 -->
+<g class="edge" id="edge3">
+<title>114503187424->114471908856
+<path d="M151.0088,-146.4551C151.0088,-138.3828 151.0088,-128.6764 151.0088,-119.6817" fill="none" stroke="#000000"></path>
+<polygon fill="#000000" points="154.5089,-119.5903 151.0088,-109.5904 147.5089,-119.5904 154.5089,-119.5903" stroke="#000000"></polygon>
+</g>
+<!-- 114795552272 -->
+<g class="node" id="node5">
+<title>114795552272
+<polygon fill="none" points="66.6104,-.5 66.6104,-36.5 235.4072,-36.5 235.4072,-.5 66.6104,-.5" stroke="#000000"></polygon>
+<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="151.0088" y="-14.3">masltsm_distance: Lambda</text>
+</g>
+<!-- 114471908856&#45;&gt;114795552272 -->
+<g class="edge" id="edge5">
+<title>114471908856->114795552272
+<path d="M151.0088,-73.4551C151.0088,-65.3828 151.0088,-55.6764 151.0088,-46.6817" fill="none" stroke="#000000"></path>
+<polygon fill="#000000" points="154.5089,-46.5903 151.0088,-36.5904 147.5089,-46.5904 154.5089,-46.5903" stroke="#000000"></polygon>
+</g>
+</g>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [135]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">siamese_lstm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_pairs</span><span class="p">,</span> <span class="n">y_pairs</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Train on 218669 samples, validate on 24297 samples
+Epoch 1/10
+218669/218669 [==============================] - 249s 1ms/step - loss: 0.6325 - acc: 0.6406 - val_loss: 0.5472 - val_acc: 0.7231
+Epoch 2/10
+218669/218669 [==============================] - 239s 1ms/step - loss: 0.5323 - acc: 0.7422 - val_loss: 0.4771 - val_acc: 0.7882
+Epoch 3/10
+218669/218669 [==============================] - 2723s 12ms/step - loss: 0.4865 - acc: 0.7827 - val_loss: 0.4358 - val_acc: 0.8190
+Epoch 4/10
+218669/218669 [==============================] - 553s 3ms/step - loss: 0.4578 - acc: 0.8041 - val_loss: 0.4092 - val_acc: 0.8392
+Epoch 5/10
+218669/218669 [==============================] - 552s 3ms/step - loss: 0.4371 - acc: 0.8202 - val_loss: 0.3863 - val_acc: 0.8522
+Epoch 6/10
+218669/218669 [==============================] - 436s 2ms/step - loss: 0.4207 - acc: 0.8302 - val_loss: 0.3710 - val_acc: 0.8585
+Epoch 7/10
+218669/218669 [==============================] - 250s 1ms/step - loss: 0.4073 - acc: 0.8375 - val_loss: 0.3565 - val_acc: 0.8659
+Epoch 8/10
+218669/218669 [==============================] - 244s 1ms/step - loss: 0.3969 - acc: 0.8428 - val_loss: 0.3475 - val_acc: 0.8682
+Epoch 9/10
+218669/218669 [==============================] - 246s 1ms/step - loss: 0.3863 - acc: 0.8474 - val_loss: 0.3350 - val_acc: 0.8735
+Epoch 10/10
+218669/218669 [==============================] - 221s 1ms/step - loss: 0.3779 - acc: 0.8502 - val_loss: 0.3326 - val_acc: 0.8729
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Without much effort (light preprocessing, few epochs, no early stopping, no hyper-parameters optimization) we obtain a decent ~87 % accuracy on the validation set. But remember that this is not the final task, here we are only solving the binary classification problem of recognizing pairs of job titles that belong to the same occupations category and pairs of jobs that are sampled from different occupations categories.</p>
+<p>To address the initial problem of finding each job title's category we have to compute, for each example in the test set, the similarity score of this example with all the examples in the training set. The predicted category is the one of the closest example in training set.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [ ]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">x_test</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [126]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x_references</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>  <span class="c1"># Preprocess the training set examples</span>
+
+<span class="k">def</span> <span class="nf">get_prediction</span><span class="p">(</span><span class="n">job_title</span><span class="p">):</span>
+    <span class="sd">""" Get the predicted job title category, and the most similar job title</span>
+<span class="sd">    in the train set. Note that this way of computing a prediction is highly </span>
+<span class="sd">    not optimal, but it'll be sufficient for us now. """</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">job_title</span><span class="p">])</span>
+    <span class="c1"># Compute similarities of the job title with all job titles in the train set</span>
+    <span class="n">similarities</span> <span class="o">=</span> <span class="n">siamese_lstm</span><span class="o">.</span><span class="n">predict</span><span class="p">([[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">x_references</span><span class="p">),</span> <span class="n">x_references</span><span class="p">])</span>
+    <span class="n">most_similar_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">similarities</span><span class="p">)</span>
+    <span class="c1"># The predicted category is the one of the most similar example from the train set</span>
+    <span class="n">prediction</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">'SOC minor group'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">most_similar_index</span><span class="p">]</span>
+    <span class="n">most_similar_example</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">most_similar_index</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">most_similar_example</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [136]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_idx</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">pred</span><span class="p">,</span> <span class="n">most_sim</span> <span class="o">=</span> <span class="n">get_prediction</span><span class="p">(</span><span class="n">x_test</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Sampled test job title: </span><span class="si">{x_test[sample_idx]}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'True occupation: </span><span class="si">{test_set["SOC minor group"].iloc[sample_idx]}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Occupation prediction: </span><span class="si">{pred}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Most similar example in train set: </span><span class="si">{most_sim}</span><span class="s1">'</span><span class="p">)</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Sampled test job title: chief diversity officer (cdo)
+True occupation: 11-1
+Occupation prediction: 11-9
+Most similar example in train set: farm operations technical director
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [128]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">accuracy_score</span>
+
+<span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_prediction</span><span class="p">(</span><span class="n">job_title</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">job_title</span> <span class="ow">in</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">50</span><span class="p">]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Test accuracy (siamese model): {100*accuracy_score(y_pred, y_test[:50]):.2f} %'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Test accuracy (siamese model): 38.00 %
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The siamese model thus outperforms the random guess (accuracy ~0.1 %) and the nearest neighbor baseline (~32 %) 🤹‍♀️! What this means is that the siamese model managed to squeeze some juice out of <strong>all</strong> the examples in the dataset, even accross categories. The original multi-class classification approach does not allow to learn "accross categories" because the categorical cross-entropy that is always used to treat those problems actually treats the multi-class classification tasks as a set of independent binary classification tasks.</p>
+<p>The siamese network approach to the few-shot learning problem is definitely a 
+way out with textual data 📚. At the cost of a bit more complex modelling it gives better than standards multi-class classification methods. Give it a shot if you and to classify your data with machine learning but don't have many examples per category, you won't regret it 🎊.</p>
 </div>
 </div>
 </div>
@@ -1446,7 +1964,7 @@ Test accuracy (baseline): 12.26 %
 <section>
     <p id="post-share-links">
         Share on:
-        <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html&title=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&summary=Few-shot%20learning%20on%20textual%20data%20with%20siamese%20neural%20networks%C2%B6If%20you%27re%20doing%20machine%20learning%20and%20meet%20a%20classification%20problem%20with%20many%20categories%20and%20few%20examples%20per%20category%2C%20it%20is%20usually%20thought%20that%20you%27re%20in%20trouble.%20Unfortunately%2C%20acquiring%20new%20data%20to%20solve%20this%20issue%20is%20not%20always%20easy%20or%20even%20doable.%20Luckily%2C%20we%27ll%20see%20that%20efficient%20techniques%20to%20deal%20with%20this%20situation.&source=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square"></i>
+        <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html&title=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&summary=Few-shot%20learning%20on%20textual%20data%20with%20siamese%20neural%20networks%C2%B6If%20you%27re%20doing%20machine%20learning%20and%20meet%20a%20classification%20problem%20with%20many%20categories%20and%20few%20examples%20per%20category%2C%20it%20is%20usually%20thought%20that%20you%27re%20in%20trouble%20%F0%9F%98%A8.%20Acquiring%20new%20data%20to%20solve%20this%20issue%20is%20not%20always%20easy%20or%20even%20doable.%20Luckily%2C%20we%27ll%20see%20that%20efficient%20techniques%20exist%20to%20deal%20with%20this%20situation%20%F0%9F%95%BA.&source=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square"></i>
 </a>
 <a href="https://twitter.com/intent/tweet?text=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on Twitter"><i class="fa fa-twitter"></i></a>
         <a href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on Facebook"><i class="fa fa-facebook"></i></a>
