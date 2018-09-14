@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/all-en.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2018-08-19T22:00:00+02:00</updated><entry><title>Few-shot learning in NLP: many-classes classification from few examples</title><link href="https://nkthiebaut.github.io/fewshot_learning_nlp.html" rel="alternate"></link><published>2018-08-19T22:00:00+02:00</published><updated>2018-08-19T22:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2018-08-19:/fewshot_learning_nlp.html</id><summary type="html">
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h1 id="Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;Few-shot learning on textual data with siamese neural networks&lt;a class="anchor-link" href="#Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble 😨. Acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques exist to deal with this situation 🕺.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/all-en.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2018-08-19T22:00:00+02:00</updated><entry><title>Few-shot learning in NLP: many-classes classification from few examples</title><link href="https://nkthiebaut.github.io/fewshot_learning_nlp.html" rel="alternate"></link><published>2018-08-19T22:00:00+02:00</published><updated>2018-08-19T22:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2018-08-19:fewshot_learning_nlp.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -991,32 +986,32 @@ h6:hover .anchor-link {
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [61]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [12]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;io&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;StringIO&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;requests&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;pandas&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;pd&lt;/span&gt;
 
-&lt;span class="c1"&gt;# Download the Standard Occupation Classification&lt;/span&gt;
+&lt;span class="c1"&gt;# Import a home-made dictionary that maps SOC codes to "occupations" names&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;soc&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;SOC_MINOR_GROUPS&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Download the Standard Occupation Classification with job titles examples&lt;/span&gt;
 &lt;span class="n"&gt;file_url&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'https://www.onetcenter.org/dl_files/database/db_20_1_text/Sample&lt;/span&gt;&lt;span class="si"&gt;%20o&lt;/span&gt;&lt;span class="s1"&gt;f%20Reported%20Titles.txt'&lt;/span&gt;
 &lt;span class="n"&gt;csv&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;StringIO&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;requests&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;file_url&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="c1"&gt;# Load it in a pandas DataFrame and drop a useless column&lt;/span&gt;
 &lt;span class="n"&gt;df&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pd&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read_csv&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;csv&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sep&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="se"&gt;\t&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;drop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'Shown in My Next Move'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="c1"&gt;# Remove occupations for which we have only one example, because&lt;/span&gt;
-&lt;span class="c1"&gt;# We can't even have a train a test examples for those&lt;/span&gt;
-&lt;span class="n"&gt;occupations_counts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'O*NET-SOC Code'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value_counts&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
-&lt;span class="n"&gt;multi_examples_occupations&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;occupations_counts&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;occupations_counts&lt;/span&gt; &lt;span class="o"&gt;&gt;&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;
-&lt;span class="n"&gt;df&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'O*NET-SOC Code'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;isin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;multi_examples_occupations&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
-
-&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'SOC minor group'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'O*NET-SOC Code'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;[:&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="c1"&gt;# Get the occupation name from the code and remove the original code column&lt;/span&gt;
+&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'SOC minor group'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'O*NET-SOC Code'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;SOC_MINOR_GROUPS&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;[:&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;]])&lt;/span&gt;
+&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;drop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'O*NET-SOC Code'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;inplace&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="c1"&gt;# Lower all job titles for simplicity&lt;/span&gt;
 &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'Reported Job Title'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'Reported Job Title'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;str&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lower&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 
-&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;head&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;# Display a few examples&lt;/span&gt;
+&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;iloc&lt;/span&gt;&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;101&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;102&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;301&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;302&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;303&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1024,7 +1019,7 @@ h6:hover .anchor-link {
 &lt;div class="output_wrapper"&gt;
 &lt;div class="output"&gt;
 &lt;div class="output_area"&gt;
-&lt;div class="prompt output_prompt"&gt;Out[61]:&lt;/div&gt;
+&lt;div class="prompt output_prompt"&gt;Out[12]:&lt;/div&gt;
 &lt;div class="output_html rendered_html output_subarea output_execute_result"&gt;
 &lt;div&gt;
 &lt;style scoped=""&gt;
@@ -1044,131 +1039,55 @@ h6:hover .anchor-link {
 &lt;thead&gt;
 &lt;tr style="text-align: right;"&gt;
 &lt;th&gt;&lt;/th&gt;
-&lt;th&gt;O*NET-SOC Code&lt;/th&gt;
 &lt;th&gt;Reported Job Title&lt;/th&gt;
 &lt;th&gt;SOC minor group&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;th&gt;0&lt;/th&gt;
-&lt;td&gt;11-1011.00&lt;/td&gt;
-&lt;td&gt;chief diversity officer (cdo)&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
 &lt;th&gt;1&lt;/th&gt;
-&lt;td&gt;11-1011.00&lt;/td&gt;
 &lt;td&gt;chief executive officer (ceo)&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
+&lt;td&gt;Top Executives&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;th&gt;2&lt;/th&gt;
-&lt;td&gt;11-1011.00&lt;/td&gt;
 &lt;td&gt;chief financial officer (cfo)&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
+&lt;td&gt;Top Executives&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;th&gt;3&lt;/th&gt;
-&lt;td&gt;11-1011.00&lt;/td&gt;
 &lt;td&gt;chief nursing officer&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
+&lt;td&gt;Top Executives&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;th&gt;4&lt;/th&gt;
-&lt;td&gt;11-1011.00&lt;/td&gt;
-&lt;td&gt;chief operating officer (coo)&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
+&lt;th&gt;100&lt;/th&gt;
+&lt;td&gt;banking center manager (bcm)&lt;/td&gt;
+&lt;td&gt;Operations Specialties Managers&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;th&gt;5&lt;/th&gt;
-&lt;td&gt;11-1011.00&lt;/td&gt;
-&lt;td&gt;executive director&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
+&lt;th&gt;101&lt;/th&gt;
+&lt;td&gt;banking officer&lt;/td&gt;
+&lt;td&gt;Operations Specialties Managers&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;th&gt;6&lt;/th&gt;
-&lt;td&gt;11-1011.00&lt;/td&gt;
-&lt;td&gt;executive vice president (evp)&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
+&lt;th&gt;102&lt;/th&gt;
+&lt;td&gt;branch manager&lt;/td&gt;
+&lt;td&gt;Operations Specialties Managers&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;th&gt;7&lt;/th&gt;
-&lt;td&gt;11-1011.00&lt;/td&gt;
-&lt;td&gt;operations vice president&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
+&lt;th&gt;301&lt;/th&gt;
+&lt;td&gt;project engineering manager&lt;/td&gt;
+&lt;td&gt;Other Management Occupations&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;th&gt;8&lt;/th&gt;
-&lt;td&gt;11-1011.00&lt;/td&gt;
-&lt;td&gt;president&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
+&lt;th&gt;302&lt;/th&gt;
+&lt;td&gt;project manager&lt;/td&gt;
+&lt;td&gt;Other Management Occupations&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;th&gt;9&lt;/th&gt;
-&lt;td&gt;11-1011.00&lt;/td&gt;
-&lt;td&gt;vice president&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;10&lt;/th&gt;
-&lt;td&gt;11-1011.03&lt;/td&gt;
-&lt;td&gt;corporate sustainability process manager&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;11&lt;/th&gt;
-&lt;td&gt;11-1011.03&lt;/td&gt;
-&lt;td&gt;director of sustainability&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;12&lt;/th&gt;
-&lt;td&gt;11-1011.03&lt;/td&gt;
-&lt;td&gt;director of sustainability programs&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;13&lt;/th&gt;
-&lt;td&gt;11-1011.03&lt;/td&gt;
-&lt;td&gt;director of sustainable design&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;14&lt;/th&gt;
-&lt;td&gt;11-1011.03&lt;/td&gt;
-&lt;td&gt;supply chain manager, sustainability and energy&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;15&lt;/th&gt;
-&lt;td&gt;11-1011.03&lt;/td&gt;
-&lt;td&gt;sustainability coordinator&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;16&lt;/th&gt;
-&lt;td&gt;11-1011.03&lt;/td&gt;
-&lt;td&gt;sustainability director&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;17&lt;/th&gt;
-&lt;td&gt;11-1011.03&lt;/td&gt;
-&lt;td&gt;vice president, corporate social responsibilit...&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;18&lt;/th&gt;
-&lt;td&gt;11-1021.00&lt;/td&gt;
-&lt;td&gt;business manager&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;19&lt;/th&gt;
-&lt;td&gt;11-1021.00&lt;/td&gt;
-&lt;td&gt;facilities manager&lt;/td&gt;
-&lt;td&gt;11-1&lt;/td&gt;
+&lt;th&gt;303&lt;/th&gt;
+&lt;td&gt;analytical research program manager&lt;/td&gt;
+&lt;td&gt;Other Management Occupations&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -1182,14 +1101,14 @@ h6:hover .anchor-link {
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;The downloaded file contains job categories codes (first column) and samples of job titles that belong to those categories. To get categories description type the occupation code &lt;a href="https://www.onetonline.org/help/online/search"&gt;here&lt;/a&gt;. For instance, the first occupation (11-1011.00) is called "Chief Executives" as one can guess from the corresponding job titles examples.&lt;/p&gt;
+&lt;p&gt;The downloaded file contains job categories codes ("SOC minor group") and samples of job titles that belong to those categories. To get categories description check &lt;a href="https://www.bls.gov/soc/2010/2010_major_groups.htm"&gt;the Standard Occupation Classification website&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Let's investigate a bit:&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [2]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [13]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;nunique&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;  &lt;span class="c1"&gt;# Count the number of different modalities in each column&lt;/span&gt;
@@ -1200,10 +1119,10 @@ h6:hover .anchor-link {
 &lt;div class="output_wrapper"&gt;
 &lt;div class="output"&gt;
 &lt;div class="output_area"&gt;
-&lt;div class="prompt output_prompt"&gt;Out[2]:&lt;/div&gt;
+&lt;div class="prompt output_prompt"&gt;Out[13]:&lt;/div&gt;
 &lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;O*NET-SOC Code         954
-Reported Job Title    7172
+&lt;pre&gt;Reported Job Title    7174
+SOC minor group         94
 dtype: int64&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1214,7 +1133,7 @@ dtype: int64&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;So we have 954 categories ("occupations") for 7172 examples, i.e. 7.5 examples per category on average. We are definitely in the few-shot learning setting.&lt;/p&gt;
+&lt;p&gt;So we have 94 categories ("SOC minor groups") for 7174 examples, i.e. 75 examples per category on average. This is not the most extreme examples of few-shot learning but it's still an example that is better tacked by the siamese techniques that will see below than with a standard multi-class classification approach.&lt;/p&gt;
 &lt;p&gt;Before proceeding with modelling let's create a train and test sets, by putting one example in the test set for each class.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1505,8 +1424,9 @@ Test accuracy (baseline): 31.91 %
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;Now that we have created the pairs dataset and preprocessed the job titles we can turn to the siamese model itself. It consists of a cloned sequential network, the input of which is a pair of vectors &lt;code&gt;x_left&lt;/code&gt; and &lt;code&gt;x_right&lt;/code&gt;. The last layer of the sequential network for &lt;code&gt;x_left&lt;/code&gt; is the vector representation of the left job title, and same thing for &lt;code&gt;x_right&lt;/code&gt; the right input job title. The representations of the right and left inputs are used to compute the similarity between the job titles: $$\text{sim}\left(x_{l}, x_{r}\right) = \exp \left(-\| f(x_l) - f(x_r) \|_1\right),$$&lt;/p&gt;
-&lt;p&gt;where $\text{sim} \in [0, 1]$, $\|\cdot\|_1$ is the $L_1$ norm, and $f$ is the function corresponding to the application of the cloned sequential network to the left/right input.&lt;/p&gt;
+&lt;p&gt;Now that we have created the pairs dataset and preprocessed the job titles we can turn to the siamese model itself. It consists of a cloned sequential network, the input of which is a pair of vectors &lt;code&gt;x_left&lt;/code&gt; and &lt;code&gt;x_right&lt;/code&gt;. The last layer of the sequential network for &lt;code&gt;x_left&lt;/code&gt; is the vector representation of the left job title, and same thing for &lt;code&gt;x_right&lt;/code&gt; the right input job title. The representations of the right and left inputs are used to compute the similarity between the job titles:&lt;/p&gt;
+&lt;p&gt;$$\text{sim}\left(x_{l}, x_{r}\right) = \exp \left(-\| f(x_l) - f(x_r) \|_1\right),$$&lt;/p&gt;
+&lt;p&gt;where $\text{sim} \in [0, 1]$, $\|\cdot\|_1$ is the L1 norm, and $f$ is the function corresponding to the application of the cloned sequential network to the left/right input.&lt;/p&gt;
 &lt;p&gt;This setting is called the &lt;a href="https://www.quora.com/What-is-Manhattan-LSTM"&gt;Manhattan LSTM&lt;/a&gt; becasue the we'll use LSTMs as the sequential network, and the L1 norm used to compute the distance between two samples of a pair is also called the &lt;a href="https://en.wikipedia.org/wiki/Taxicab_geometry"&gt;Manhattan distance&lt;/a&gt;. Here is the corresponding code.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1593,90 +1513,6 @@ ________________________________________________________________________________
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [134]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;IPython.display&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;SVG&lt;/span&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;keras.utils.vis_utils&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;model_to_dot&lt;/span&gt;
-
-&lt;span class="c1"&gt;# Let's get a very minimalist visual representation of our siamese model&lt;/span&gt;
-&lt;span class="n"&gt;SVG&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;model_to_dot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;siamese_lstm&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;prog&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'dot'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;format&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'svg'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt output_prompt"&gt;Out[134]:&lt;/div&gt;
-&lt;div class="output_svg output_subarea output_execute_result"&gt;
-&lt;svg height="264pt" viewbox="0.00 0.00 313.91 264.00" width="314pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
-&lt;g class="graph" id="graph0" transform="scale(1 1) rotate(0) translate(4 260)"&gt;
-&lt;title&gt;G
-&lt;polygon fill="#ffffff" points="-4,4 -4,-260 309.9106,-260 309.9106,4 -4,4" stroke="transparent"&gt;&lt;/polygon&gt;
-&lt;!-- 114503186864 --&gt;
-&lt;g class="node" id="node1"&gt;
-&lt;title&gt;114503186864
-&lt;polygon fill="none" points="0,-219.5 0,-255.5 140.0176,-255.5 140.0176,-219.5 0,-219.5" stroke="#000000"&gt;&lt;/polygon&gt;
-&lt;text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="70.0088" y="-233.3"&gt;left_input: InputLayer&lt;/text&gt;
-&lt;/g&gt;
-&lt;!-- 114503187424 --&gt;
-&lt;g class="node" id="node3"&gt;
-&lt;title&gt;114503187424
-&lt;polygon fill="none" points="54.9482,-146.5 54.9482,-182.5 247.0693,-182.5 247.0693,-146.5 54.9482,-146.5" stroke="#000000"&gt;&lt;/polygon&gt;
-&lt;text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="151.0088" y="-160.3"&gt;sequential_network: Sequential&lt;/text&gt;
-&lt;/g&gt;
-&lt;!-- 114503186864&amp;#45;&amp;gt;114503187424 --&gt;
-&lt;g class="edge" id="edge1"&gt;
-&lt;title&gt;114503186864-&gt;114503187424
-&lt;path d="M90.0313,-219.4551C100.059,-210.4177 112.3597,-199.3319 123.2802,-189.4899" fill="none" stroke="#000000"&gt;&lt;/path&gt;
-&lt;polygon fill="#000000" points="125.8507,-191.885 130.9359,-182.5904 121.1644,-186.6852 125.8507,-191.885" stroke="#000000"&gt;&lt;/polygon&gt;
-&lt;/g&gt;
-&lt;!-- 114503186584 --&gt;
-&lt;g class="node" id="node2"&gt;
-&lt;title&gt;114503186584
-&lt;polygon fill="none" points="158.1069,-219.5 158.1069,-255.5 305.9106,-255.5 305.9106,-219.5 158.1069,-219.5" stroke="#000000"&gt;&lt;/polygon&gt;
-&lt;text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="232.0088" y="-233.3"&gt;right_input: InputLayer&lt;/text&gt;
-&lt;/g&gt;
-&lt;!-- 114503186584&amp;#45;&amp;gt;114503187424 --&gt;
-&lt;g class="edge" id="edge2"&gt;
-&lt;title&gt;114503186584-&gt;114503187424
-&lt;path d="M211.9863,-219.4551C201.9585,-210.4177 189.6579,-199.3319 178.7373,-189.4899" fill="none" stroke="#000000"&gt;&lt;/path&gt;
-&lt;polygon fill="#000000" points="180.8532,-186.6852 171.0817,-182.5904 176.1669,-191.885 180.8532,-186.6852" stroke="#000000"&gt;&lt;/polygon&gt;
-&lt;/g&gt;
-&lt;!-- 114471908856 --&gt;
-&lt;g class="node" id="node4"&gt;
-&lt;title&gt;114471908856
-&lt;polygon fill="none" points="27.4883,-73.5 27.4883,-109.5 274.5293,-109.5 274.5293,-73.5 27.4883,-73.5" stroke="#000000"&gt;&lt;/polygon&gt;
-&lt;text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="151.0088" y="-87.3"&gt;pair_representations_difference: Subtract&lt;/text&gt;
-&lt;/g&gt;
-&lt;!-- 114503187424&amp;#45;&amp;gt;114471908856 --&gt;
-&lt;g class="edge" id="edge3"&gt;
-&lt;title&gt;114503187424-&gt;114471908856
-&lt;path d="M151.0088,-146.4551C151.0088,-138.3828 151.0088,-128.6764 151.0088,-119.6817" fill="none" stroke="#000000"&gt;&lt;/path&gt;
-&lt;polygon fill="#000000" points="154.5089,-119.5903 151.0088,-109.5904 147.5089,-119.5904 154.5089,-119.5903" stroke="#000000"&gt;&lt;/polygon&gt;
-&lt;/g&gt;
-&lt;!-- 114795552272 --&gt;
-&lt;g class="node" id="node5"&gt;
-&lt;title&gt;114795552272
-&lt;polygon fill="none" points="66.6104,-.5 66.6104,-36.5 235.4072,-36.5 235.4072,-.5 66.6104,-.5" stroke="#000000"&gt;&lt;/polygon&gt;
-&lt;text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="151.0088" y="-14.3"&gt;masltsm_distance: Lambda&lt;/text&gt;
-&lt;/g&gt;
-&lt;!-- 114471908856&amp;#45;&amp;gt;114795552272 --&gt;
-&lt;g class="edge" id="edge5"&gt;
-&lt;title&gt;114471908856-&gt;114795552272
-&lt;path d="M151.0088,-73.4551C151.0088,-65.3828 151.0088,-55.6764 151.0088,-46.6817" fill="none" stroke="#000000"&gt;&lt;/path&gt;
-&lt;polygon fill="#000000" points="154.5089,-46.5903 151.0088,-36.5904 147.5089,-46.5904 154.5089,-46.5903" stroke="#000000"&gt;&lt;/polygon&gt;
-&lt;/g&gt;
-&lt;/g&gt;
-&lt;/svg&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
 &lt;div class="prompt input_prompt"&gt;In [135]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
@@ -1728,17 +1564,6 @@ Epoch 10/10
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [ ]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;pipeline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;x_test&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
 &lt;div class="prompt input_prompt"&gt;In [126]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
@@ -1763,30 +1588,16 @@ Epoch 10/10
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [136]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [ ]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;sample_idx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;sample_idx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
 &lt;span class="n"&gt;pred&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;most_sim&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_prediction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x_test&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;sample_idx&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
 &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;'Sampled test job title: &lt;/span&gt;&lt;span class="si"&gt;{x_test[sample_idx]}&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;'True occupation: &lt;/span&gt;&lt;span class="si"&gt;{test_set["SOC minor group"].iloc[sample_idx]}&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;'Occupation prediction: &lt;/span&gt;&lt;span class="si"&gt;{pred}&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;'Most similar example in train set: &lt;/span&gt;&lt;span class="si"&gt;{most_sim}&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; 
 &lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt"&gt;&lt;/div&gt;
-&lt;div class="output_subarea output_stream output_stdout output_text"&gt;
-&lt;pre&gt;Sampled test job title: chief diversity officer (cdo)
-True occupation: 11-1
-Occupation prediction: 11-9
-Most similar example in train set: farm operations technical director
-&lt;/pre&gt;
-&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1820,7 +1631,8 @@ Most similar example in train set: farm operations technical director
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;The siamese model thus outperforms the random guess (accuracy ~0.1 %) and the nearest neighbor baseline (~32 %) 🤹‍♀️! What this means is that the siamese model managed to squeeze some juice out of &lt;strong&gt;all&lt;/strong&gt; the examples in the dataset, even accross categories. The original multi-class classification approach does not allow to learn "accross categories" because the categorical cross-entropy that is always used to treat those problems actually treats the multi-class classification tasks as a set of independent binary classification tasks.&lt;/p&gt;
+&lt;p&gt;The siamese model thus outperforms the random guess (accuracy ~0.1 %) and the nearest neighbor baseline (~32 %) by a substantial margin 🤹‍♀️ . Even though it is far from perfect, predicts the right category for a job title 2 times out of 5, while it has to choose between roughly a hundred of them.&lt;/p&gt;
+&lt;p&gt;What this means is that the siamese model managed to squeeze some juice out of &lt;strong&gt;all&lt;/strong&gt; the examples in the dataset, even accross categories. The original multi-class classification approach does not allow to learn "accross categories" because the categorical cross-entropy that is always used to treat those problems actually treats the multi-class classification tasks as a set of independent binary classification tasks.&lt;/p&gt;
 &lt;p&gt;The siamese network approach to the few-shot learning problem is definitely a 
 way out with textual data 📚. At the cost of a bit more complex modelling it gives better than standards multi-class classification methods. Give it a shot if you and to classify your data with machine learning but don't have many examples per category, you won't regret it 🎊.&lt;/p&gt;
 &lt;/div&gt;
@@ -1855,12 +1667,7 @@ way out with textual data 📚. At the cost of a bit more complex modelling it g
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</content><category term="python"></category><category term="machine learning"></category><category term="deep learning"></category><category term="natural language processing"></category></entry><entry><title>LIME of words: interpreting Recurrent Neural Networks predictions</title><link href="https://nkthiebaut.github.io/deep-lime.html" rel="alternate"></link><published>2017-09-12T16:00:00+02:00</published><updated>2017-09-12T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-09-12:/deep-lime.html</id><summary type="html">
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h1 id="Interpreting-recurrent-neural-networks-with-LIME"&gt;Interpreting recurrent neural networks with LIME&lt;a class="anchor-link" href="#Interpreting-recurrent-neural-networks-with-LIME"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the &lt;a href="https://nkthiebaut.github.io/lime-of-words.html"&gt;first part&lt;/a&gt;. This second part is a quick application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
+</summary><category term="python"></category><category term="machine learning"></category><category term="deep learning"></category><category term="natural language processing"></category></entry><entry><title>LIME of words: interpreting Recurrent Neural Networks predictions</title><link href="https://nkthiebaut.github.io/deep-lime.html" rel="alternate"></link><published>2017-09-12T16:00:00+02:00</published><updated>2017-09-12T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-09-12:deep-lime.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -3486,12 +3293,7 @@ YII=
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</content><category term="python"></category><category term="machine learning"></category><category term="deep learning"></category></entry><entry><title>LIME of words: how to interpret your machine learning model predictions</title><link href="https://nkthiebaut.github.io/lime-of-words.html" rel="alternate"></link><published>2017-08-07T16:00:00+02:00</published><updated>2017-08-07T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-08-07:/lime-of-words.html</id><summary type="html">
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h1 id="Experiments-with-the-LIME-interpretation-model"&gt;Experiments with the LIME interpretation model&lt;a class="anchor-link" href="#Experiments-with-the-LIME-interpretation-model"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;In this blog post I will share experiments on the LIME (Local Interpretable Model-agnostic Explanations) interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called &lt;a href="https://arxiv.org/abs/1602.04938"&gt;“Why Should I Trust You?” Explaining the Predictions of Any Classifier&lt;/a&gt;. The purpose of this method is to explain a model prediction for a specific sample in a human-interpretable way.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
+</summary><category term="python"></category><category term="machine learning"></category><category term="deep learning"></category></entry><entry><title>LIME of words: how to interpret your machine learning model predictions</title><link href="https://nkthiebaut.github.io/lime-of-words.html" rel="alternate"></link><published>2017-08-07T16:00:00+02:00</published><updated>2017-08-07T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-08-07:lime-of-words.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -5541,4 +5343,4 @@ JmbmgeWyiwAAAABJRU5ErkJggg==
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</content><category term="python"></category><category term="machine learning"></category></entry></feed>
+</summary><category term="python"></category><category term="machine learning"></category></entry></feed>

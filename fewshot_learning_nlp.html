@@ -1086,32 +1086,32 @@ h6:hover .anchor-link {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [61]:</div>
+<div class="prompt input_prompt">In [12]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="c1"># Download the Standard Occupation Classification</span>
+<span class="c1"># Import a home-made dictionary that maps SOC codes to "occupations" names</span>
+<span class="kn">from</span> <span class="nn">soc</span> <span class="k">import</span> <span class="n">SOC_MINOR_GROUPS</span>
+
+<span class="c1"># Download the Standard Occupation Classification with job titles examples</span>
 <span class="n">file_url</span> <span class="o">=</span> <span class="s1">'https://www.onetcenter.org/dl_files/database/db_20_1_text/Sample</span><span class="si">%20o</span><span class="s1">f%20Reported%20Titles.txt'</span>
 <span class="n">csv</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">file_url</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
 <span class="c1"># Load it in a pandas DataFrame and drop a useless column</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">'</span><span class="se">\t</span><span class="s1">'</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'Shown in My Next Move'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="c1"># Remove occupations for which we have only one example, because</span>
-<span class="c1"># We can't even have a train a test examples for those</span>
-<span class="n">occupations_counts</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
-<span class="n">multi_examples_occupations</span> <span class="o">=</span> <span class="n">occupations_counts</span><span class="p">[</span><span class="n">occupations_counts</span> <span class="o">></span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">multi_examples_occupations</span><span class="p">)]</span>
-
-<span class="n">df</span><span class="p">[</span><span class="s1">'SOC minor group'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+<span class="c1"># Get the occupation name from the code and remove the original code column</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'SOC minor group'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'O*NET-SOC Code'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">SOC_MINOR_GROUPS</span><span class="p">[</span><span class="n">x</span><span class="p">[:</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'O*NET-SOC Code'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Lower all job titles for simplicity</span>
 <span class="n">df</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
-<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="c1"># Display a few examples</span>
+<span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">101</span><span class="p">,</span><span class="mi">102</span><span class="p">,</span><span class="mi">301</span><span class="p">,</span><span class="mi">302</span><span class="p">,</span><span class="mi">303</span><span class="p">]]</span>
 </pre></div>
 </div>
 </div>
@@ -1119,7 +1119,7 @@ h6:hover .anchor-link {
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[61]:</div>
+<div class="prompt output_prompt">Out[12]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
 <style scoped="">
@@ -1139,131 +1139,55 @@ h6:hover .anchor-link {
 <thead>
 <tr style="text-align: right;">
 <th></th>
-<th>O*NET-SOC Code</th>
 <th>Reported Job Title</th>
 <th>SOC minor group</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<th>0</th>
-<td>11-1011.00</td>
-<td>chief diversity officer (cdo)</td>
-<td>11-1</td>
-</tr>
-<tr>
 <th>1</th>
-<td>11-1011.00</td>
 <td>chief executive officer (ceo)</td>
-<td>11-1</td>
+<td>Top Executives</td>
 </tr>
 <tr>
 <th>2</th>
-<td>11-1011.00</td>
 <td>chief financial officer (cfo)</td>
-<td>11-1</td>
+<td>Top Executives</td>
 </tr>
 <tr>
 <th>3</th>
-<td>11-1011.00</td>
 <td>chief nursing officer</td>
-<td>11-1</td>
+<td>Top Executives</td>
 </tr>
 <tr>
-<th>4</th>
-<td>11-1011.00</td>
-<td>chief operating officer (coo)</td>
-<td>11-1</td>
+<th>100</th>
+<td>banking center manager (bcm)</td>
+<td>Operations Specialties Managers</td>
 </tr>
 <tr>
-<th>5</th>
-<td>11-1011.00</td>
-<td>executive director</td>
-<td>11-1</td>
+<th>101</th>
+<td>banking officer</td>
+<td>Operations Specialties Managers</td>
 </tr>
 <tr>
-<th>6</th>
-<td>11-1011.00</td>
-<td>executive vice president (evp)</td>
-<td>11-1</td>
+<th>102</th>
+<td>branch manager</td>
+<td>Operations Specialties Managers</td>
 </tr>
 <tr>
-<th>7</th>
-<td>11-1011.00</td>
-<td>operations vice president</td>
-<td>11-1</td>
+<th>301</th>
+<td>project engineering manager</td>
+<td>Other Management Occupations</td>
 </tr>
 <tr>
-<th>8</th>
-<td>11-1011.00</td>
-<td>president</td>
-<td>11-1</td>
+<th>302</th>
+<td>project manager</td>
+<td>Other Management Occupations</td>
 </tr>
 <tr>
-<th>9</th>
-<td>11-1011.00</td>
-<td>vice president</td>
-<td>11-1</td>
-</tr>
-<tr>
-<th>10</th>
-<td>11-1011.03</td>
-<td>corporate sustainability process manager</td>
-<td>11-1</td>
-</tr>
-<tr>
-<th>11</th>
-<td>11-1011.03</td>
-<td>director of sustainability</td>
-<td>11-1</td>
-</tr>
-<tr>
-<th>12</th>
-<td>11-1011.03</td>
-<td>director of sustainability programs</td>
-<td>11-1</td>
-</tr>
-<tr>
-<th>13</th>
-<td>11-1011.03</td>
-<td>director of sustainable design</td>
-<td>11-1</td>
-</tr>
-<tr>
-<th>14</th>
-<td>11-1011.03</td>
-<td>supply chain manager, sustainability and energy</td>
-<td>11-1</td>
-</tr>
-<tr>
-<th>15</th>
-<td>11-1011.03</td>
-<td>sustainability coordinator</td>
-<td>11-1</td>
-</tr>
-<tr>
-<th>16</th>
-<td>11-1011.03</td>
-<td>sustainability director</td>
-<td>11-1</td>
-</tr>
-<tr>
-<th>17</th>
-<td>11-1011.03</td>
-<td>vice president, corporate social responsibilit...</td>
-<td>11-1</td>
-</tr>
-<tr>
-<th>18</th>
-<td>11-1021.00</td>
-<td>business manager</td>
-<td>11-1</td>
-</tr>
-<tr>
-<th>19</th>
-<td>11-1021.00</td>
-<td>facilities manager</td>
-<td>11-1</td>
+<th>303</th>
+<td>analytical research program manager</td>
+<td>Other Management Occupations</td>
 </tr>
 </tbody>
 </table>
@@ -1277,14 +1201,14 @@ h6:hover .anchor-link {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The downloaded file contains job categories codes (first column) and samples of job titles that belong to those categories. To get categories description type the occupation code <a href="https://www.onetonline.org/help/online/search">here</a>. For instance, the first occupation (11-1011.00) is called "Chief Executives" as one can guess from the corresponding job titles examples.</p>
+<p>The downloaded file contains job categories codes ("SOC minor group") and samples of job titles that belong to those categories. To get categories description check <a href="https://www.bls.gov/soc/2010/2010_major_groups.htm">the Standard Occupation Classification website</a>.</p>
 <p>Let's investigate a bit:</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [2]:</div>
+<div class="prompt input_prompt">In [13]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>  <span class="c1"># Count the number of different modalities in each column</span>
@@ -1295,10 +1219,10 @@ h6:hover .anchor-link {
 <div class="output_wrapper">
 <div class="output">
 <div class="output_area">
-<div class="prompt output_prompt">Out[2]:</div>
+<div class="prompt output_prompt">Out[13]:</div>
 <div class="output_text output_subarea output_execute_result">
-<pre>O*NET-SOC Code         954
-Reported Job Title    7172
+<pre>Reported Job Title    7174
+SOC minor group         94
 dtype: int64</pre>
 </div>
 </div>
@@ -1309,7 +1233,7 @@ dtype: int64</pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>So we have 954 categories ("occupations") for 7172 examples, i.e. 7.5 examples per category on average. We are definitely in the few-shot learning setting.</p>
+<p>So we have 94 categories ("SOC minor groups") for 7174 examples, i.e. 75 examples per category on average. This is not the most extreme examples of few-shot learning but it's still an example that is better tacked by the siamese techniques that will see below than with a standard multi-class classification approach.</p>
 <p>Before proceeding with modelling let's create a train and test sets, by putting one example in the test set for each class.</p>
 </div>
 </div>
@@ -1600,8 +1524,9 @@ Test accuracy (baseline): 31.91 %
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now that we have created the pairs dataset and preprocessed the job titles we can turn to the siamese model itself. It consists of a cloned sequential network, the input of which is a pair of vectors <code>x_left</code> and <code>x_right</code>. The last layer of the sequential network for <code>x_left</code> is the vector representation of the left job title, and same thing for <code>x_right</code> the right input job title. The representations of the right and left inputs are used to compute the similarity between the job titles: $$\text{sim}\left(x_{l}, x_{r}\right) = \exp \left(-\| f(x_l) - f(x_r) \|_1\right),$$</p>
-<p>where $\text{sim} \in [0, 1]$, $\|\cdot\|_1$ is the $L_1$ norm, and $f$ is the function corresponding to the application of the cloned sequential network to the left/right input.</p>
+<p>Now that we have created the pairs dataset and preprocessed the job titles we can turn to the siamese model itself. It consists of a cloned sequential network, the input of which is a pair of vectors <code>x_left</code> and <code>x_right</code>. The last layer of the sequential network for <code>x_left</code> is the vector representation of the left job title, and same thing for <code>x_right</code> the right input job title. The representations of the right and left inputs are used to compute the similarity between the job titles:</p>
+<p>$$\text{sim}\left(x_{l}, x_{r}\right) = \exp \left(-\| f(x_l) - f(x_r) \|_1\right),$$</p>
+<p>where $\text{sim} \in [0, 1]$, $\|\cdot\|_1$ is the L1 norm, and $f$ is the function corresponding to the application of the cloned sequential network to the left/right input.</p>
 <p>This setting is called the <a href="https://www.quora.com/What-is-Manhattan-LSTM">Manhattan LSTM</a> becasue the we'll use LSTMs as the sequential network, and the L1 norm used to compute the distance between two samples of a pair is also called the <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Manhattan distance</a>. Here is the corresponding code.</p>
 </div>
 </div>
@@ -1688,90 +1613,6 @@ ________________________________________________________________________________
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [134]:</div>
-<div class="inner_cell">
-<div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">SVG</span>
-<span class="kn">from</span> <span class="nn">keras.utils.vis_utils</span> <span class="k">import</span> <span class="n">model_to_dot</span>
-
-<span class="c1"># Let's get a very minimalist visual representation of our siamese model</span>
-<span class="n">SVG</span><span class="p">(</span><span class="n">model_to_dot</span><span class="p">(</span><span class="n">siamese_lstm</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">prog</span><span class="o">=</span><span class="s1">'dot'</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'svg'</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="output_wrapper">
-<div class="output">
-<div class="output_area">
-<div class="prompt output_prompt">Out[134]:</div>
-<div class="output_svg output_subarea output_execute_result">
-<svg height="264pt" viewbox="0.00 0.00 313.91 264.00" width="314pt" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g class="graph" id="graph0" transform="scale(1 1) rotate(0) translate(4 260)">
-<title>G
-<polygon fill="#ffffff" points="-4,4 -4,-260 309.9106,-260 309.9106,4 -4,4" stroke="transparent"></polygon>
-<!-- 114503186864 -->
-<g class="node" id="node1">
-<title>114503186864
-<polygon fill="none" points="0,-219.5 0,-255.5 140.0176,-255.5 140.0176,-219.5 0,-219.5" stroke="#000000"></polygon>
-<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="70.0088" y="-233.3">left_input: InputLayer</text>
-</g>
-<!-- 114503187424 -->
-<g class="node" id="node3">
-<title>114503187424
-<polygon fill="none" points="54.9482,-146.5 54.9482,-182.5 247.0693,-182.5 247.0693,-146.5 54.9482,-146.5" stroke="#000000"></polygon>
-<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="151.0088" y="-160.3">sequential_network: Sequential</text>
-</g>
-<!-- 114503186864&#45;&gt;114503187424 -->
-<g class="edge" id="edge1">
-<title>114503186864->114503187424
-<path d="M90.0313,-219.4551C100.059,-210.4177 112.3597,-199.3319 123.2802,-189.4899" fill="none" stroke="#000000"></path>
-<polygon fill="#000000" points="125.8507,-191.885 130.9359,-182.5904 121.1644,-186.6852 125.8507,-191.885" stroke="#000000"></polygon>
-</g>
-<!-- 114503186584 -->
-<g class="node" id="node2">
-<title>114503186584
-<polygon fill="none" points="158.1069,-219.5 158.1069,-255.5 305.9106,-255.5 305.9106,-219.5 158.1069,-219.5" stroke="#000000"></polygon>
-<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="232.0088" y="-233.3">right_input: InputLayer</text>
-</g>
-<!-- 114503186584&#45;&gt;114503187424 -->
-<g class="edge" id="edge2">
-<title>114503186584->114503187424
-<path d="M211.9863,-219.4551C201.9585,-210.4177 189.6579,-199.3319 178.7373,-189.4899" fill="none" stroke="#000000"></path>
-<polygon fill="#000000" points="180.8532,-186.6852 171.0817,-182.5904 176.1669,-191.885 180.8532,-186.6852" stroke="#000000"></polygon>
-</g>
-<!-- 114471908856 -->
-<g class="node" id="node4">
-<title>114471908856
-<polygon fill="none" points="27.4883,-73.5 27.4883,-109.5 274.5293,-109.5 274.5293,-73.5 27.4883,-73.5" stroke="#000000"></polygon>
-<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="151.0088" y="-87.3">pair_representations_difference: Subtract</text>
-</g>
-<!-- 114503187424&#45;&gt;114471908856 -->
-<g class="edge" id="edge3">
-<title>114503187424->114471908856
-<path d="M151.0088,-146.4551C151.0088,-138.3828 151.0088,-128.6764 151.0088,-119.6817" fill="none" stroke="#000000"></path>
-<polygon fill="#000000" points="154.5089,-119.5903 151.0088,-109.5904 147.5089,-119.5904 154.5089,-119.5903" stroke="#000000"></polygon>
-</g>
-<!-- 114795552272 -->
-<g class="node" id="node5">
-<title>114795552272
-<polygon fill="none" points="66.6104,-.5 66.6104,-36.5 235.4072,-36.5 235.4072,-.5 66.6104,-.5" stroke="#000000"></polygon>
-<text fill="#000000" font-family="Times,serif" font-size="14.00" text-anchor="middle" x="151.0088" y="-14.3">masltsm_distance: Lambda</text>
-</g>
-<!-- 114471908856&#45;&gt;114795552272 -->
-<g class="edge" id="edge5">
-<title>114471908856->114795552272
-<path d="M151.0088,-73.4551C151.0088,-65.3828 151.0088,-55.6764 151.0088,-46.6817" fill="none" stroke="#000000"></path>
-<polygon fill="#000000" points="154.5089,-46.5903 151.0088,-36.5904 147.5089,-46.5904 154.5089,-46.5903" stroke="#000000"></polygon>
-</g>
-</g>
-</svg>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
 <div class="prompt input_prompt">In [135]:</div>
 <div class="inner_cell">
 <div class="input_area">
@@ -1823,17 +1664,6 @@ Epoch 10/10
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [ ]:</div>
-<div class="inner_cell">
-<div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">x_test</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
 <div class="prompt input_prompt">In [126]:</div>
 <div class="inner_cell">
 <div class="input_area">
@@ -1858,30 +1688,16 @@ Epoch 10/10
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In [136]:</div>
+<div class="prompt input_prompt">In [ ]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_idx</span> <span class="o">=</span> <span class="mi">0</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_idx</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">pred</span><span class="p">,</span> <span class="n">most_sim</span> <span class="o">=</span> <span class="n">get_prediction</span><span class="p">(</span><span class="n">x_test</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Sampled test job title: </span><span class="si">{x_test[sample_idx]}</span><span class="s1">'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'True occupation: </span><span class="si">{test_set["SOC minor group"].iloc[sample_idx]}</span><span class="s1">'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Occupation prediction: </span><span class="si">{pred}</span><span class="s1">'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Most similar example in train set: </span><span class="si">{most_sim}</span><span class="s1">'</span><span class="p">)</span> 
 </pre></div>
-</div>
-</div>
-</div>
-<div class="output_wrapper">
-<div class="output">
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Sampled test job title: chief diversity officer (cdo)
-True occupation: 11-1
-Occupation prediction: 11-9
-Most similar example in train set: farm operations technical director
-</pre>
-</div>
 </div>
 </div>
 </div>
@@ -1915,7 +1731,8 @@ Most similar example in train set: farm operations technical director
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The siamese model thus outperforms the random guess (accuracy ~0.1 %) and the nearest neighbor baseline (~32 %) 🤹‍♀️! What this means is that the siamese model managed to squeeze some juice out of <strong>all</strong> the examples in the dataset, even accross categories. The original multi-class classification approach does not allow to learn "accross categories" because the categorical cross-entropy that is always used to treat those problems actually treats the multi-class classification tasks as a set of independent binary classification tasks.</p>
+<p>The siamese model thus outperforms the random guess (accuracy ~0.1 %) and the nearest neighbor baseline (~32 %) by a substantial margin 🤹‍♀️ . Even though it is far from perfect, predicts the right category for a job title 2 times out of 5, while it has to choose between roughly a hundred of them.</p>
+<p>What this means is that the siamese model managed to squeeze some juice out of <strong>all</strong> the examples in the dataset, even accross categories. The original multi-class classification approach does not allow to learn "accross categories" because the categorical cross-entropy that is always used to treat those problems actually treats the multi-class classification tasks as a set of independent binary classification tasks.</p>
 <p>The siamese network approach to the few-shot learning problem is definitely a 
 way out with textual data 📚. At the cost of a bit more complex modelling it gives better than standards multi-class classification methods. Give it a shot if you and to classify your data with machine learning but don't have many examples per category, you won't regret it 🎊.</p>
 </div>
