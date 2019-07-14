@@ -12,8 +12,8 @@ A few websites about data science I like:
 
 Machine learning, Deep learning and NLP:
 
-* Christopher Olah's blog on many stuff: `<http://colah.github.io>`_
-* WildML, deep learning and NLP: `<http://www.wildml.com>`_
+* Distill: AI and Deep Learning blog:: `<https://distill.pub/>`_
+* WildML: deep learning and NLP `<http://www.wildml.com>`_
 * Sebastian Ruder's blog, particularly nice for its SGD explanations: `<http://ruder.io>`_
 * Cathy O'Neill's blog, mostly on the ethics in data science: `<https://mathbabe.org>`_ 
 
