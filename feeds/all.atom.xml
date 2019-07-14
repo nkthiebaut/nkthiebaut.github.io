@@ -975,11 +975,11 @@ h6:hover .anchor-link {
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h1 id="Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;Few-shot learning on textual data with siamese neural networks&lt;a class="anchor-link" href="#Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and few examples per category, it is usually thought that you're in trouble 😨. Acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques exist to deal with this situation 🕺.&lt;/p&gt;
+&lt;h1 id="Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;Few-shot learning on textual data with siamese neural networks&lt;a class="anchor-link" href="#Few-shot-learning-on-textual-data-with-siamese-neural-networks"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and only a few examples per category, it is usually thought that you're in trouble 😨. Acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques exist to deal with this situation 🕺.&lt;/p&gt;
 &lt;p&gt;This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;obtain decent results&lt;/a&gt;!).&lt;/p&gt;
 &lt;p&gt;Most of the machine learning research on one-shot learning involves images, but some &lt;a href="https://arxiv.org/abs/1710.10280"&gt;recent research papers&lt;/a&gt; address the same problem in the Natural Language Processing (NLP) realm.&lt;/p&gt;
-&lt;p&gt;In this blog post, I will use siamese neural network to tackle few-shot learning, following a &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;method that was originally applied to images&lt;/a&gt; and that is nicely explained &lt;a href="https://sorenbouma.github.io/blog/oneshot/"&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Job title classification provides a good example of a few-shot learning problem in NLP. Say you want to group job titles in different categories or "occupations" (e.g. gather "Programmer" and "Software engineer" in an occupation, and "Sales manager" in another one), then unless you have hundreds of job titles examples per occupation you are facing a few-shot learning problem. The U.S government provides such a job title/occupations taxonomy: the &lt;a href="https://www.bls.gov/soc/"&gt;Standard Occupational Classification&lt;/a&gt;. I'll use it as a toy dataset understand how few-shot learning with siamese neural networks works.&lt;/p&gt;
+&lt;p&gt;In this blog post, I will use a siamese neural network to tackle a few-shot learning prolbem, following a &lt;a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf"&gt;method that was originally applied to images&lt;/a&gt; and that is nicely explained &lt;a href="https://sorenbouma.github.io/blog/oneshot/"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Job title classification provides a good example of a few-shot learning problem in NLP. Imagine you want to group job titles in different categories or "occupations" (e.g. gather "Programmer" and "Software engineer" under the same occupation, and "Sales manager" and "Account executive" under another one). Unless you have hundreds of job titles examples per occupation you are facing a few-shot learning problem. The U.S government provides such a job title/occupations taxonomy: the &lt;a href="https://www.bls.gov/soc/"&gt;Standard Occupational Classification&lt;/a&gt;. I'll use it as a toy dataset to understand how few-shot learning with siamese neural networks works.&lt;/p&gt;
 &lt;p&gt;Let's start by downloading the taxonomy and check what's in there.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -994,6 +994,7 @@ h6:hover .anchor-link {
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;pandas&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;pd&lt;/span&gt;
 
 &lt;span class="c1"&gt;# Import a home-made dictionary that maps SOC codes to "occupations" names&lt;/span&gt;
+&lt;span class="c1"&gt;# The corresponding file can be downloaded here: https://gist.github.com/nkthiebaut/c2895b8bb77bdf3253fb581622dca51b&lt;/span&gt;
 &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;soc&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;SOC_MINOR_GROUPS&lt;/span&gt;
 
 &lt;span class="c1"&gt;# Download the Standard Occupation Classification with job titles examples&lt;/span&gt;
@@ -1101,14 +1102,14 @@ h6:hover .anchor-link {
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;The downloaded file contains job categories codes ("SOC minor group") and samples of job titles that belong to those categories. To get categories description check &lt;a href="https://www.bls.gov/soc/2010/2010_major_groups.htm"&gt;the Standard Occupation Classification website&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Let's investigate a bit:&lt;/p&gt;
+&lt;p&gt;The downloaded file contains job categories codes ("SOC minor group") and samples of job titles that belong to those categories. The categories descriptions are available on &lt;a href="https://www.bls.gov/soc/2010/2010_major_groups.htm"&gt;the Standard Occupation Classification website&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Let's investigate our dataset:&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [13]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [2]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;nunique&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;  &lt;span class="c1"&gt;# Count the number of different modalities in each column&lt;/span&gt;
@@ -1119,7 +1120,7 @@ h6:hover .anchor-link {
 &lt;div class="output_wrapper"&gt;
 &lt;div class="output"&gt;
 &lt;div class="output_area"&gt;
-&lt;div class="prompt output_prompt"&gt;Out[13]:&lt;/div&gt;
+&lt;div class="prompt output_prompt"&gt;Out[2]:&lt;/div&gt;
 &lt;div class="output_text output_subarea output_execute_result"&gt;
 &lt;pre&gt;Reported Job Title    7174
 SOC minor group         94
@@ -1133,7 +1134,7 @@ dtype: int64&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;So we have 94 categories ("SOC minor groups") for 7174 examples, i.e. 75 examples per category on average, but some categories have as few as 10 examples (a df.value_counts() would tell you that). This is not the most extreme examples of few-shot learning but it's still an example that is better tacked by the siamese techniques that will see below than with a standard multi-class classification approach.&lt;/p&gt;
+&lt;p&gt;So we have 94 categories ("SOC minor groups") for 7174 examples, i.e. 75 examples per category on average, but some categories have as few as 10 examples (&lt;code&gt;df.value_counts()&lt;/code&gt; would tell you that). This is not the most extreme examples of few-shot learning but it's still an example that is better tackled by siamese models than by standard multi-class classification approaches.&lt;/p&gt;
 &lt;p&gt;Before proceeding with modelling let's create a train and test sets, by putting one example in the test set for each class.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1157,7 +1158,31 @@ dtype: int64&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="Building-a-baseline-🐣"&gt;Building a baseline 🐣&lt;a class="anchor-link" href="#Building-a-baseline-🐣"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Before experimenting with fancy models, let's establish a strong baseline. We can start by using word embeddings to get a vector representation of each job title, and use a nearest neighbor classifier that is a less likely to overfit than tree-based models or parametric classifiers.&lt;/p&gt;
+&lt;p&gt;We then encode the targets as numbers.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [4]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.preprocessing&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;LabelEncoder&lt;/span&gt;
+
+&lt;span class="n"&gt;classes_encoder&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;LabelEncoder&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="n"&gt;y_train&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;classes_encoder&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit_transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;y_test&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;classes_encoder&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;h2 id="Building-a-baseline-🐣"&gt;Building a baseline 🐣&lt;a class="anchor-link" href="#Building-a-baseline-🐣"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Before experimenting with fancy models, let's establish a strong baseline. We can start by using word embeddings to get a vector representation of each job title and use a nearest neighbor classifier that is less likely to overfit than tree-based models or parametric classifiers.&lt;/p&gt;
 &lt;p&gt;To get the representation of a sentence from pre-trained word embeddings I'll use &lt;a href="https://github.com/nkthiebaut/zeugma"&gt;Zeugma&lt;/a&gt;, an NLP python library I've written that conveniently provides pre-trained word embeddings in the form of &lt;a href="http://scikit-learn.org/stable/modules/pipeline.html"&gt;scikit-learn transformers&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1171,15 +1196,26 @@ dtype: int64&lt;/pre&gt;
 
 &lt;span class="c1"&gt;# We'll use the GloVe pre-trained embeddings, using the sum of the word embeddings&lt;/span&gt;
 &lt;span class="c1"&gt;# of a job title as the embedding vector&lt;/span&gt;
-&lt;span class="n"&gt;embedding&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;EmbeddingTransformer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'glove-twitter-200'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;aggregation&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'sum'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;embedding&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;EmbeddingTransformer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'glove'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;aggregation&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'sum'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+&lt;div class="output_area"&gt;
+&lt;div class="prompt"&gt;&lt;/div&gt;
+&lt;div class="output_subarea output_stream output_stderr output_text"&gt;
+&lt;pre&gt;Using TensorFlow backend.
+&lt;/pre&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [54]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [6]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.pipeline&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;make_pipeline&lt;/span&gt;
@@ -1188,8 +1224,7 @@ dtype: int64&lt;/pre&gt;
 &lt;span class="c1"&gt;# Our model is a nearest neighbor classifier, the input of which is the sum of the &lt;/span&gt;
 &lt;span class="c1"&gt;# embeddings of words in the job title.&lt;/span&gt;
 &lt;span class="n"&gt;clf&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;KNeighborsClassifier&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_neighbors&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.linear_model&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;LogisticRegression&lt;/span&gt;
-&lt;span class="n"&gt;clf&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;LogisticRegression&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
 &lt;span class="n"&gt;baseline&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;make_pipeline&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;embedding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;clf&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;/div&gt;
@@ -1198,7 +1233,7 @@ dtype: int64&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [55]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [7]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;baseline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x_train&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -1213,72 +1248,9 @@ dtype: int64&lt;/pre&gt;
 &lt;div class="output_area"&gt;
 &lt;div class="prompt"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_stream output_stdout output_text"&gt;
-&lt;pre&gt;Train accuracy (baseline): 73.81 %
-Test accuracy (baseline): 50.00 %
+&lt;pre&gt;Train accuracy (baseline): 84.94 %
+Test accuracy (baseline): 25.53 %
 &lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [65]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.metrics&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;roc_auc_score&lt;/span&gt;
-&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.preprocessing&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;label_binarize&lt;/span&gt;
-
-&lt;span class="n"&gt;y_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;baseline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;predict&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x_test&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;y_prob&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;baseline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;predict_proba&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x_test&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="c1"&gt;# def roc_auc_multiclass(y_test, y_pred, )&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [71]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;soc_minor_groups&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;unique&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;roc_auc_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
-    &lt;span class="n"&gt;label_binarize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;classes&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;unique&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt; 
-    &lt;span class="n"&gt;y_prob&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-    &lt;span class="n"&gt;average&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'micro'&lt;/span&gt;
-&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt output_prompt"&gt;Out[71]:&lt;/div&gt;
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;0.9385419861076632&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [59]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;f1_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;average&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"micro"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-&lt;div class="output_area"&gt;
-&lt;div class="prompt output_prompt"&gt;Out[59]:&lt;/div&gt;
-&lt;div class="output_text output_subarea output_execute_result"&gt;
-&lt;pre&gt;0.5&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1288,18 +1260,19 @@ Test accuracy (baseline): 50.00 %
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;Definitely not great but not too bad for a simple baseline model, considering a random guess would have a $\frac{1}{n_{\text{classes}}} \simeq 0.1 \%$ accuracy.&lt;/p&gt;
+&lt;p&gt;Not great... but not too bad for a simple baseline model, considering a random guess would have a $\frac{1}{n_{\text{classes}}} \simeq 0.1 \%$ accuracy. I have tried a few other simple models but, surprisingly, I could not beat this simple baseline easily. Let me know if you find a better model!&lt;/p&gt;
+&lt;p&gt;Note that the test accuracy is usually expected to be as high as the train one for a nearest neighbors classifier, since no parameters are fitted. Here this is not the case because the test set contains one example per category, such that rare categories have the same weight as prominent categories in the test accuracy.&lt;/p&gt;
 &lt;p&gt;It may seem hard to beat this simple baseline with a deep learning model due to the high chances of overfitting with such a small dataset, but here come siamese networks to the rescue.&lt;/p&gt;
-&lt;h2 id="Few-shot-learning-with-siamese-neural-networks-👯‍♀️"&gt;Few-shot learning with siamese neural networks 👯‍♀️&lt;a class="anchor-link" href="#Few-shot-learning-with-siamese-neural-networks-👯‍♀️"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The nearest neighbor model of the previous section is preforming quite well despite its simplicity, because it uses word embeddings learnt on a &lt;a href="https://nlp.stanford.edu/projects/glove/"&gt;huge NLP dataset from Twitter&lt;/a&gt;. Using word representations learnt in an unsupervised setting on a bigger dataset is the basic principle of &lt;a href="https://en.wikipedia.org/wiki/Transfer_learning"&gt;transfer learning&lt;/a&gt; and reduces the overfit by allowing smaller models to perform well, utltimately giving better performances on the test set.&lt;/p&gt;
-&lt;p&gt;Although the pre-trained embeddings are valuable, the embedding space used to determine nearest neighbors knows nothing about job titles in particular. There must be a way to learn an embedding space in which jobs belonging to the same occupation category are closer. This is where siamese networks come into play.&lt;/p&gt;
-&lt;p&gt;The main idea of siamese networks is to learn such a representation by training a model to discriminate between pairs of examples that are in the same category, and pairs of examples that come from different categories.&lt;/p&gt;
-&lt;h3 id="Building-the-pairs-dataset"&gt;Building the pairs dataset&lt;a class="anchor-link" href="#Building-the-pairs-dataset"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Let's create positive samples with pairs of job titles corresponding to the same SOC, and negative examples with pairs of job titles sampled from different SOC codes.&lt;/p&gt;
+&lt;h2 id="Few-shot-learning-with-siamese-neural-networks-👯‍♀️"&gt;Few-shot learning with siamese neural networks 👯‍♀️&lt;a class="anchor-link" href="#Few-shot-learning-with-siamese-neural-networks-👯‍♀️"&gt;¶&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The nearest neighbor model of the previous section is performing quite well despite its simplicity because it uses word embeddings learned on a &lt;a href="https://nlp.stanford.edu/projects/glove/"&gt;huge NLP dataset from Twitter&lt;/a&gt;. Using these words embeddings is a basic form of &lt;a href="https://en.wikipedia.org/wiki/Transfer_learning"&gt;transfer learning&lt;/a&gt;, which reduces the overfit by allowing smaller models to perform well, ultimately giving better performances on the test set.&lt;/p&gt;
+&lt;p&gt;Although the pre-trained embeddings are valuable, the embedding space used to determine nearest neighbors knows nothing about job titles in particular. There must be a way to learn an embedding space in which jobs that belong to the same occupation category are closer. This is where siamese networks come into play.&lt;/p&gt;
+&lt;p&gt;The main idea of siamese networks is to learn the above mentioned vector representation by training a model that discriminates between pairs of examples that are in the same category, and pairs of examples that come from different categories.&lt;/p&gt;
+&lt;h3 id="Building-the-pairs-dataset"&gt;Building the pairs dataset&lt;a class="anchor-link" href="#Building-the-pairs-dataset"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Let's create positive samples with pairs of job titles from the same SOC category, and negative examples with pairs of job titles sampled from different SOC codes.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [129]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [8]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;itertools&lt;/span&gt;
@@ -1311,14 +1284,17 @@ Test accuracy (baseline): 50.00 %
 
 &lt;span class="n"&gt;soc_codes&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;train_set&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'SOC minor group'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;unique&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;code&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;soc_codes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="c1"&gt;# 1) create similar categories pairs, with a corresponding target of 1&lt;/span&gt;
     &lt;span class="n"&gt;similar_jobs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;train_set&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;train_set&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'SOC minor group'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;code&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s1"&gt;'Reported Job Title'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+    
     &lt;span class="c1"&gt;# Pick 1000 random pairs from the SOC group's job titles combinations &lt;/span&gt;
     &lt;span class="n"&gt;group_pairs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;itertools&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;combinations&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;similar_jobs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; 
-    &lt;span class="n"&gt;positive_pairs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;group_pairs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;group_pairs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&gt;&lt;/span&gt; &lt;span class="mi"&gt;2000&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="n"&gt;group_pairs&lt;/span&gt;
+    &lt;span class="n"&gt;positive_pairs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;group_pairs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;group_pairs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&gt;&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="n"&gt;group_pairs&lt;/span&gt;
     &lt;span class="n"&gt;jobs_left&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;positive_pairs&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
     &lt;span class="n"&gt;jobs_right&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;positive_pairs&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
     &lt;span class="n"&gt;target&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="mf"&gt;1.&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;positive_pairs&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
     
+    &lt;span class="c1"&gt;# 2) create pairs of examples with jobs from different categories, with a target set to 0&lt;/span&gt;
     &lt;span class="n"&gt;other_jobs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;df&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'SOC minor group'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;code&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s1"&gt;'Reported Job Title'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
     &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;positive_pairs&lt;/span&gt;&lt;span class="p"&gt;)):&lt;/span&gt;
         &lt;span class="n"&gt;jobs_left&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;choice&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;similar_jobs&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
@@ -1331,7 +1307,7 @@ Test accuracy (baseline): 50.00 %
         &lt;span class="s1"&gt;'target'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;target&lt;/span&gt;
     &lt;span class="p"&gt;})&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;frac&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;  &lt;span class="c1"&gt;# Shuffle dataset&lt;/span&gt;
 
-&lt;span class="n"&gt;dataset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;dataset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;random_state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;2019&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1339,7 +1315,7 @@ Test accuracy (baseline): 50.00 %
 &lt;div class="output_wrapper"&gt;
 &lt;div class="output"&gt;
 &lt;div class="output_area"&gt;
-&lt;div class="prompt output_prompt"&gt;Out[129]:&lt;/div&gt;
+&lt;div class="prompt output_prompt"&gt;Out[8]:&lt;/div&gt;
 &lt;div class="output_html rendered_html output_subarea output_execute_result"&gt;
 &lt;div&gt;
 &lt;style scoped=""&gt;
@@ -1366,34 +1342,34 @@ Test accuracy (baseline): 50.00 %
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;th&gt;96427&lt;/th&gt;
-&lt;td&gt;staff genetic counselor&lt;/td&gt;
-&lt;td&gt;certified professional midwife&lt;/td&gt;
+&lt;th&gt;124077&lt;/th&gt;
+&lt;td&gt;cnc operator (computerized numerical control o...&lt;/td&gt;
+&lt;td&gt;quality technician&lt;/td&gt;
 &lt;td&gt;1.0&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;th&gt;213759&lt;/th&gt;
-&lt;td&gt;double end tenon operator&lt;/td&gt;
-&lt;td&gt;fitness instructor&lt;/td&gt;
+&lt;th&gt;44561&lt;/th&gt;
+&lt;td&gt;hockey player&lt;/td&gt;
+&lt;td&gt;major league baseball player&lt;/td&gt;
+&lt;td&gt;1.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;95797&lt;/th&gt;
+&lt;td&gt;load planner&lt;/td&gt;
+&lt;td&gt;network manager&lt;/td&gt;
 &lt;td&gt;0.0&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;th&gt;115334&lt;/th&gt;
-&lt;td&gt;certified executive chef (cec)&lt;/td&gt;
-&lt;td&gt;cost analyst&lt;/td&gt;
+&lt;th&gt;41577&lt;/th&gt;
+&lt;td&gt;curriculum specialist&lt;/td&gt;
+&lt;td&gt;utility worker&lt;/td&gt;
 &lt;td&gt;0.0&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;th&gt;192141&lt;/th&gt;
-&lt;td&gt;lubricator&lt;/td&gt;
-&lt;td&gt;trades helper&lt;/td&gt;
-&lt;td&gt;1.0&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;th&gt;182783&lt;/th&gt;
-&lt;td&gt;repair technician&lt;/td&gt;
-&lt;td&gt;substation mechanic&lt;/td&gt;
-&lt;td&gt;1.0&lt;/td&gt;
+&lt;th&gt;89726&lt;/th&gt;
+&lt;td&gt;customer engagement manager&lt;/td&gt;
+&lt;td&gt;manager, security infrastructure and enterpris...&lt;/td&gt;
+&lt;td&gt;0.0&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -1407,14 +1383,20 @@ Test accuracy (baseline): 50.00 %
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;Here we see that the pair "professor" and "spanish instructor" belong to the same job occupation category, while "sports writer" and "animal scientist" are in different occupations. Note that we end up with a much bigger dataset by creating pairs. Indeed the number of the created siamese dataset has 218,669 while the original dataset has only 8,921 samples. Of course we have only artifically increased the dataset size because we have not generated new data, but we'll see that this technique is still very powerful.&lt;/p&gt;
-&lt;h3 id="Modelling"&gt;Modelling&lt;a class="anchor-link" href="#Modelling"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;The general architecture of the model is based on &lt;a href="https://medium.com/mlreview/implementing-malstm-on-kaggles-quora-question-pairs-competition-8b31b0b16a07"&gt;this very good tutorial&lt;/a&gt;. I first lighly preprocess the job titles, turn them into index sequences and pad them to get a valide input for the incoming neural network classifier. Once again I use convenient transformers from the &lt;a href="https://github.com/nkthiebaut/zeugma"&gt;Zeugma&lt;/a&gt; to do so.&lt;/p&gt;
+&lt;p&gt;Here we see that the pair "hockey player" and "major league baseball player" belong to the same job occupation category (target = 1), while "curriculum specialist" and "utility worker" are in different occupations (target = 0). Note that we end up with a much bigger dataset by creating pairs. The synthetic dataset contains 218,669 pairs while the original dataset has only 8,921 samples. Of course, we have only artificially increased the dataset size because we have not generated new data, but we'll see that this technique is still very powerful.&lt;/p&gt;
+&lt;h3 id="Modelling"&gt;Modelling&lt;a class="anchor-link" href="#Modelling"&gt;¶&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;The general architecture of the model is based on &lt;a href="https://medium.com/mlreview/implementing-malstm-on-kaggles-quora-question-pairs-competition-8b31b0b16a07"&gt;this very good tutorial&lt;/a&gt;. The preprocessing is fairly simple:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;we remove parts of the jobs titles that are between parenthesis, we lowercase them, &lt;/li&gt;
+&lt;li&gt;then we turn the examples into index sequences, and&lt;/li&gt;
+&lt;li&gt;"pad" them to get a valid input for the neural network classifier. &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Here, again, I use convenient transformers from the &lt;a href="https://github.com/nkthiebaut/zeugma"&gt;Zeugma&lt;/a&gt; to perform all those steps.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [130]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [9]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;re&lt;/span&gt;
@@ -1449,7 +1431,7 @@ Test accuracy (baseline): 50.00 %
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [131]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [10]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;x_left&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pipeline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dataset&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'job_left'&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
@@ -1464,7 +1446,7 @@ Test accuracy (baseline): 50.00 %
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [132]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [11]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# We re-use the same embedding as with the baseline model&lt;/span&gt;
@@ -1478,16 +1460,16 @@ Test accuracy (baseline): 50.00 %
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;Now that we have created the pairs dataset and preprocessed the job titles we can turn to the siamese model itself. It consists of a cloned sequential network, the input of which is a pair of vectors &lt;code&gt;x_left&lt;/code&gt; and &lt;code&gt;x_right&lt;/code&gt;. The last layer of the sequential network for &lt;code&gt;x_left&lt;/code&gt; is the vector representation of the left job title, and same thing for &lt;code&gt;x_right&lt;/code&gt; the right input job title. The representations of the right and left inputs are used to compute the similarity between the job titles:&lt;/p&gt;
+&lt;p&gt;Now that we have created the pairs dataset and preprocessed the job titles we can turn our attention to the siamese model itself. It consists of a cloned sequential network, the input of which is a pair of vectors &lt;code&gt;x_left&lt;/code&gt; and &lt;code&gt;x_right&lt;/code&gt;. The last layer of the sequential network for &lt;code&gt;x_left&lt;/code&gt; is the vector representation of the left job title and same thing for &lt;code&gt;x_right&lt;/code&gt; the right input job title. The representations of the right and left inputs are used to compute the similarity between the job titles:&lt;/p&gt;
 &lt;p&gt;$$\text{sim}\left(x_{l}, x_{r}\right) = \exp \left(-\| f(x_l) - f(x_r) \|_1\right),$$&lt;/p&gt;
 &lt;p&gt;where $\text{sim} \in [0, 1]$, $\|\cdot\|_1$ is the L1 norm, and $f$ is the function corresponding to the application of the cloned sequential network to the left/right input.&lt;/p&gt;
-&lt;p&gt;This setting is called the &lt;a href="https://www.quora.com/What-is-Manhattan-LSTM"&gt;Manhattan LSTM&lt;/a&gt; becasue the we'll use LSTMs as the sequential network, and the L1 norm used to compute the distance between two samples of a pair is also called the &lt;a href="https://en.wikipedia.org/wiki/Taxicab_geometry"&gt;Manhattan distance&lt;/a&gt;. Here is the corresponding code.&lt;/p&gt;
+&lt;p&gt;This setting is called the &lt;a href="https://www.quora.com/What-is-Manhattan-LSTM"&gt;Manhattan LSTM&lt;/a&gt; because we'll use LSTMs as the sequential network, and the L1 norm (used to compute the distance between two samples of a pair) is also called the &lt;a href="https://en.wikipedia.org/wiki/Taxicab_geometry"&gt;Manhattan distance&lt;/a&gt;. Here is the corresponding code.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [133]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [18]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;keras.layers&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;LSTM&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Bidirectional&lt;/span&gt;
@@ -1501,18 +1483,17 @@ Test accuracy (baseline): 50.00 %
 &lt;span class="sd"&gt;    L1 distance to a similarity measure between 0 and 1"""&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;K&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;K&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sum&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;K&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;arms_difference&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;axis&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;keepdims&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 
-&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;siamese_lstm&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;max_length&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;max_words_job_title&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;embedding_layer&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;embedding_layer&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;siamese_lstm&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;max_length&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;embedding_layer&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="sd"&gt;""" Define, compile and return a siamese LSTM model """&lt;/span&gt;
     &lt;span class="n"&gt;input_shape&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;max_length&lt;/span&gt;&lt;span class="p"&gt;,)&lt;/span&gt;
     &lt;span class="n"&gt;left_input&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Input&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;input_shape&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'left_input'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;right_input&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Input&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;input_shape&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'right_input'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
     &lt;span class="c1"&gt;# Define a single sequential model for both arms.&lt;/span&gt;
-    &lt;span class="c1"&gt;# In this example I've chosen a stack of 2 bidirectional LSTMs with a bit of dropout&lt;/span&gt;
+    &lt;span class="c1"&gt;# In this example I've chosen a simple bidirectional LSTM with no dropout&lt;/span&gt;
     &lt;span class="n"&gt;seq&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Sequential&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'sequential_network'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;seq&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;embedding_layer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="n"&gt;seq&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Bidirectional&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;LSTM&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dropout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;recurrent_dropout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;return_sequences&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
-    &lt;span class="n"&gt;seq&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Bidirectional&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;LSTM&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;32&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dropout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;recurrent_dropout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.2&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+    &lt;span class="n"&gt;seq&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Bidirectional&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;LSTM&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;32&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dropout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;recurrent_dropout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
     
     &lt;span class="n"&gt;left_output&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;seq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;left_input&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;right_output&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;seq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;right_input&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -1527,7 +1508,7 @@ Test accuracy (baseline): 50.00 %
     &lt;span class="n"&gt;siamese_net&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;loss&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"binary_crossentropy"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;optimizer&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'adam'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;metrics&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'accuracy'&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;siamese_net&lt;/span&gt;
 
-&lt;span class="n"&gt;siamese_lstm&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;siamese_lstm&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;siamese_lstm&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;siamese_lstm&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;max_words_job_title&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;embedding_layer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
 &lt;span class="c1"&gt;# Print a summary of the model mainly to know the number of trainable parameters&lt;/span&gt;
 &lt;span class="n"&gt;siamese_lstm&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;summary&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
@@ -1547,7 +1528,7 @@ left_input (InputLayer)         (None, 10)           0
 __________________________________________________________________________________________________
 right_input (InputLayer)        (None, 10)           0                                            
 __________________________________________________________________________________________________
-sequential_network (Sequential) (None, 64)           238879696   left_input[0][0]                 
+sequential_network (Sequential) (None, 64)           29852698    left_input[0][0]                 
                                                                  right_input[0][0]                
 __________________________________________________________________________________________________
 pair_representations_difference (None, 64)           0           sequential_network[1][0]         
@@ -1555,9 +1536,9 @@ pair_representations_difference (None, 64)           0           sequential_netw
 __________________________________________________________________________________________________
 masltsm_distance (Lambda)       (None, 1)            0           pair_representations_difference[0
 ==================================================================================================
-Total params: 238,879,696
-Trainable params: 176,896
-Non-trainable params: 238,702,800
+Total params: 29,852,698
+Trainable params: 14,848
+Non-trainable params: 29,837,850
 __________________________________________________________________________________________________
 &lt;/pre&gt;
 &lt;/div&gt;
@@ -1567,10 +1548,10 @@ ________________________________________________________________________________
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [135]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [19]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;siamese_lstm&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x_pairs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_pairs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;validation_split&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;epochs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;siamese_lstm&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x_pairs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_pairs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;validation_split&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;0.1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;epochs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1580,27 +1561,9 @@ ________________________________________________________________________________
 &lt;div class="output_area"&gt;
 &lt;div class="prompt"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_stream output_stdout output_text"&gt;
-&lt;pre&gt;Train on 218669 samples, validate on 24297 samples
-Epoch 1/10
-218669/218669 [==============================] - 249s 1ms/step - loss: 0.6325 - acc: 0.6406 - val_loss: 0.5472 - val_acc: 0.7231
-Epoch 2/10
-218669/218669 [==============================] - 239s 1ms/step - loss: 0.5323 - acc: 0.7422 - val_loss: 0.4771 - val_acc: 0.7882
-Epoch 3/10
-218669/218669 [==============================] - 2723s 12ms/step - loss: 0.4865 - acc: 0.7827 - val_loss: 0.4358 - val_acc: 0.8190
-Epoch 4/10
-218669/218669 [==============================] - 553s 3ms/step - loss: 0.4578 - acc: 0.8041 - val_loss: 0.4092 - val_acc: 0.8392
-Epoch 5/10
-218669/218669 [==============================] - 552s 3ms/step - loss: 0.4371 - acc: 0.8202 - val_loss: 0.3863 - val_acc: 0.8522
-Epoch 6/10
-218669/218669 [==============================] - 436s 2ms/step - loss: 0.4207 - acc: 0.8302 - val_loss: 0.3710 - val_acc: 0.8585
-Epoch 7/10
-218669/218669 [==============================] - 250s 1ms/step - loss: 0.4073 - acc: 0.8375 - val_loss: 0.3565 - val_acc: 0.8659
-Epoch 8/10
-218669/218669 [==============================] - 244s 1ms/step - loss: 0.3969 - acc: 0.8428 - val_loss: 0.3475 - val_acc: 0.8682
-Epoch 9/10
-218669/218669 [==============================] - 246s 1ms/step - loss: 0.3863 - acc: 0.8474 - val_loss: 0.3350 - val_acc: 0.8735
-Epoch 10/10
-218669/218669 [==============================] - 221s 1ms/step - loss: 0.3779 - acc: 0.8502 - val_loss: 0.3326 - val_acc: 0.8729
+&lt;pre&gt;Train on 132636 samples, validate on 14738 samples
+Epoch 1/1
+132636/132636 [==============================] - 44s 329us/step - loss: 0.6727 - acc: 0.5781 - val_loss: 0.6515 - val_acc: 0.5999
 &lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1611,14 +1574,14 @@ Epoch 10/10
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;Without much effort (light preprocessing, few epochs, no early stopping, no hyper-parameters optimization) we obtain a decent ~87 % accuracy on the validation set. But remember that this is not the final task, here we are only solving the binary classification problem of recognizing pairs of job titles that belong to the same occupations category and pairs of jobs that are sampled from different occupations categories.&lt;/p&gt;
+&lt;p&gt;Without much effort (light preprocessing, few epochs, no early stopping, no hyper-parameters optimization) we obtain a decent ~67 % accuracy on the validation set. But remember that this is not the final task, here we are only solving the binary classification problem of recognizing pairs of job titles that belong to the same occupations category and pairs of jobs that are sampled from different occupations categories.&lt;/p&gt;
 &lt;p&gt;To address the initial problem of finding each job title's category we have to compute, for each example in the test set, the similarity score of this example with all the examples in the training set. The predicted category is the one of the closest example in training set.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [126]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [20]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;x_references&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pipeline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x_train&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;  &lt;span class="c1"&gt;# Preprocess the training set examples&lt;/span&gt;
@@ -1628,9 +1591,11 @@ Epoch 10/10
 &lt;span class="sd"&gt;    in the train set. Note that this way of computing a prediction is highly &lt;/span&gt;
 &lt;span class="sd"&gt;    not optimal, but it'll be sufficient for us now. """&lt;/span&gt;
     &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pipeline&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;job_title&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+    
     &lt;span class="c1"&gt;# Compute similarities of the job title with all job titles in the train set&lt;/span&gt;
     &lt;span class="n"&gt;similarities&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;siamese_lstm&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;predict&lt;/span&gt;&lt;span class="p"&gt;([[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x_references&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;x_references&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
     &lt;span class="n"&gt;most_similar_index&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argmax&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;similarities&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    
     &lt;span class="c1"&gt;# The predicted category is the one of the most similar example from the train set&lt;/span&gt;
     &lt;span class="n"&gt;prediction&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;train_set&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'SOC minor group'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;iloc&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;most_similar_index&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
     &lt;span class="n"&gt;most_similar_example&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;train_set&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'Reported Job Title'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;iloc&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;most_similar_index&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
@@ -1640,31 +1605,26 @@ Epoch 10/10
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Let's check a prediction example&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [ ]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In [21]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;sample_idx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
 &lt;span class="n"&gt;pred&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;most_sim&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_prediction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x_test&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;sample_idx&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+
 &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;'Sampled test job title: &lt;/span&gt;&lt;span class="si"&gt;{x_test[sample_idx]}&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;'True occupation: &lt;/span&gt;&lt;span class="si"&gt;{test_set["SOC minor group"].iloc[sample_idx]}&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;'Occupation prediction: &lt;/span&gt;&lt;span class="si"&gt;{pred}&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;'Most similar example in train set: &lt;/span&gt;&lt;span class="si"&gt;{most_sim}&lt;/span&gt;&lt;span class="s1"&gt;'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; 
-&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing code_cell rendered"&gt;
-&lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In [128]:&lt;/div&gt;
-&lt;div class="inner_cell"&gt;
-&lt;div class="input_area"&gt;
-&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.metrics&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;accuracy_score&lt;/span&gt;
-
-&lt;span class="n"&gt;y_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;get_prediction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;job_title&lt;/span&gt;&lt;span class="p"&gt;)[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;job_title&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;test_set&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'Reported Job Title'&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;iloc&lt;/span&gt;&lt;span class="p"&gt;[:&lt;/span&gt;&lt;span class="mi"&gt;50&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
-&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;'Test accuracy (siamese model): {100*accuracy_score(y_pred, y_test[:50]):.2f} %'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1674,7 +1634,37 @@ Epoch 10/10
 &lt;div class="output_area"&gt;
 &lt;div class="prompt"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_stream output_stdout output_text"&gt;
-&lt;pre&gt;Test accuracy (siamese model): 38.00 %
+&lt;pre&gt;Sampled test job title: brand inspector
+True occupation: Agricultural Workers
+Occupation prediction: Metal Workers and Plastic Workers
+Most similar example in train set: layout inspector
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="cell border-box-sizing code_cell rendered"&gt;
+&lt;div class="input"&gt;
+&lt;div class="prompt input_prompt"&gt;In [22]:&lt;/div&gt;
+&lt;div class="inner_cell"&gt;
+&lt;div class="input_area"&gt;
+&lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sklearn.metrics&lt;/span&gt; &lt;span class="k"&gt;import&lt;/span&gt; &lt;span class="n"&gt;accuracy_score&lt;/span&gt;
+
+&lt;span class="n"&gt;y_pred&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;get_prediction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;job_title&lt;/span&gt;&lt;span class="p"&gt;)[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;job_title&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;test_set&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'Reported Job Title'&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
+&lt;span class="n"&gt;accuracy&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;accuracy_score&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;classes_encoder&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y_pred&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;y_test&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;'Test accuracy (siamese model): {100*accuracy:.2f} %'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="output_wrapper"&gt;
+&lt;div class="output"&gt;
+&lt;div class="output_area"&gt;
+&lt;div class="prompt"&gt;&lt;/div&gt;
+&lt;div class="output_subarea output_stream output_stdout output_text"&gt;
+&lt;pre&gt;Test accuracy (siamese model): 40.43 %
 &lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1685,10 +1675,11 @@ Epoch 10/10
 &lt;/div&gt;
 &lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;The siamese model thus outperforms the random guess (accuracy ~0.1 %) and the nearest neighbor baseline (~32 %) by a substantial margin 🤹‍♀️ . Even though it is far from perfect, predicts the right category for a job title 2 times out of 5, while it has to choose between roughly a hundred of them.&lt;/p&gt;
-&lt;p&gt;What this means is that the siamese model managed to squeeze some juice out of &lt;strong&gt;all&lt;/strong&gt; the examples in the dataset, even accross categories. The original multi-class classification approach does not allow to learn "accross categories" because the categorical cross-entropy that is always used to treat those problems actually treats the multi-class classification tasks as a set of independent binary classification tasks.&lt;/p&gt;
+&lt;p&gt;The siamese model thus outperforms the random guess (accuracy ~0.1 %) and the nearest neighbor baseline (~25 %) by a substantial margin 🤹‍♀️ . Even though it is far from perfect, it predicts the right category for a job title more than 2 times out of 5, while it has to choose between roughly a hundred of them.&lt;/p&gt;
+&lt;p&gt;What this means is that the siamese model managed to squeeze some juice out of &lt;strong&gt;all&lt;/strong&gt; the examples in the dataset, even across different categories. The original multi-class classification approach does not allow to learn "across categories" because the categorical cross-entropy that is always used to treat those problems actually treats the multi-class classification tasks as a set of independent binary classification tasks.&lt;/p&gt;
 &lt;p&gt;The siamese network approach to the few-shot learning problem is definitely a 
-way out with textual data 📚. At the cost of a bit more complex modelling it gives better than standards multi-class classification methods. Give it a shot if you and to classify your data with machine learning but don't have many examples per category, you won't regret it 🎊.&lt;/p&gt;
+way out with textual data 📚. At the cost of a more complex modelling, it gives better results than standard  classification methods. Give it a shot if you want to classify your data with machine learning but don't have many examples per category, you won't regret it 🎊.&lt;/p&gt;
+&lt;p&gt;Please don't hesitate to leave a comment, I'd be happy to learn about your experiments with few-shot learning problems, to clarify some parts, or to have any feedback on this post, thanks for reading!&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
