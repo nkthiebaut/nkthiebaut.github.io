@@ -105,9 +105,124 @@
 * IPython notebook
 *
 */
-/* CSS font colors for translated ANSI colors. */
+/* CSS font colors for translated ANSI escape sequences */
+/* The color values are a mix of
+   http://www.xcolors.net/dl/baskerville-ivorylight and
+   http://www.xcolors.net/dl/euphrasia */
+.ansi-black-fg {
+  color: #3E424D;
+}
+.ansi-black-bg {
+  background-color: #3E424D;
+}
+.ansi-black-intense-fg {
+  color: #282C36;
+}
+.ansi-black-intense-bg {
+  background-color: #282C36;
+}
+.ansi-red-fg {
+  color: #E75C58;
+}
+.ansi-red-bg {
+  background-color: #E75C58;
+}
+.ansi-red-intense-fg {
+  color: #B22B31;
+}
+.ansi-red-intense-bg {
+  background-color: #B22B31;
+}
+.ansi-green-fg {
+  color: #00A250;
+}
+.ansi-green-bg {
+  background-color: #00A250;
+}
+.ansi-green-intense-fg {
+  color: #007427;
+}
+.ansi-green-intense-bg {
+  background-color: #007427;
+}
+.ansi-yellow-fg {
+  color: #DDB62B;
+}
+.ansi-yellow-bg {
+  background-color: #DDB62B;
+}
+.ansi-yellow-intense-fg {
+  color: #B27D12;
+}
+.ansi-yellow-intense-bg {
+  background-color: #B27D12;
+}
+.ansi-blue-fg {
+  color: #208FFB;
+}
+.ansi-blue-bg {
+  background-color: #208FFB;
+}
+.ansi-blue-intense-fg {
+  color: #0065CA;
+}
+.ansi-blue-intense-bg {
+  background-color: #0065CA;
+}
+.ansi-magenta-fg {
+  color: #D160C4;
+}
+.ansi-magenta-bg {
+  background-color: #D160C4;
+}
+.ansi-magenta-intense-fg {
+  color: #A03196;
+}
+.ansi-magenta-intense-bg {
+  background-color: #A03196;
+}
+.ansi-cyan-fg {
+  color: #60C6C8;
+}
+.ansi-cyan-bg {
+  background-color: #60C6C8;
+}
+.ansi-cyan-intense-fg {
+  color: #258F8F;
+}
+.ansi-cyan-intense-bg {
+  background-color: #258F8F;
+}
+.ansi-white-fg {
+  color: #C5C1B4;
+}
+.ansi-white-bg {
+  background-color: #C5C1B4;
+}
+.ansi-white-intense-fg {
+  color: #A1A6B2;
+}
+.ansi-white-intense-bg {
+  background-color: #A1A6B2;
+}
+.ansi-default-inverse-fg {
+  color: #FFFFFF;
+}
+.ansi-default-inverse-bg {
+  background-color: #000000;
+}
+.ansi-bold {
+  font-weight: bold;
+}
+.ansi-underline {
+  text-decoration: underline;
+}
+/* The following styles are deprecated an will be removed in a future version */
 .ansibold {
   font-weight: bold;
+}
+.ansi-inverse {
+  outline: 0.5px dotted;
 }
 /* use dark versions for foreground, to improve visibility */
 .ansiblack {
@@ -186,12 +301,20 @@ div.cell {
   /* This acts as a spacer between cells, that is outside the border */
   margin: 0px;
   outline: none;
-  border-left-width: 1px;
-  padding-left: 5px;
-  background: linear-gradient(to right, transparent -40px, transparent 1px, transparent 1px, transparent 100%);
+  position: relative;
+  overflow: visible;
+}
+div.cell:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: transparent;
 }
 div.cell.jupyter-soft-selected {
-  border-left-color: #90CAF9;
   border-left-color: #E3F2FD;
   border-left-width: 1px;
   padding-left: 5px;
@@ -204,27 +327,39 @@ div.cell.jupyter-soft-selected {
     border-color: transparent;
   }
 }
-div.cell.selected {
+div.cell.selected,
+div.cell.selected.jupyter-soft-selected {
   border-color: #ababab;
-  border-left-width: 0px;
-  padding-left: 6px;
-  background: linear-gradient(to right, #42A5F5 -40px, #42A5F5 5px, transparent 5px, transparent 100%);
+}
+div.cell.selected:before,
+div.cell.selected.jupyter-soft-selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #42A5F5;
 }
 @media print {
-  div.cell.selected {
+  div.cell.selected,
+  div.cell.selected.jupyter-soft-selected {
     border-color: transparent;
   }
 }
-div.cell.selected.jupyter-soft-selected {
-  border-left-width: 0;
-  padding-left: 6px;
-  background: linear-gradient(to right, #42A5F5 -40px, #42A5F5 7px, #E3F2FD 7px, #E3F2FD 100%);
-}
 .edit_mode div.cell.selected {
   border-color: #66BB6A;
-  border-left-width: 0px;
-  padding-left: 6px;
-  background: linear-gradient(to right, #66BB6A -40px, #66BB6A 5px, transparent 5px, transparent 100%);
+}
+.edit_mode div.cell.selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #66BB6A;
 }
 @media print {
   .edit_mode div.cell.selected {
@@ -420,7 +555,9 @@ div.input_area > div.highlight > pre {
 .CodeMirror-lines {
   /* In CM2, this used to be 0.4em, but in CM3 it went to 4px. We need the em value because */
   /* we have set a different line-height and want this to scale with that. */
-  padding: 0.4em;
+  /* Note that this should set vertical padding only, since CodeMirror assumes
+       that horizontal padding will be set on CodeMirror pre */
+  padding: 0.4em 0;
 }
 .CodeMirror-linenumber {
   padding: 0 8px 0 4px;
@@ -430,11 +567,24 @@ div.input_area > div.highlight > pre {
   border-top-left-radius: 2px;
 }
 .CodeMirror pre {
-  /* In CM3 this went to 4px from 0 in CM2. We need the 0 value because of how we size */
-  /* .CodeMirror-lines */
-  padding: 0;
+  /* In CM3 this went to 4px from 0 in CM2. This sets horizontal padding only,
+    use .CodeMirror-lines for vertical */
+  padding: 0 0.4em;
   border: 0;
   border-radius: 0;
+}
+.CodeMirror-cursor {
+  border-left: 1.4px solid black;
+}
+@media screen and (min-width: 2138px) and (max-width: 4319px) {
+  .CodeMirror-cursor {
+    border-left: 2px solid black;
+  }
+}
+@media screen and (min-width: 4320px) {
+  .CodeMirror-cursor {
+    border-left: 4px solid black;
+  }
 }
 /*
 
@@ -682,6 +832,9 @@ div.output_area img.unconfined,
 div.output_area svg.unconfined {
   max-width: none;
 }
+div.output_area .mglyph > img {
+  max-width: none;
+}
 /* This is needed to protect the pre formating from global settings such
    as that of bootstrap */
 .output {
@@ -720,7 +873,7 @@ div.output_area svg.unconfined {
 }
 div.output_area pre {
   margin: 0;
-  padding: 0;
+  padding: 1px 0 1px 0;
   border: 0;
   vertical-align: baseline;
   color: black;
@@ -842,6 +995,10 @@ div.output_unrecognized a:hover {
 .rendered_html h6:first-child {
   margin-top: 1em;
 }
+.rendered_html ul:not(.list-inline),
+.rendered_html ol:not(.list-inline) {
+  padding-left: 2em;
+}
 
 
 
@@ -858,16 +1015,24 @@ div.output_unrecognized a:hover {
 }
 
 
+
+
+
 .rendered_html pre,
+
 
 
 
 .rendered_html tr,
 .rendered_html th,
 
-.rendered_html td,
 
-
+.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 .rendered_html * + table {
   margin-top: 1em;
 }
@@ -883,6 +1048,11 @@ div.output_unrecognized a:hover {
 
 .rendered_html img.unconfined,
 
+
+.rendered_html * + .alert {
+  margin-top: 1em;
+}
+[dir="rtl"] 
 div.text_cell {
   /* Old browsers */
   display: -webkit-box;
@@ -933,8 +1103,15 @@ h6:hover .anchor-link {
   display: none;
 }
 .text_cell.rendered 
+.text_cell.rendered .rendered_html tr,
+.text_cell.rendered .rendered_html th,
+.text_cell.rendered 
 .text_cell.unrendered .text_cell_render {
   display: none;
+}
+.text_cell .dropzone .input_area {
+  border: 2px dashed #bababa;
+  margin: -1px;
 }
 .cm-header-1,
 .cm-header-2,
@@ -1034,47 +1211,8 @@ h6:hover .anchor-link {
 .highlight .vg { color: #19177C } /* Name.Variable.Global */
 .highlight .vi { color: #19177C } /* Name.Variable.Instance */
 .highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */</style>
-<style type="text/css">
-/* Temporary definitions which will become obsolete with Notebook release 5.0 */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-bold { font-weight: bold; }
-</style>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Few-shot-learning-on-textual-data-with-siamese-neural-networks">Few-shot learning on textual data with siamese neural networks<a class="anchor-link" href="#Few-shot-learning-on-textual-data-with-siamese-neural-networks">¶</a></h1><p>If you're doing machine learning and meet a classification problem with many categories and only a few examples per category, it is usually thought that you're in trouble 😨. Acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques exist to deal with this situation 🕺.</p>
 <p>This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and <a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf">obtain decent results</a>!).</p>
@@ -1090,19 +1228,19 @@ h6:hover .anchor-link {
 <div class="prompt input_prompt">In [1]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="c1"># Set random seeds for reproducibility</span>
-<span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">seed</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">seed</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 
 <span class="c1"># Import a home-made dictionary that maps SOC codes to "occupations" names</span>
 <span class="c1"># The corresponding file can be downloaded here: https://gist.github.com/nkthiebaut/c2895b8bb77bdf3253fb581622dca51b</span>
-<span class="kn">from</span> <span class="nn">soc</span> <span class="k">import</span> <span class="n">SOC_MINOR_GROUPS</span>
+<span class="kn">from</span> <span class="nn">soc</span> <span class="kn">import</span> <span class="n">SOC_MINOR_GROUPS</span>
 
 <span class="c1"># Download the Standard Occupation Classification with job titles examples</span>
 <span class="n">file_url</span> <span class="o">=</span> <span class="s1">'https://www.onetcenter.org/dl_files/database/db_20_1_text/Sample</span><span class="si">%20o</span><span class="s1">f%20Reported%20Titles.txt'</span>
@@ -1206,8 +1344,7 @@ h6:hover .anchor-link {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The downloaded file contains job categories codes ("SOC minor group") and samples of job titles that belong to those categories. The categories descriptions are available on <a href="https://www.bls.gov/soc/2010/2010_major_groups.htm">the Standard Occupation Classification website</a>.</p>
 <p>Let's investigate our dataset:</p>
@@ -1219,7 +1356,7 @@ h6:hover .anchor-link {
 <div class="prompt input_prompt">In [2]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>  <span class="c1"># Count the number of different modalities in each column</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>  <span class="c1"># Count the number of different modalities in each column</span>
 </pre></div>
 </div>
 </div>
@@ -1238,8 +1375,7 @@ dtype: int64</pre>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>So we have 94 categories ("SOC minor groups") for 7174 examples, i.e. 75 examples per category on average, but some categories have as few as 10 examples (<code>df.value_counts()</code> would tell you that). This is not the most extreme examples of few-shot learning but it's still an example that is better tackled by siamese models than by standard multi-class classification approaches.</p>
 <p>Before proceeding with modelling let's create a train and test sets, by putting one example in the test set for each class.</p>
@@ -1251,7 +1387,7 @@ dtype: int64</pre>
 <div class="prompt input_prompt">In [3]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_set</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'SOC minor group'</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">test_set</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'SOC minor group'</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 <span class="n">train_set</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">test_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">])]</span>
 
 <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">],</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">'SOC minor group'</span><span class="p">]</span>
@@ -1262,8 +1398,7 @@ dtype: int64</pre>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We then encode the targets as numbers.</p>
 </div>
@@ -1274,7 +1409,7 @@ dtype: int64</pre>
 <div class="prompt input_prompt">In [4]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">LabelEncoder</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
 
 <span class="n">classes_encoder</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
 
@@ -1286,8 +1421,7 @@ dtype: int64</pre>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Building-a-baseline-🐣">Building a baseline 🐣<a class="anchor-link" href="#Building-a-baseline-🐣">¶</a></h2><p>Before experimenting with fancy models, let's establish a strong baseline. We can start by using word embeddings to get a vector representation of each job title and use a nearest neighbor classifier that is less likely to overfit than tree-based models or parametric classifiers.</p>
 <p>To get the representation of a sentence from pre-trained word embeddings I'll use <a href="https://github.com/nkthiebaut/zeugma">Zeugma</a>, an NLP python library I've written that conveniently provides pre-trained word embeddings in the form of <a href="http://scikit-learn.org/stable/modules/pipeline.html">scikit-learn transformers</a>.</p>
@@ -1299,7 +1433,7 @@ dtype: int64</pre>
 <div class="prompt input_prompt">In [5]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">zeugma</span> <span class="k">import</span> <span class="n">EmbeddingTransformer</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">zeugma</span> <span class="kn">import</span> <span class="n">EmbeddingTransformer</span>
 
 <span class="c1"># We'll use the GloVe pre-trained embeddings, using the sum of the word embeddings</span>
 <span class="c1"># of a job title as the embedding vector</span>
@@ -1325,8 +1459,8 @@ dtype: int64</pre>
 <div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">make_pipeline</span>
-<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">KNeighborsClassifier</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
 
 <span class="c1"># Our model is a nearest neighbor classifier, the input of which is the sum of the </span>
 <span class="c1"># embeddings of words in the job title.</span>
@@ -1343,9 +1477,9 @@ dtype: int64</pre>
 <div class="prompt input_prompt">In [7]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">baseline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Train accuracy (baseline): {100*baseline.score(x_train, y_train):.2f} %'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Test accuracy (baseline): {100*baseline.score(x_test, y_test):.2f} %'</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">baseline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Train accuracy (baseline): {100*baseline.score(x_train, y_train):.2f} %'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Test accuracy (baseline): {100*baseline.score(x_test, y_test):.2f} %'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1364,8 +1498,7 @@ Test accuracy (baseline): 25.53 %
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Not great... but not too bad for a simple baseline model, considering a random guess would have a $\frac{1}{n_{\text{classes}}} \simeq 0.1 \%$ accuracy. I have tried a few other simple models but, surprisingly, I could not beat this simple baseline easily. Let me know if you find a better model!</p>
 <p>Note that the test accuracy is usually expected to be as high as the train one for a nearest neighbors classifier, since no parameters are fitted. Here this is not the case because the test set contains one example per category, such that rare categories have the same weight as prominent categories in the test accuracy.</p>
@@ -1382,8 +1515,8 @@ Test accuracy (baseline): 25.53 %
 <div class="prompt input_prompt">In [8]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">sample</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">sample</span>
 
 <span class="n">jobs_left</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">jobs_right</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1487,8 +1620,7 @@ Test accuracy (baseline): 25.53 %
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Here we see that the pair "childcare worker" and "recreation supervisor" belong to the same job occupation category (second example, target = 1), while "carman" and "marine design engineer" are in different occupation categories (first example, target = 0). Note that we end up with a much bigger dataset by creating pairs. The synthetic dataset contains 218,669 pairs while the original dataset has only 8,921 samples. Of course, we have only artificially increased the dataset size because we have not generated new data, but we'll see that this technique is still very powerful.</p>
 <h3 id="Modelling">Modelling<a class="anchor-link" href="#Modelling">¶</a></h3><p>The general architecture of the model is based on <a href="https://medium.com/mlreview/implementing-malstm-on-kaggles-quora-question-pairs-competition-8b31b0b16a07">this very good tutorial</a>. The preprocessing is fairly simple:</p>
@@ -1506,10 +1638,10 @@ Test accuracy (baseline): 25.53 %
 <div class="prompt input_prompt">In [9]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">make_pipeline</span><span class="p">,</span> <span class="n">FeatureUnion</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">FunctionTransformer</span>
-<span class="kn">from</span> <span class="nn">zeugma</span> <span class="k">import</span> <span class="n">TextsToSequences</span><span class="p">,</span> <span class="n">Padder</span><span class="p">,</span> <span class="n">ItemSelector</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span><span class="p">,</span> <span class="n">FeatureUnion</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">FunctionTransformer</span>
+<span class="kn">from</span> <span class="nn">zeugma</span> <span class="kn">import</span> <span class="n">TextsToSequences</span><span class="p">,</span> <span class="n">Padder</span><span class="p">,</span> <span class="n">ItemSelector</span>
 
 <span class="n">max_words_job_title</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># To avoid very long job titles we limit them to 10 words</span>
 <span class="n">vocab_size</span> <span class="o">=</span> <span class="mi">10000</span>  <span class="c1"># Number of most-frequent words kept in the vocabulary</span>
@@ -1541,7 +1673,7 @@ Test accuracy (baseline): 25.53 %
 <div class="prompt input_prompt">In [10]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x_left</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">'job_left'</span><span class="p">])</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">x_left</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">'job_left'</span><span class="p">])</span>
 <span class="n">x_right</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">'job_right'</span><span class="p">])</span>
 <span class="n">x_pairs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_left</span><span class="p">,</span> <span class="n">x_right</span><span class="p">]</span>   <span class="c1"># this will be the input of the siamese network</span>
 
@@ -1556,7 +1688,7 @@ Test accuracy (baseline): 25.53 %
 <div class="prompt input_prompt">In [11]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># We re-use the same embedding as with the baseline model</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># We re-use the same embedding as with the baseline model</span>
 <span class="n">embedding_layer</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_keras_embedding</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1564,12 +1696,10 @@ Test accuracy (baseline): 25.53 %
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now that we have created the pairs dataset and preprocessed the job titles we can turn our attention to the siamese model itself. It consists of a cloned sequential network, the input of which is a pair of vectors <code>x_left</code> and <code>x_right</code>. The last layer of the sequential network for <code>x_left</code> is the vector representation of the left job title and same thing for <code>x_right</code> the right input job title. The representations of the right and left inputs are used to compute the similarity between the job titles:</p>
-<p>$$\text{sim}\left(x_{l}, x_{r}\right) = \exp \left(-\| f(x_l) - f(x_r) \|_1\right),$$</p>
-<p>where $\text{sim} \in [0, 1]$, $\|\cdot\|_1$ is the L1 norm, and $f$ is the function corresponding to the application of the cloned sequential network to the left/right input.</p>
+$$\text{sim}\left(x_{l}, x_{r}\right) = \exp \left(-\| f(x_l) - f(x_r) \|_1\right),$$<p>where $\text{sim} \in [0, 1]$, $\|\cdot\|_1$ is the L1 norm, and $f$ is the function corresponding to the application of the cloned sequential network to the left/right input.</p>
 <p>This setting is called the <a href="https://www.quora.com/What-is-Manhattan-LSTM">Manhattan LSTM</a> because we'll use LSTMs as the sequential network, and the L1 norm (used to compute the distance between two samples of a pair) is also called the <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Manhattan distance</a>. Here is the corresponding code.</p>
 </div>
 </div>
@@ -1579,10 +1709,10 @@ Test accuracy (baseline): 25.53 %
 <div class="prompt input_prompt">In [12]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">LSTM</span><span class="p">,</span> <span class="n">Bidirectional</span>
-<span class="kn">from</span> <span class="nn">keras</span> <span class="k">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Sequential</span>
-<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Dropout</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">Subtract</span>
-<span class="kn">from</span> <span class="nn">keras</span> <span class="k">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">LSTM</span><span class="p">,</span> <span class="n">Bidirectional</span>
+<span class="kn">from</span> <span class="nn">keras</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Dropout</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">Subtract</span>
+<span class="kn">from</span> <span class="nn">keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
 
 <span class="k">def</span> <span class="nf">exponent_neg_manhattan_distance</span><span class="p">(</span><span class="n">arms_difference</span><span class="p">):</span>
     <span class="sd">""" Compute the exponent of the opposite of the L1 norm of a vector, to get the left/right inputs</span>
@@ -1658,7 +1788,7 @@ ________________________________________________________________________________
 <div class="prompt input_prompt">In [13]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">siamese_lstm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_pairs</span><span class="p">,</span> <span class="n">y_pairs</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">siamese_lstm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_pairs</span><span class="p">,</span> <span class="n">y_pairs</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -1678,8 +1808,7 @@ Epoch 1/1
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Without much effort (light preprocessing, only one epoch, no early stopping, no hyper-parameters optimization) we obtain a decent ~60 % accuracy on the validation set. But remember that this is not the final task, here we are only solving the binary classification problem of recognizing pairs of job titles that belong to the same occupations category and pairs of jobs that are sampled from different occupations categories.</p>
 <p>To address the initial problem of finding each job title's category we have to compute, for each example in the test set, the similarity score of this example with all the examples in the training set. The predicted category is the one of the closest example in training set.</p>
@@ -1691,7 +1820,7 @@ Epoch 1/1
 <div class="prompt input_prompt">In [14]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x_references</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>  <span class="c1"># Preprocess the training set examples</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">x_references</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>  <span class="c1"># Preprocess the training set examples</span>
 
 <span class="k">def</span> <span class="nf">get_prediction</span><span class="p">(</span><span class="n">job_title</span><span class="p">):</span>
     <span class="sd">""" Get the predicted job title category, and the most similar job title</span>
@@ -1713,8 +1842,7 @@ Epoch 1/1
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Let's check a prediction example</p>
 </div>
@@ -1725,13 +1853,13 @@ Epoch 1/1
 <div class="prompt input_prompt">In [15]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_idx</span> <span class="o">=</span> <span class="mi">1</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">sample_idx</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">pred</span><span class="p">,</span> <span class="n">most_sim</span> <span class="o">=</span> <span class="n">get_prediction</span><span class="p">(</span><span class="n">x_test</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">])</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Sampled test job title: </span><span class="si">{x_test[sample_idx]}</span><span class="s1">'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'True occupation: </span><span class="si">{test_set["SOC minor group"].iloc[sample_idx]}</span><span class="s1">'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Occupation prediction: </span><span class="si">{pred}</span><span class="s1">'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Most similar example in train set: </span><span class="si">{most_sim}</span><span class="s1">'</span><span class="p">)</span> 
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Sampled test job title: </span><span class="si">{x_test[sample_idx]}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'True occupation: </span><span class="si">{test_set["SOC minor group"].iloc[sample_idx]}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Occupation prediction: </span><span class="si">{pred}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Most similar example in train set: </span><span class="si">{most_sim}</span><span class="s1">'</span><span class="p">)</span> 
 </pre></div>
 </div>
 </div>
@@ -1756,12 +1884,12 @@ Most similar example in train set: deputy brand inspector
 <div class="prompt input_prompt">In [16]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">accuracy_score</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
 
 <span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_prediction</span><span class="p">(</span><span class="n">job_title</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">job_title</span> <span class="ow">in</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">'Reported Job Title'</span><span class="p">]]</span>
 <span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">classes_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">y_pred</span><span class="p">),</span> <span class="n">y_test</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">'Test accuracy (siamese model): {100*accuracy:.2f} %'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Test accuracy (siamese model): {100*accuracy:.2f} %'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1779,8 +1907,7 @@ Most similar example in train set: deputy brand inspector
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The siamese model thus outperforms the random guess (accuracy ~0.1 %) and the nearest neighbor baseline (~25 %) by a substantial margin 🤹‍♀️ . Even though it is far from perfect, it predicts the right category for a job title roughly 2 times out of 5, while it has to choose between roughly a hundred of them.</p>
 <p>What this means is that the siamese model managed to squeeze some juice out of <strong>all</strong> the examples in the dataset, even across different categories. The original multi-class classification approach does not allow to learn "across categories" because the categorical cross-entropy that is always used to treat those problems actually treats the multi-class classification tasks as a set of independent binary classification tasks.</p>
