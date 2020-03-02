@@ -77,6 +77,12 @@ else
 	cd $(OUTPUTDIR) && $(PY) -m pelican.server
 endif
 
+local: 
+	rm -fr content/.ipynb_checkpoints
+	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS)
+	cd $(OUTPUTDIR) 
+	chrome 8000 & $(PY) -m pelican.server
+
 serve-global:
 ifdef SERVER
 	cd $(OUTPUTDIR) && $(PY) -m pelican.server 80 $(SERVER)
@@ -129,4 +135,4 @@ github: publish
 	git push --all
 	git checkout source
 
-.PHONY: html help clean regenerate serve serve-global devserver publish ssh_upload rsync_upload dropbox_upload ftp_upload s3_upload cf_upload github
+.PHONY: html help clean regenerate serve serve-global devserver publish ssh_upload rsync_upload dropbox_upload ftp_upload s3_upload cf_upload github local

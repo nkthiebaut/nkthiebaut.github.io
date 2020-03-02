@@ -47,4 +47,6 @@ To create master branch follow the procedure explained `here <http://ntanjerome.
 Automated publishing with MAKE
 ------------------------------
 
-From the root folder: ``make github``.
+(from the repo root folder)
+To test locally: ``make local`` (it will open chrome and run the pelican server)
+To publish changes: ``make github``.
