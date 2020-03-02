@@ -25,11 +25,11 @@
 
 
 <meta name="author" content="Nicolas Thiebaut" />
-<meta name="description" content="Understanding the SHAP interpretation method: Kernel SHAP¶SHAP is certainly one of the most important tools in the interpretable machine learning toolbox nowadays. It is used by a variety of actors, mentioned extensively by the research community, and in my experience it provides the best insights into a model behavior. In the last blog article" />
+<meta name="description" content="Understanding the SHAP interpretation method: Kernel SHAP¶SHAP is certainly one of the most important tools in the interpretable machine learning toolbox nowadays. It is used by a variety of actors, mentioned extensively by the research community, and in my experience it provides the best insights into a model behavior. This blog article gives a detailed yet simple explanation for Kernel SHAP, the core of the SHAP reactor." />
 <meta name="keywords" content="python, machine learning, interpretable machine learning">
 <meta property="og:site_name" content="Data4thought: data science blog"/>
-<meta property="og:title" content="Understanding SHAP: Part 2"/>
-<meta property="og:description" content="Understanding the SHAP interpretation method: Kernel SHAP¶SHAP is certainly one of the most important tools in the interpretable machine learning toolbox nowadays. It is used by a variety of actors, mentioned extensively by the research community, and in my experience it provides the best insights into a model behavior. In the last blog article"/>
+<meta property="og:title" content="Understanding SHAP (part 2)"/>
+<meta property="og:description" content="Understanding the SHAP interpretation method: Kernel SHAP¶SHAP is certainly one of the most important tools in the interpretable machine learning toolbox nowadays. It is used by a variety of actors, mentioned extensively by the research community, and in my experience it provides the best insights into a model behavior. This blog article gives a detailed yet simple explanation for Kernel SHAP, the core of the SHAP reactor."/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://nkthiebaut.github.io/kernel_shap.html"/>
 <meta property="og:type" content="article"/>
@@ -42,7 +42,7 @@
 <meta property="article:tag" content="interpretable machine learning"/>
 <meta property="og:image" content="https://nkthiebaut.github.io/images/PhotoThiebaut.jpg">
 
-  <title>Data4thought: data science blog &ndash; Understanding SHAP: Part 2</title>
+  <title>Data4thought: data science blog &ndash; Understanding SHAP (part 2)</title>
 
 </head>
 <body>
@@ -89,7 +89,7 @@
 
 <article class="single">
   <header>
-    <h1 id="kernel_shap">Understanding SHAP: Part 2</h1>
+    <h1 id="kernel_shap">Understanding SHAP (part 2)</h1>
     <p>
           Posted on Sat 29 February 2020 in <a href="https://nkthiebaut.github.io/category/posts.html">posts</a>
 
@@ -1214,6 +1214,8 @@ h6:hover .anchor-link {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Understanding-the-SHAP-interpretation-method:-Kernel-SHAP">Understanding the SHAP interpretation method: Kernel SHAP<a class="anchor-link" href="#Understanding-the-SHAP-interpretation-method:-Kernel-SHAP">¶</a></h1><p>SHAP is certainly one of the most important tools in the interpretable machine learning toolbox nowadays. It is used by a variety of actors, mentioned extensively by the research community, and in my experience it provides the best insights into a model behavior.</p>
+<p><img alt="Shap schema (from https://github.com/slundberg/shap)" class="center" src="images/shap_schema.png" width="50%" /></p>
+<p>This blog article gives a detailed yet simple explanation for Kernel SHAP, the core of the SHAP reactor.</p>
 <p>In the <a href="https://data4thought.com/shap.html">last blog article</a> I've introduced the SHAP machine learning interpretation method, and presented its main underlying concept: Shapley values. We've seen that Shapley values, despite being very satisfying when used as feature weights for the means interpretation, are not practical.</p>
 <p>The computation of Shapley values is only tractable in low-dimensional problems. This is why the <a href="http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions">SHAP paper</a> introduces methods to compute approximate Shapley values, without having to train this huge number of models.</p>
 <p>The most versatile such method is called Kernel SHAP and is the topic of this blog post.</p>
@@ -1848,11 +1850,11 @@ $$L\left(f, g, \pi_{x}\right)=\sum_{z^{\prime} \in Z}\left[f\left(h_{x}\left(z^{
 <section>
     <p id="post-share-links">
         Share on:
-        <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/kernel_shap.html&title=Understanding%20SHAP%3A%20Part%202&summary=Understanding%20the%20SHAP%20interpretation%20method%3A%20Kernel%20SHAP%C2%B6SHAP%20is%20certainly%20one%20of%20the%20most%20important%20tools%20in%20the%20interpretable%20machine%20learning%20toolbox%20nowadays.%20It%20is%20used%20by%20a%20variety%20of%20actors%2C%20mentioned%20extensively%20by%20the%20research%20community%2C%20and%20in%20my%20experience%20it%20provides%20the%20best%20insights%20into%20a%20model%20behavior.%0AIn%20the%20last%20blog%20article&source=https%3A//nkthiebaut.github.io/kernel_shap.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square"></i>
+        <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/kernel_shap.html&title=Understanding%20SHAP%20%28part%202%29&summary=Understanding%20the%20SHAP%20interpretation%20method%3A%20Kernel%20SHAP%C2%B6SHAP%20is%20certainly%20one%20of%20the%20most%20important%20tools%20in%20the%20interpretable%20machine%20learning%20toolbox%20nowadays.%20It%20is%20used%20by%20a%20variety%20of%20actors%2C%20mentioned%20extensively%20by%20the%20research%20community%2C%20and%20in%20my%20experience%20it%20provides%20the%20best%20insights%20into%20a%20model%20behavior.%0A%0AThis%20blog%20article%20gives%20a%20detailed%20yet%20simple%20explanation%20for%20Kernel%20SHAP%2C%20the%20core%20of%20the%20SHAP%20reactor.&source=https%3A//nkthiebaut.github.io/kernel_shap.html" target="_blank" title="Share on LinkedIn"><i class="fa fa-linkedin-square"></i>
 </a>
-<a href="https://twitter.com/intent/tweet?text=Understanding%20SHAP%3A%20Part%202&url=https%3A//nkthiebaut.github.io/kernel_shap.html" target="_blank" title="Share on Twitter"><i class="fa fa-twitter"></i></a>
+<a href="https://twitter.com/intent/tweet?text=Understanding%20SHAP%20%28part%202%29&url=https%3A//nkthiebaut.github.io/kernel_shap.html" target="_blank" title="Share on Twitter"><i class="fa fa-twitter"></i></a>
         <a href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/kernel_shap.html" target="_blank" title="Share on Facebook"><i class="fa fa-facebook"></i></a>
-        <a href="mailto:?subject=Understanding%20SHAP%3A%20Part%202&amp;body=https%3A//nkthiebaut.github.io/kernel_shap.html" target="_blank" title="Share via Email"><i class="fa fa-envelope"></i></a>
+        <a href="mailto:?subject=Understanding%20SHAP%20%28part%202%29&amp;body=https%3A//nkthiebaut.github.io/kernel_shap.html" target="_blank" title="Share via Email"><i class="fa fa-envelope"></i></a>
     </p>
 </section>
 <div id="disqus_thread"></div>
