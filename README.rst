@@ -47,7 +47,4 @@ To create master branch follow the procedure explained `here <http://ntanjerome.
 Automated publishing with MAKE
 ------------------------------
 
-* Remove .ipynb_checkpoints from the content folder if they exist
-* Commit and push everything: ``git add -u && git commit -m 'Publish pelican content' && git push --all``
-* from the root folder: ``make github``
-* Get back to the source branch; ``git checkout source``
+From the root folder: ``make github``.
