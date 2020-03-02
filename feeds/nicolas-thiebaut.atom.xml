@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/nicolas-thiebaut.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2020-02-29T02:00:00+01:00</updated><entry><title>Understanding SHAP: Part 2</title><link href="https://nkthiebaut.github.io/kernel_shap.html" rel="alternate"></link><published>2020-02-29T02:00:00+01:00</published><updated>2020-02-29T02:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2020-02-29:kernel_shap.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/nicolas-thiebaut.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2020-02-29T02:00:00+01:00</updated><entry><title>Understanding SHAP (part 2)</title><link href="https://nkthiebaut.github.io/kernel_shap.html" rel="alternate"></link><published>2020-02-29T02:00:00+01:00</published><updated>2020-02-29T02:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2020-02-29:kernel_shap.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -1114,6 +1114,8 @@ h6:hover .anchor-link {
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h1 id="Understanding-the-SHAP-interpretation-method:-Kernel-SHAP"&gt;Understanding the SHAP interpretation method: Kernel SHAP&lt;a class="anchor-link" href="#Understanding-the-SHAP-interpretation-method:-Kernel-SHAP"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;SHAP is certainly one of the most important tools in the interpretable machine learning toolbox nowadays. It is used by a variety of actors, mentioned extensively by the research community, and in my experience it provides the best insights into a model behavior.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Shap schema (from https://github.com/slundberg/shap)" class="center" src="images/shap_schema.png" width="50%" /&gt;&lt;/p&gt;
+&lt;p&gt;This blog article gives a detailed yet simple explanation for Kernel SHAP, the core of the SHAP reactor.&lt;/p&gt;
 &lt;p&gt;In the &lt;a href="https://data4thought.com/shap.html"&gt;last blog article&lt;/a&gt; I've introduced the SHAP machine learning interpretation method, and presented its main underlying concept: Shapley values. We've seen that Shapley values, despite being very satisfying when used as feature weights for the means interpretation, are not practical.&lt;/p&gt;
 &lt;p&gt;The computation of Shapley values is only tractable in low-dimensional problems. This is why the &lt;a href="http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions"&gt;SHAP paper&lt;/a&gt; introduces methods to compute approximate Shapley values, without having to train this huge number of models.&lt;/p&gt;
 &lt;p&gt;The most versatile such method is called Kernel SHAP and is the topic of this blog post.&lt;/p&gt;
@@ -1735,7 +1737,7 @@ $$L\left(f, g, \pi_{x}\right)=\sum_{z^{\prime} \in Z}\left[f\left(h_{x}\left(z^{
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</summary><category term="python"></category><category term="machine learning"></category><category term="interpretable machine learning"></category></entry><entry><title>Understanding SHAP part 1</title><link href="https://nkthiebaut.github.io/shapley.html" rel="alternate"></link><published>2019-12-27T16:00:00+01:00</published><updated>2019-12-27T16:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2019-12-27:shapley.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
+</summary><category term="python"></category><category term="machine learning"></category><category term="interpretable machine learning"></category></entry><entry><title>Understanding SHAP (part 1)</title><link href="https://nkthiebaut.github.io/shapley.html" rel="alternate"></link><published>2019-12-27T16:00:00+01:00</published><updated>2019-12-27T16:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2019-12-27:shapley.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -2850,7 +2852,7 @@ h6:hover .anchor-link {
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h1 id="Understanding-the-SHAP-interpretation-method:-Shapley-values"&gt;Understanding the SHAP interpretation method: Shapley values&lt;a class="anchor-link" href="#Understanding-the-SHAP-interpretation-method:-Shapley-values"&gt;¶&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;Explainable artificial intelligence (XAI, a.k.a interpretable machine learning) is a thing those days. The goal of XAI is to provide explanations for machine learning models predictions, such that humans can understand the reasons that lead to those predictions.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Interpretable machine learning Google scholar searches over the last few years." src="images/xai-trend.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Interpretable machine learning Google scholar searches over the last few years." class="center" src="images/xai-trend.png" width="50%" /&gt;&lt;/p&gt;
 &lt;p&gt;It is important to know the reasons behind an algorithm's predictions in a variety of contexts:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;🤔 when you have to explain to a bank customer why his loan was refused by an algorithm, &lt;/li&gt;
