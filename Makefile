@@ -119,6 +119,9 @@ cf_upload: publish
 
 github: publish
 	rm -fr content/.ipynb_checkpoints
+	git add -u 
+	git commit -m 'Publish pelican content' 
+	git push --all
 	ghp-import -m "Generate Pelican site" -b $(GITHUB_PAGES_BRANCH) $(OUTPUTDIR)
 	# git push origin $(GITHUB_PAGES_BRANCH)
 	git checkout master
