@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/nicolas-thiebaut.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2020-02-29T02:00:00+01:00</updated><entry><title>Understanding the SHAP interpretation method: Kernel SHAP</title><link href="https://nkthiebaut.github.io/kernel_shap.html" rel="alternate"></link><published>2020-02-29T02:00:00+01:00</published><updated>2020-02-29T02:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2020-02-29:kernel_shap.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog - Nicolas Thiebaut</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/nicolas-thiebaut.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2020-02-29T02:00:00+01:00</updated><subtitle>Nicolas Thiebaut's data science blog</subtitle><entry><title>Understanding the SHAP interpretation method: Kernel SHAP</title><link href="https://nkthiebaut.github.io/kernel_shap.html" rel="alternate"></link><published>2020-02-29T02:00:00+01:00</published><updated>2020-02-29T02:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2020-02-29:/kernel_shap.html</id><summary type="html">&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;SHAP is certainly one of the most important tools in the interpretable machine learning toolbox nowadays. It is used by a variety of actors, mentioned extensively by the research community, and in my experience it provides the best insights into a model behavior.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Shap schema (from https://github.com/slundberg/shap)" class="center" src="images/shap_schema.png" width="50%" /&gt;&lt;/p&gt;
+&lt;p&gt;This blog article gives a detailed yet simple explanation for Kernel SHAP, the core of the SHAP reactor.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -1737,7 +1742,12 @@ $$L\left(f, g, \pi_{x}\right)=\sum_{z^{\prime} \in Z}\left[f\left(h_{x}\left(z^{
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</summary><category term="python"></category><category term="machine learning"></category><category term="interpretable machine learning"></category></entry><entry><title>Understanding the SHAP interpretation method: Shapley values</title><link href="https://nkthiebaut.github.io/shapley.html" rel="alternate"></link><published>2019-12-27T16:00:00+01:00</published><updated>2019-12-27T16:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2019-12-27:shapley.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
+</content><category term="posts"></category><category term="python"></category><category term="machine learning"></category><category term="interpretable machine learning"></category></entry><entry><title>Understanding the SHAP interpretation method: Shapley values</title><link href="https://nkthiebaut.github.io/shapley.html" rel="alternate"></link><published>2019-12-27T16:00:00+01:00</published><updated>2019-12-27T16:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2019-12-27:/shapley.html</id><summary type="html">&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;Explainable artificial intelligence (XAI, a.k.a interpretable machine learning) is a thing those days. The goal of XAI is to provide explanations for machine learning models predictions, such that humans can understand the reasons that lead to those predictions.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Interpretable machine learning Google scholar searches over the last few years." class="center" src="images/xai-trend.png" width="40%" /&gt;&lt;/p&gt;
+&lt;p&gt;It is important to know the reasons behind an algorithm's predictions in a variety of contexts:&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -3038,7 +3048,10 @@ $$&lt;p&gt;🙀 That's a lot of terms to compute and models to train, six in tot
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</summary><category term="python"></category><category term="machine learning"></category><category term="interpretable machine learning"></category></entry><entry><title>Few-shot learning in NLP: many-classes classification from few examples</title><link href="https://nkthiebaut.github.io/fewshot_learning_nlp.html" rel="alternate"></link><published>2018-08-19T22:00:00+02:00</published><updated>2018-08-19T22:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2018-08-19:fewshot_learning_nlp.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
+</content><category term="posts"></category><category term="python"></category><category term="machine learning"></category><category term="interpretable machine learning"></category></entry><entry><title>Few-shot learning in NLP: many-classes classification from few examples</title><link href="https://nkthiebaut.github.io/fewshot_learning_nlp.html" rel="alternate"></link><published>2018-08-19T22:00:00+02:00</published><updated>2018-08-19T22:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2018-08-19:/fewshot_learning_nlp.html</id><summary type="html">&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;If you're doing machine learning and meet a classification problem with many categories and only a few examples per category, it is usually thought that you're in trouble 😨. Acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques exist to deal with this situation with Siamese Neural Networks 🕺.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -4884,7 +4897,10 @@ way out with textual data 📚. At the cost of a more complex modelling, it give
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</summary><category term="python"></category><category term="machine learning"></category><category term="deep learning"></category><category term="natural language processing"></category></entry><entry><title>LIME of words: interpreting Recurrent Neural Networks predictions</title><link href="https://nkthiebaut.github.io/deep-lime.html" rel="alternate"></link><published>2017-09-12T16:00:00+02:00</published><updated>2017-09-12T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-09-12:deep-lime.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
+</content><category term="posts"></category><category term="python"></category><category term="machine learning"></category><category term="deep learning"></category><category term="natural language processing"></category></entry><entry><title>LIME of words: interpreting Recurrent Neural Networks predictions</title><link href="https://nkthiebaut.github.io/deep-lime.html" rel="alternate"></link><published>2017-09-12T16:00:00+02:00</published><updated>2017-09-12T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-09-12:/deep-lime.html</id><summary type="html">&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;This is the second part of my blog post on the LIME interpretation model. For a reminder of what LIME is and its purpose, please read the &lt;a href="https://nkthiebaut.github.io/lime-of-words.html"&gt;first part&lt;/a&gt;. This second part is a quick application of the same algorithm to a deep learning (LSTM) model, while the first part was focused on explaining the predictions of a random forest.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -6641,7 +6657,10 @@ YII=
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</summary><category term="python"></category><category term="machine learning"></category><category term="deep learning"></category></entry><entry><title>LIME of words: how to interpret your machine learning model predictions</title><link href="https://nkthiebaut.github.io/lime-of-words.html" rel="alternate"></link><published>2017-08-07T16:00:00+02:00</published><updated>2017-08-07T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-08-07:lime-of-words.html</id><summary type="html">&lt;style type="text/css"&gt;/*!
+</content><category term="posts"></category><category term="python"></category><category term="machine learning"></category><category term="deep learning"></category></entry><entry><title>LIME of words: how to interpret your machine learning model predictions</title><link href="https://nkthiebaut.github.io/lime-of-words.html" rel="alternate"></link><published>2017-08-07T16:00:00+02:00</published><updated>2017-08-07T16:00:00+02:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2017-08-07:/lime-of-words.html</id><summary type="html">&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
+&lt;/div&gt;&lt;div class="inner_cell"&gt;
+&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
+&lt;p&gt;In this blog post I will share experiments on the LIME (Local Interpretable Model-agnostic Explanations) interpretation model. LIME was introduced in 2016 by Marco Ribeiro and his collaborators in a paper called &lt;a href="https://arxiv.org/abs/1602.04938"&gt;“Why Should I Trust You?” Explaining the Predictions of Any Classifier&lt;/a&gt;. The purpose of this method is to explain a model prediction for a specific sample in a human-interpretable way.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -8187,4 +8206,4 @@ $$\mathcal{L}(f, g, \Pi_x)= \sum_{z, z'} \Pi_x(z) \left[f(z) - g(z') \right]^2.$
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</summary><category term="python"></category><category term="machine learning"></category></entry></feed>
+</content><category term="posts"></category><category term="python"></category><category term="machine learning"></category></entry></feed>
