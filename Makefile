@@ -80,8 +80,7 @@ endif
 local: 
 	rm -fr content/.ipynb_checkpoints
 	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS)
-	cd $(OUTPUTDIR) 
-	chrome 8000 & $(PY) -m pelican.server
+	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://localhost:8000 & pelican --listen
 
 serve-global:
 ifdef SERVER
