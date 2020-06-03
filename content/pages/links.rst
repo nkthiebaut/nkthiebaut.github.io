@@ -12,7 +12,7 @@ A few websites about data science I like:
 
 Machine learning, Deep learning and NLP:
 
-* Distill: AI and Deep Learning blog:: `<https://distill.pub/>`_
+* Distill: AI and Deep Learning blog: `<https://distill.pub/>`_
 * A beautifully designed ML blog: `<https://koaning.io/>`_
 * Insightful ML research blog: `<https://roberttlange.github.io/>`_
 * Sebastian Ruder's blog, focused on NLP: `<http://ruder.io>`_
