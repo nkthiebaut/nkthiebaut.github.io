@@ -17,7 +17,7 @@ MAIN_MENU = True
 STATIC_PATHS = ['images', 'pdfs']
 
 TIMEZONE = 'Europe/Paris'
-THEME = os.path.join(os.getcwd(), "themes", "Flex")
+THEME = os.path.join(os.getcwd(), "themes", "neat")
 
 DEFAULT_LANG = 'en'
 # Blogroll
@@ -35,8 +35,15 @@ MENUITEMS = (('Archives', '/archives.html'),
 DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
+RELATIVE_URLS = True
 MARKUP = ('md', 'ipynb')
 
+from pelican_jupyter import markup as nb_markup
+PLUGINS = [nb_markup]
+
 PLUGIN_PATHS = ['./plugins']
-PLUGINS = ['ipynb.markup', 'share_post.share_post']
+PLUGINS = ['share_post.share_post']
+IGNORE_FILES = ['.ipynb_checkpoints']
+
+#PLUGIN_PATHS = ['./plugins']
+#PLUGINS = ['ipynb.markup', 'share_post.share_post']

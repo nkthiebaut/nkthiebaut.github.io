@@ -1,7 +1,0 @@
-Title: Understanding the SHAP interpretation method: Kernel SHAP
-Slug: kernel_shap
-Date: 2020-02-29 02:00
-Category: posts
-Tags: python, machine learning, interpretable machine learning
-Author: Nicolas Thiebaut
-Summary: Exploring the mechanics of the SHAP feature attribution method with toy examples.Presentation of Kernel SHAP.
