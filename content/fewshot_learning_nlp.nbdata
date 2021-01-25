@@ -1,0 +1,7 @@
+Title: Few-shot learning in NLP: many-classes classification from few examples
+Slug: fewshot_learning_nlp
+Date: 2018-08-19 22:00
+Category: posts
+Tags: python, machine learning, deep learning, natural language processing
+Author: Nicolas Thiebaut
+Summary: Learning multi-class classification with only a handful of of examples per class may seem impossible at first, let's see how we can tackle this problem with textual data.
