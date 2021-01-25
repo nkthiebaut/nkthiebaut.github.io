@@ -1,0 +1,2160 @@
+  
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.optimizely.com/js/12126171152.js"></script>
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://nkthiebaut.github.io/theme/stylesheet/style.min.css"
+    />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://nkthiebaut.github.io/theme/pygments/github.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://nkthiebaut.github.io/theme/font-awesome/css/font-awesome.min.css"
+    />
+
+
+    <!--     <link href="https://nkthiebaut.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Data4thought: data science blog Atom">
+ -->
+
+     <link rel="shortcut icon" href="https://nkthiebaut.github.io/images/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="https://nkthiebaut.github.io/images/favicon.ico" type="image/x-icon" />
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+ <meta name="author" content="Nicolas Thiebaut" />
+<meta name="description" content="Learning multi-class classification with only a handful of of examples per class may seem impossible at first, let's see how we can tackle this problem with textual data." />
+<meta name="keywords" content="python, machine learning, deep learning, natural language processing" />
+<meta property="og:site_name" content="Data4thought: data science blog"/>
+<meta property="og:title" content="Few-shot learning in NLP: many-classes classification from few examples"/>
+<meta property="og:description" content="Learning multi-class classification with only a handful of of examples per class may seem impossible at first, let's see how we can tackle this problem with textual data."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://nkthiebaut.github.io/fewshot_learning_nlp.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2018-08-19 22:00:00+02:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="https://nkthiebaut.github.io/author/nicolas-thiebaut.html">
+<meta property="article:section" content="posts"/>
+<meta property="article:tag" content="python"/>
+<meta property="article:tag" content="machine learning"/>
+<meta property="article:tag" content="deep learning"/>
+<meta property="article:tag" content="natural language processing"/>
+<meta property="og:image" content="https://nkthiebaut.github.io/images/PhotoThiebaut.jpg">
+ 
+    <title>Data4thought: data science blog &ndash;
+Few-shot learning in NLP: many-classes classification from few examples</title>
+
+  </head>
+  <body>
+    <!-- <aside>
+    <div>
+      <a href="https://nkthiebaut.github.io">
+        <img src="https://nkthiebaut.github.io/images/PhotoThiebaut.jpg" alt="Data4thought" title="Data4thought">
+      </a>
+      <h1><a href="https://nkthiebaut.github.io">Data4thought</a></h1>
+
+<p>Nicolas Thiebaut's data science blog</p>
+      <nav>
+        <ul class="list">
+          <li><a href="https://nkthiebaut.github.io/pages/about.html#about">About</a></li>
+          <li><a href="https://nkthiebaut.github.io/pages/contact.html#contact">Contact</a></li>
+          <li><a href="https://nkthiebaut.github.io/pages/links.html#links">Links</a></li>
+          <li><a href="https://nkthiebaut.github.io/pages/remote_work.html#remote_work">Remote work</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-linkedin" href="https://www.linkedin.com/in/nthiebaut" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-github" href="https://github.com/nkthiebaut/" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/NicoThiebaut" target="_blank"><i class="fa fa-twitter"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside> -->
+    <main>
+       <nav>
+        <a href="https://nkthiebaut.github.io"> Home </a>
+
+        <a href="/archives.html">Archives</a>
+        <a href="/categories.html">Categories</a>
+        <a href="/tags.html">Tags</a>
+          <a href="https://nkthiebaut.github.io/pages/about.html#about"
+          >About</a
+        >
+        <a href="https://nkthiebaut.github.io/pages/contact.html#contact"
+          >Contact</a
+        >
+        <a href="https://nkthiebaut.github.io/pages/links.html#links"
+          >Links</a
+        >
+        <a href="https://nkthiebaut.github.io/pages/remote_work.html#remote_work"
+          >Remote work</a
+        >
+         <!--       <a href="https://nkthiebaut.github.io/feeds/all.atom.xml"> Atom </a>
+ -->
+
+      </nav>
+ <article class="single">
+  <header>
+    <h1 id="fewshot_learning_nlp">Few-shot learning in NLP: many-classes classification from few examples</h1>
+    <p>
+       Posted on Sun 19 August 2018      </p>
+  </header>
+
+
+  <div><style type="text/css">/*!
+*
+* IPython notebook
+*
+*/
+/* CSS font colors for translated ANSI escape sequences */
+/* The color values are a mix of
+   http://www.xcolors.net/dl/baskerville-ivorylight and
+   http://www.xcolors.net/dl/euphrasia */
+.ansi-black-fg {
+  color: #3E424D;
+}
+.ansi-black-bg {
+  background-color: #3E424D;
+}
+.ansi-black-intense-fg {
+  color: #282C36;
+}
+.ansi-black-intense-bg {
+  background-color: #282C36;
+}
+.ansi-red-fg {
+  color: #E75C58;
+}
+.ansi-red-bg {
+  background-color: #E75C58;
+}
+.ansi-red-intense-fg {
+  color: #B22B31;
+}
+.ansi-red-intense-bg {
+  background-color: #B22B31;
+}
+.ansi-green-fg {
+  color: #00A250;
+}
+.ansi-green-bg {
+  background-color: #00A250;
+}
+.ansi-green-intense-fg {
+  color: #007427;
+}
+.ansi-green-intense-bg {
+  background-color: #007427;
+}
+.ansi-yellow-fg {
+  color: #DDB62B;
+}
+.ansi-yellow-bg {
+  background-color: #DDB62B;
+}
+.ansi-yellow-intense-fg {
+  color: #B27D12;
+}
+.ansi-yellow-intense-bg {
+  background-color: #B27D12;
+}
+.ansi-blue-fg {
+  color: #208FFB;
+}
+.ansi-blue-bg {
+  background-color: #208FFB;
+}
+.ansi-blue-intense-fg {
+  color: #0065CA;
+}
+.ansi-blue-intense-bg {
+  background-color: #0065CA;
+}
+.ansi-magenta-fg {
+  color: #D160C4;
+}
+.ansi-magenta-bg {
+  background-color: #D160C4;
+}
+.ansi-magenta-intense-fg {
+  color: #A03196;
+}
+.ansi-magenta-intense-bg {
+  background-color: #A03196;
+}
+.ansi-cyan-fg {
+  color: #60C6C8;
+}
+.ansi-cyan-bg {
+  background-color: #60C6C8;
+}
+.ansi-cyan-intense-fg {
+  color: #258F8F;
+}
+.ansi-cyan-intense-bg {
+  background-color: #258F8F;
+}
+.ansi-white-fg {
+  color: #C5C1B4;
+}
+.ansi-white-bg {
+  background-color: #C5C1B4;
+}
+.ansi-white-intense-fg {
+  color: #A1A6B2;
+}
+.ansi-white-intense-bg {
+  background-color: #A1A6B2;
+}
+.ansi-default-inverse-fg {
+  color: #FFFFFF;
+}
+.ansi-default-inverse-bg {
+  background-color: #000000;
+}
+.ansi-bold {
+  font-weight: bold;
+}
+.ansi-underline {
+  text-decoration: underline;
+}
+/* The following styles are deprecated an will be removed in a future version */
+.ansibold {
+  font-weight: bold;
+}
+.ansi-inverse {
+  outline: 0.5px dotted;
+}
+/* use dark versions for foreground, to improve visibility */
+.ansiblack {
+  color: black;
+}
+.ansired {
+  color: darkred;
+}
+.ansigreen {
+  color: darkgreen;
+}
+.ansiyellow {
+  color: #c4a000;
+}
+.ansiblue {
+  color: darkblue;
+}
+.ansipurple {
+  color: darkviolet;
+}
+.ansicyan {
+  color: steelblue;
+}
+.ansigray {
+  color: gray;
+}
+/* and light for background, for the same reason */
+.ansibgblack {
+  background-color: black;
+}
+.ansibgred {
+  background-color: red;
+}
+.ansibggreen {
+  background-color: green;
+}
+.ansibgyellow {
+  background-color: yellow;
+}
+.ansibgblue {
+  background-color: blue;
+}
+.ansibgpurple {
+  background-color: magenta;
+}
+.ansibgcyan {
+  background-color: cyan;
+}
+.ansibggray {
+  background-color: gray;
+}
+div.cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  width: 100%;
+  padding: 5px;
+  /* This acts as a spacer between cells, that is outside the border */
+  margin: 0px;
+  outline: none;
+  position: relative;
+  overflow: visible;
+}
+div.cell:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: transparent;
+}
+div.cell.jupyter-soft-selected {
+  border-left-color: #E3F2FD;
+  border-left-width: 1px;
+  padding-left: 5px;
+  border-right-color: #E3F2FD;
+  border-right-width: 1px;
+  background: #E3F2FD;
+}
+@media print {
+  div.cell.jupyter-soft-selected {
+    border-color: transparent;
+  }
+}
+div.cell.selected,
+div.cell.selected.jupyter-soft-selected {
+  border-color: #ababab;
+}
+div.cell.selected:before,
+div.cell.selected.jupyter-soft-selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #42A5F5;
+}
+@media print {
+  div.cell.selected,
+  div.cell.selected.jupyter-soft-selected {
+    border-color: transparent;
+  }
+}
+.edit_mode div.cell.selected {
+  border-color: #66BB6A;
+}
+.edit_mode div.cell.selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #66BB6A;
+}
+@media print {
+  .edit_mode div.cell.selected {
+    border-color: transparent;
+  }
+}
+.prompt {
+  /* This needs to be wide enough for 3 digit prompt numbers: In[100]: */
+  min-width: 14ex;
+  /* This padding is tuned to match the padding on the CodeMirror editor. */
+  padding: 0.4em;
+  margin: 0px;
+  font-family: monospace;
+  text-align: right;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+  /* Don't highlight prompt number selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Use default cursor */
+  cursor: default;
+}
+@media (max-width: 540px) {
+  .prompt {
+    text-align: left;
+  }
+}
+div.inner_cell {
+  min-width: 0;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_area {
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
+  background: #f7f7f7;
+  line-height: 1.21429em;
+}
+/* This is needed so that empty prompt areas can collapse to zero height when there
+   is no content in the output_subarea and the prompt. The main purpose of this is
+   to make sure that empty JavaScript output_subareas have no height. */
+div.prompt:empty {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+div.unrecognized_cell {
+  padding: 5px 5px 5px 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.unrecognized_cell .inner_cell {
+  border-radius: 2px;
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+  border: 1px solid #cfcfcf;
+  background: #eaeaea;
+}
+div.unrecognized_cell .inner_cell a {
+  color: inherit;
+  text-decoration: none;
+}
+div.unrecognized_cell .inner_cell a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+@media (max-width: 540px) {
+  div.unrecognized_cell > div.prompt {
+    display: none;
+  }
+}
+div.code_cell {
+  /* avoid page breaking on code cells when printing */
+}
+@media print {
+  div.code_cell {
+    page-break-inside: avoid;
+  }
+}
+/* any special styling for code cells that are currently running goes here */
+div.input {
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.input {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_prompt {
+  color: #303F9F;
+  border-top: 1px solid transparent;
+}
+div.input_area > div.highlight {
+  margin: 0.4em;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+div.input_area > div.highlight > pre {
+  margin: 0px;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+/* The following gets added to the <head> if it is detected that the user has a
+ * monospace font with inconsistent normal/bold/italic height.  See
+ * notebookmain.js.  Such fonts will have keywords vertically offset with
+ * respect to the rest of the text.  The user should select a better font.
+ * See: https://github.com/ipython/ipython/issues/1503
+ *
+ * .CodeMirror span {
+ *      vertical-align: bottom;
+ * }
+ */
+.CodeMirror {
+  line-height: 1.21429em;
+  /* Changed from 1em to our global default */
+  font-size: 14px;
+  height: auto;
+  /* Changed to auto to autogrow */
+  background: none;
+  /* Changed from white to allow our bg to show through */
+}
+.CodeMirror-scroll {
+  /*  The CodeMirror docs are a bit fuzzy on if overflow-y should be hidden or visible.*/
+  /*  We have found that if it is visible, vertical scrollbars appear with font size changes.*/
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+.CodeMirror-lines {
+  /* In CM2, this used to be 0.4em, but in CM3 it went to 4px. We need the em value because */
+  /* we have set a different line-height and want this to scale with that. */
+  /* Note that this should set vertical padding only, since CodeMirror assumes
+       that horizontal padding will be set on CodeMirror pre */
+  padding: 0.4em 0;
+}
+.CodeMirror-linenumber {
+  padding: 0 8px 0 4px;
+}
+.CodeMirror-gutters {
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+}
+.CodeMirror pre {
+  /* In CM3 this went to 4px from 0 in CM2. This sets horizontal padding only,
+    use .CodeMirror-lines for vertical */
+  padding: 0 0.4em;
+  border: 0;
+  border-radius: 0;
+}
+.CodeMirror-cursor {
+  border-left: 1.4px solid black;
+}
+@media screen and (min-width: 2138px) and (max-width: 4319px) {
+  .CodeMirror-cursor {
+    border-left: 2px solid black;
+  }
+}
+@media screen and (min-width: 4320px) {
+  .CodeMirror-cursor {
+    border-left: 4px solid black;
+  }
+}
+/*
+
+Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiacs.Org>
+Adapted from GitHub theme
+
+*/
+.highlight-base {
+  color: #000;
+}
+.highlight-variable {
+  color: #000;
+}
+.highlight-variable-2 {
+  color: #1a1a1a;
+}
+.highlight-variable-3 {
+  color: #333333;
+}
+.highlight-string {
+  color: #BA2121;
+}
+.highlight-comment {
+  color: #408080;
+  font-style: italic;
+}
+.highlight-number {
+  color: #080;
+}
+.highlight-atom {
+  color: #88F;
+}
+.highlight-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.highlight-builtin {
+  color: #008000;
+}
+.highlight-error {
+  color: #f00;
+}
+.highlight-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.highlight-meta {
+  color: #AA22FF;
+}
+/* previously not defined, copying from default codemirror */
+.highlight-def {
+  color: #00f;
+}
+.highlight-string-2 {
+  color: #f50;
+}
+.highlight-qualifier {
+  color: #555;
+}
+.highlight-bracket {
+  color: #997;
+}
+.highlight-tag {
+  color: #170;
+}
+.highlight-attribute {
+  color: #00c;
+}
+.highlight-header {
+  color: blue;
+}
+.highlight-quote {
+  color: #090;
+}
+.highlight-link {
+  color: #00c;
+}
+/* apply the same style to codemirror */
+.cm-s-ipython span.cm-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-atom {
+  color: #88F;
+}
+.cm-s-ipython span.cm-number {
+  color: #080;
+}
+.cm-s-ipython span.cm-def {
+  color: #00f;
+}
+.cm-s-ipython span.cm-variable {
+  color: #000;
+}
+.cm-s-ipython span.cm-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-variable-2 {
+  color: #1a1a1a;
+}
+.cm-s-ipython span.cm-variable-3 {
+  color: #333333;
+}
+.cm-s-ipython span.cm-comment {
+  color: #408080;
+  font-style: italic;
+}
+.cm-s-ipython span.cm-string {
+  color: #BA2121;
+}
+.cm-s-ipython span.cm-string-2 {
+  color: #f50;
+}
+.cm-s-ipython span.cm-meta {
+  color: #AA22FF;
+}
+.cm-s-ipython span.cm-qualifier {
+  color: #555;
+}
+.cm-s-ipython span.cm-builtin {
+  color: #008000;
+}
+.cm-s-ipython span.cm-bracket {
+  color: #997;
+}
+.cm-s-ipython span.cm-tag {
+  color: #170;
+}
+.cm-s-ipython span.cm-attribute {
+  color: #00c;
+}
+.cm-s-ipython span.cm-header {
+  color: blue;
+}
+.cm-s-ipython span.cm-quote {
+  color: #090;
+}
+.cm-s-ipython span.cm-link {
+  color: #00c;
+}
+.cm-s-ipython span.cm-error {
+  color: #f00;
+}
+.cm-s-ipython span.cm-tab {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMCAYAAAAkuj5RAAAAAXNSR0IArs4c6QAAAGFJREFUSMft1LsRQFAQheHPowAKoACx3IgEKtaEHujDjORSgWTH/ZOdnZOcM/sgk/kFFWY0qV8foQwS4MKBCS3qR6ixBJvElOobYAtivseIE120FaowJPN75GMu8j/LfMwNjh4HUpwg4LUAAAAASUVORK5CYII=);
+  background-position: right;
+  background-repeat: no-repeat;
+}
+div.output_wrapper {
+  /* this position must be relative to enable descendents to be absolute within it */
+  position: relative;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  z-index: 1;
+}
+/* class for the output area when it should be height-limited */
+div.output_scroll {
+  /* ideally, this would be max-height, but FF barfs all over that */
+  height: 24em;
+  /* FF needs this *and the wrapper* to specify full width, or it will shrinkwrap */
+  width: 100%;
+  overflow: auto;
+  border-radius: 2px;
+  -webkit-box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  display: block;
+}
+/* output div while it is collapsed */
+div.output_collapsed {
+  margin: 0px;
+  padding: 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+div.out_prompt_overlay {
+  height: 100%;
+  padding: 0px 0.4em;
+  position: absolute;
+  border-radius: 2px;
+}
+div.out_prompt_overlay:hover {
+  /* use inner shadow to get border that is computed the same on WebKit/FF */
+  -webkit-box-shadow: inset 0 0 1px #000;
+  box-shadow: inset 0 0 1px #000;
+  background: rgba(240, 240, 240, 0.5);
+}
+div.output_prompt {
+  color: #D84315;
+}
+/* This class is the outer container of all output sections. */
+div.output_area {
+  padding: 0px;
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.output_area .MathJax_Display {
+  text-align: left !important;
+}
+div.output_area 
+div.output_area 
+div.output_area img,
+div.output_area svg {
+  max-width: 100%;
+  height: auto;
+}
+div.output_area img.unconfined,
+div.output_area svg.unconfined {
+  max-width: none;
+}
+div.output_area .mglyph > img {
+  max-width: none;
+}
+/* This is needed to protect the pre formating from global settings such
+   as that of bootstrap */
+.output {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.output_area {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+div.output_area pre {
+  margin: 0;
+  padding: 1px 0 1px 0;
+  border: 0;
+  vertical-align: baseline;
+  color: black;
+  background-color: transparent;
+  border-radius: 0;
+}
+/* This class is for the output subarea inside the output_area and after
+   the prompt div. */
+div.output_subarea {
+  overflow-x: auto;
+  padding: 0.4em;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+  max-width: calc(100% - 14ex);
+}
+div.output_scroll div.output_subarea {
+  overflow-x: visible;
+}
+/* The rest of the output_* classes are for special styling of the different
+   output types */
+/* all text output has this class: */
+div.output_text {
+  text-align: left;
+  color: #000;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+}
+/* stdout/stderr are 'text' as well as 'stream', but execute_result/error are *not* streams */
+div.output_stderr {
+  background: #fdd;
+  /* very light red background for stderr */
+}
+div.output_latex {
+  text-align: left;
+}
+/* Empty output_javascript divs should have no height */
+div.output_javascript:empty {
+  padding: 0;
+}
+.js-error {
+  color: darkred;
+}
+/* raw_input styles */
+div.raw_input_container {
+  line-height: 1.21429em;
+  padding-top: 5px;
+}
+pre.raw_input_prompt {
+  /* nothing needed here. */
+}
+input.raw_input {
+  font-family: monospace;
+  font-size: inherit;
+  color: inherit;
+  width: auto;
+  /* make sure input baseline aligns with prompt */
+  vertical-align: baseline;
+  /* padding + margin = 0.5em between prompt and cursor */
+  padding: 0em 0.25em;
+  margin: 0em 0.25em;
+}
+input.raw_input:focus {
+  box-shadow: none;
+}
+p.p-space {
+  margin-bottom: 10px;
+}
+div.output_unrecognized {
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+}
+div.output_unrecognized a {
+  color: inherit;
+  text-decoration: none;
+}
+div.output_unrecognized a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+.rendered_html {
+  color: #000;
+  /* any extras will just be numbers: */
+}
+
+
+
+.rendered_html :link {
+  text-decoration: underline;
+}
+.rendered_html :visited {
+  text-decoration: underline;
+}
+
+
+
+
+
+
+.rendered_html h1:first-child {
+  margin-top: 0.538em;
+}
+.rendered_html h2:first-child {
+  margin-top: 0.636em;
+}
+.rendered_html h3:first-child {
+  margin-top: 0.777em;
+}
+.rendered_html h4:first-child {
+  margin-top: 1em;
+}
+.rendered_html h5:first-child {
+  margin-top: 1em;
+}
+.rendered_html h6:first-child {
+  margin-top: 1em;
+}
+.rendered_html ul:not(.list-inline),
+.rendered_html ol:not(.list-inline) {
+  padding-left: 2em;
+}
+
+
+
+
+
+
+
+
+.rendered_html * + ul {
+  margin-top: 1em;
+}
+.rendered_html * + ol {
+  margin-top: 1em;
+}
+
+
+
+
+
+.rendered_html pre,
+
+
+
+
+.rendered_html tr,
+.rendered_html th,
+
+
+.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+.rendered_html * + table {
+  margin-top: 1em;
+}
+
+.rendered_html * + p {
+  margin-top: 1em;
+}
+
+.rendered_html * + img {
+  margin-top: 1em;
+}
+.rendered_html img,
+
+.rendered_html img.unconfined,
+
+
+.rendered_html * + .alert {
+  margin-top: 1em;
+}
+[dir="rtl"] 
+div.text_cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.text_cell > div.prompt {
+    display: none;
+  }
+}
+div.text_cell_render {
+  /*font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;*/
+  outline: none;
+  resize: none;
+  width: inherit;
+  border-style: none;
+  padding: 0.5em 0.5em 0.5em 0.4em;
+  color: #000;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+a.anchor-link:link {
+  text-decoration: none;
+  padding: 0px 20px;
+  visibility: hidden;
+}
+h1:hover .anchor-link,
+h2:hover .anchor-link,
+h3:hover .anchor-link,
+h4:hover .anchor-link,
+h5:hover .anchor-link,
+h6:hover .anchor-link {
+  visibility: visible;
+}
+.text_cell.rendered .input_area {
+  display: none;
+}
+.text_cell.rendered 
+.text_cell.rendered .rendered_html tr,
+.text_cell.rendered .rendered_html th,
+.text_cell.rendered 
+.text_cell.unrendered .text_cell_render {
+  display: none;
+}
+.text_cell .dropzone .input_area {
+  border: 2px dashed #bababa;
+  margin: -1px;
+}
+.cm-header-1,
+.cm-header-2,
+.cm-header-3,
+.cm-header-4,
+.cm-header-5,
+.cm-header-6 {
+  font-weight: bold;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.cm-header-1 {
+  font-size: 185.7%;
+}
+.cm-header-2 {
+  font-size: 157.1%;
+}
+.cm-header-3 {
+  font-size: 128.6%;
+}
+.cm-header-4 {
+  font-size: 110%;
+}
+.cm-header-5 {
+  font-size: 100%;
+  font-style: italic;
+}
+.cm-header-6 {
+  font-size: 100%;
+  font-style: italic;
+}
+</style>
+<style type="text/css">pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+ .highlight pre  .hll { background-color: #ffffcc }
+ .highlight pre  { background: #f8f8f8; }
+ .highlight pre  .c { color: #408080; font-style: italic } /* Comment */
+ .highlight pre  .err { border: 1px solid #FF0000 } /* Error */
+ .highlight pre  .k { color: #008000; font-weight: bold } /* Keyword */
+ .highlight pre  .o { color: #666666 } /* Operator */
+ .highlight pre  .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+ .highlight pre  .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+ .highlight pre  .cp { color: #BC7A00 } /* Comment.Preproc */
+ .highlight pre  .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+ .highlight pre  .c1 { color: #408080; font-style: italic } /* Comment.Single */
+ .highlight pre  .cs { color: #408080; font-style: italic } /* Comment.Special */
+ .highlight pre  .gd { color: #A00000 } /* Generic.Deleted */
+ .highlight pre  .ge { font-style: italic } /* Generic.Emph */
+ .highlight pre  .gr { color: #FF0000 } /* Generic.Error */
+ .highlight pre  .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+ .highlight pre  .gi { color: #00A000 } /* Generic.Inserted */
+ .highlight pre  .go { color: #888888 } /* Generic.Output */
+ .highlight pre  .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+ .highlight pre  .gs { font-weight: bold } /* Generic.Strong */
+ .highlight pre  .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+ .highlight pre  .gt { color: #0044DD } /* Generic.Traceback */
+ .highlight pre  .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+ .highlight pre  .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+ .highlight pre  .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+ .highlight pre  .kp { color: #008000 } /* Keyword.Pseudo */
+ .highlight pre  .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+ .highlight pre  .kt { color: #B00040 } /* Keyword.Type */
+ .highlight pre  .m { color: #666666 } /* Literal.Number */
+ .highlight pre  .s { color: #BA2121 } /* Literal.String */
+ .highlight pre  .na { color: #7D9029 } /* Name.Attribute */
+ .highlight pre  .nb { color: #008000 } /* Name.Builtin */
+ .highlight pre  .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+ .highlight pre  .no { color: #880000 } /* Name.Constant */
+ .highlight pre  .nd { color: #AA22FF } /* Name.Decorator */
+ .highlight pre  .ni { color: #999999; font-weight: bold } /* Name.Entity */
+ .highlight pre  .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+ .highlight pre  .nf { color: #0000FF } /* Name.Function */
+ .highlight pre  .nl { color: #A0A000 } /* Name.Label */
+ .highlight pre  .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+ .highlight pre  .nt { color: #008000; font-weight: bold } /* Name.Tag */
+ .highlight pre  .nv { color: #19177C } /* Name.Variable */
+ .highlight pre  .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+ .highlight pre  .w { color: #bbbbbb } /* Text.Whitespace */
+ .highlight pre  .mb { color: #666666 } /* Literal.Number.Bin */
+ .highlight pre  .mf { color: #666666 } /* Literal.Number.Float */
+ .highlight pre  .mh { color: #666666 } /* Literal.Number.Hex */
+ .highlight pre  .mi { color: #666666 } /* Literal.Number.Integer */
+ .highlight pre  .mo { color: #666666 } /* Literal.Number.Oct */
+ .highlight pre  .sa { color: #BA2121 } /* Literal.String.Affix */
+ .highlight pre  .sb { color: #BA2121 } /* Literal.String.Backtick */
+ .highlight pre  .sc { color: #BA2121 } /* Literal.String.Char */
+ .highlight pre  .dl { color: #BA2121 } /* Literal.String.Delimiter */
+ .highlight pre  .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+ .highlight pre  .s2 { color: #BA2121 } /* Literal.String.Double */
+ .highlight pre  .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+ .highlight pre  .sh { color: #BA2121 } /* Literal.String.Heredoc */
+ .highlight pre  .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+ .highlight pre  .sx { color: #008000 } /* Literal.String.Other */
+ .highlight pre  .sr { color: #BB6688 } /* Literal.String.Regex */
+ .highlight pre  .s1 { color: #BA2121 } /* Literal.String.Single */
+ .highlight pre  .ss { color: #19177C } /* Literal.String.Symbol */
+ .highlight pre  .bp { color: #008000 } /* Name.Builtin.Pseudo */
+ .highlight pre  .fm { color: #0000FF } /* Name.Function.Magic */
+ .highlight pre  .vc { color: #19177C } /* Name.Variable.Class */
+ .highlight pre  .vg { color: #19177C } /* Name.Variable.Global */
+ .highlight pre  .vi { color: #19177C } /* Name.Variable.Instance */
+ .highlight pre  .vm { color: #19177C } /* Name.Variable.Magic */
+ .highlight pre  .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you're doing machine learning and meet a classification problem with many categories and only a few examples per category, it is usually thought that you're in trouble 😨. Acquiring new data to solve this issue is not always easy or even doable. Luckily, we'll see that efficient techniques exist to deal with this situation with Siamese Neural Networks 🕺.</p>
+<p>This problem of learning with only a few examples per category is called "few-shot learning", and "one-shot learning" in the extreme case of only one example per class (yes, you can even do this and <a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf">obtain decent results</a>!).</p>
+<p>Most of the machine learning research on one-shot learning involves images, but some <a href="https://arxiv.org/abs/1710.10280">recent research papers</a> address the same problem in the Natural Language Processing (NLP) realm.</p>
+<p>In this blog post, I will use a siamese neural network to tackle a few-shot learning prolbem, following a <a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf">method that was originally applied to images</a> and that is nicely explained <a href="https://sorenbouma.github.io/blog/oneshot/">here</a>.</p>
+<p>Job title classification provides a good example of a few-shot learning problem in NLP. Imagine you want to group job titles in different categories or "occupations" (e.g. gather "Programmer" and "Software engineer" under the same occupation, and "Sales manager" and "Account executive" under another one). Unless you have hundreds of job titles examples per occupation you are facing a few-shot learning problem. The U.S government provides such a job title/occupations taxonomy: the <a href="https://www.bls.gov/soc/">Standard Occupational Classification</a>. I'll use it as a toy dataset to understand how few-shot learning with siamese neural networks works.</p>
+<p>Let's start by downloading the taxonomy and check what's in there.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># Set random seeds for reproducibility</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">seed</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># Import a home-made dictionary that maps SOC codes to &quot;occupations&quot; names</span>
+<span class="c1"># The corresponding file can be downloaded here: https://gist.github.com/nkthiebaut/c2895b8bb77bdf3253fb581622dca51b</span>
+<span class="kn">from</span> <span class="nn">soc</span> <span class="kn">import</span> <span class="n">SOC_MINOR_GROUPS</span>
+
+<span class="c1"># Download the Standard Occupation Classification with job titles examples</span>
+<span class="n">file_url</span> <span class="o">=</span> <span class="s1">&#39;https://www.onetcenter.org/dl_files/database/db_20_1_text/Sample</span><span class="si">%20o</span><span class="s1">f%20Reported%20Titles.txt&#39;</span>
+<span class="n">csv</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">file_url</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="c1"># Load it in a pandas DataFrame and drop a useless column</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;Shown in My Next Move&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Get the occupation name from the code and remove the original code column</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;SOC minor group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;O*NET-SOC Code&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">SOC_MINOR_GROUPS</span><span class="p">[</span><span class="n">x</span><span class="p">[:</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;O*NET-SOC Code&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Lower all job titles for simplicity</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Reported Job Title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Reported Job Title&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+<span class="c1"># Display a few examples</span>
+<span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">101</span><span class="p">,</span><span class="mi">102</span><span class="p">,</span><span class="mi">301</span><span class="p">,</span><span class="mi">302</span><span class="p">,</span><span class="mi">303</span><span class="p">]]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[1]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Reported Job Title</th>
+      <th>SOC minor group</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>chief executive officer (ceo)</td>
+      <td>Top Executives</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>chief financial officer (cfo)</td>
+      <td>Top Executives</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>chief nursing officer</td>
+      <td>Top Executives</td>
+    </tr>
+    <tr>
+      <th>100</th>
+      <td>banking center manager (bcm)</td>
+      <td>Operations Specialties Managers</td>
+    </tr>
+    <tr>
+      <th>101</th>
+      <td>banking officer</td>
+      <td>Operations Specialties Managers</td>
+    </tr>
+    <tr>
+      <th>102</th>
+      <td>branch manager</td>
+      <td>Operations Specialties Managers</td>
+    </tr>
+    <tr>
+      <th>301</th>
+      <td>project engineering manager</td>
+      <td>Other Management Occupations</td>
+    </tr>
+    <tr>
+      <th>302</th>
+      <td>project manager</td>
+      <td>Other Management Occupations</td>
+    </tr>
+    <tr>
+      <th>303</th>
+      <td>analytical research program manager</td>
+      <td>Other Management Occupations</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The downloaded file contains job categories codes ("SOC minor group") and samples of job titles that belong to those categories. The categories descriptions are available on <a href="https://www.bls.gov/soc/2010/2010_major_groups.htm">the Standard Occupation Classification website</a>.</p>
+<p>Let's investigate our dataset:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>  <span class="c1"># Count the number of different modalities in each column</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Reported Job Title    7174
+SOC minor group         94
+dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So we have 94 categories ("SOC minor groups") for 7174 examples, i.e. 75 examples per category on average, but some categories have as few as 10 examples (<code>df.value_counts()</code> would tell you that). This is not the most extreme examples of few-shot learning but it's still an example that is better tackled by siamese models than by standard multi-class classification approaches.</p>
+<p>Before proceeding with modelling let's create a train and test sets, by putting one example in the test set for each class.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_set</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;SOC minor group&#39;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">&#39;Reported Job Title&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+<span class="n">train_set</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Reported Job Title&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">test_set</span><span class="p">[</span><span class="s1">&#39;Reported Job Title&#39;</span><span class="p">])]</span>
+
+<span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;Reported Job Title&#39;</span><span class="p">],</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;SOC minor group&#39;</span><span class="p">]</span>
+<span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">&#39;Reported Job Title&#39;</span><span class="p">],</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">&#39;SOC minor group&#39;</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We then encode the targets as numbers.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+
+<span class="n">classes_encoder</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">classes_encoder</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">classes_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Building-a-baseline-&#128035;">Building a baseline &#128035;<a class="anchor-link" href="#Building-a-baseline-&#128035;">&#182;</a></h2><p>Before experimenting with fancy models, let's establish a strong baseline. We can start by using word embeddings to get a vector representation of each job title and use a nearest neighbor classifier that is less likely to overfit than tree-based models or parametric classifiers.</p>
+<p>To get the representation of a sentence from pre-trained word embeddings I'll use <a href="https://github.com/nkthiebaut/zeugma">Zeugma</a>, an NLP python library I've written that conveniently provides pre-trained word embeddings in the form of <a href="http://scikit-learn.org/stable/modules/pipeline.html">scikit-learn transformers</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">zeugma</span> <span class="kn">import</span> <span class="n">EmbeddingTransformer</span>
+
+<span class="c1"># We&#39;ll use the GloVe pre-trained embeddings, using the sum of the word embeddings</span>
+<span class="c1"># of a job title as the embedding vector</span>
+<span class="n">embedding</span> <span class="o">=</span> <span class="n">EmbeddingTransformer</span><span class="p">(</span><span class="s1">&#39;glove&#39;</span><span class="p">,</span> <span class="n">aggregation</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Using TensorFlow backend.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
+
+<span class="c1"># Our model is a nearest neighbor classifier, the input of which is the sum of the </span>
+<span class="c1"># embeddings of words in the job title.</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">baseline</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">clf</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">baseline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Train accuracy (baseline): </span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">baseline</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> %&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Test accuracy (baseline): </span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">baseline</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> %&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Train accuracy (baseline): 84.94 %
+Test accuracy (baseline): 25.53 %
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Not great... but not too bad for a simple baseline model, considering a random guess would have a $\frac{1}{n_{\text{classes}}} \simeq 0.1 \%$ accuracy. I have tried a few other simple models but, surprisingly, I could not beat this simple baseline easily. Let me know if you find a better model!</p>
+<p>Note that the test accuracy is usually expected to be as high as the train one for a nearest neighbors classifier, since no parameters are fitted. Here this is not the case because the test set contains one example per category, such that rare categories have the same weight as prominent categories in the test accuracy.</p>
+<p>It may seem hard to beat this simple baseline with a deep learning model due to the high chances of overfitting with such a small dataset, but here come siamese networks to the rescue.</p>
+<h2 id="Few-shot-learning-with-siamese-neural-networks-&#128111;&#8205;&#9792;&#65039;">Few-shot learning with siamese neural networks &#128111;&#8205;&#9792;&#65039;<a class="anchor-link" href="#Few-shot-learning-with-siamese-neural-networks-&#128111;&#8205;&#9792;&#65039;">&#182;</a></h2><p>The nearest neighbor model of the previous section is performing quite well despite its simplicity because it uses word embeddings learned on a <a href="https://nlp.stanford.edu/projects/glove/">huge NLP dataset from Twitter</a>. Using these words embeddings is a basic form of <a href="https://en.wikipedia.org/wiki/Transfer_learning">transfer learning</a>, which reduces the overfit by allowing smaller models to perform well, ultimately giving better performances on the test set.</p>
+<p>Although the pre-trained embeddings are valuable, the embedding space used to determine nearest neighbors knows nothing about job titles in particular. There must be a way to learn an embedding space in which jobs that belong to the same occupation category are closer. This is where siamese networks come into play.</p>
+<p>The main idea of siamese networks is to learn the above mentioned vector representation by training a model that discriminates between pairs of examples that are in the same category, and pairs of examples that come from different categories.</p>
+<h3 id="Building-the-pairs-dataset">Building the pairs dataset<a class="anchor-link" href="#Building-the-pairs-dataset">&#182;</a></h3><p>Let's create positive samples with pairs of job titles from the same SOC category, and negative examples with pairs of job titles sampled from different SOC codes.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">sample</span>
+
+<span class="n">jobs_left</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">jobs_right</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">target</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">soc_codes</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;SOC minor group&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">soc_codes</span><span class="p">:</span>
+    <span class="c1"># 1) create similar categories pairs, with a corresponding target of 1</span>
+    <span class="n">similar_jobs</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;SOC minor group&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">code</span><span class="p">][</span><span class="s1">&#39;Reported Job Title&#39;</span><span class="p">]</span>
+    
+    <span class="c1"># Pick 1000 random pairs from the SOC group&#39;s job titles combinations </span>
+    <span class="n">group_pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">similar_jobs</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> 
+    <span class="n">positive_pairs</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">group_pairs</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_pairs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1000</span> <span class="k">else</span> <span class="n">group_pairs</span>
+    <span class="n">jobs_left</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">positive_pairs</span><span class="p">])</span>
+    <span class="n">jobs_right</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">positive_pairs</span><span class="p">])</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mf">1.</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">positive_pairs</span><span class="p">))</span>
+    
+    <span class="c1"># 2) create pairs of examples with jobs from different categories, with a target set to 0</span>
+    <span class="n">other_jobs</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;SOC minor group&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">code</span><span class="p">][</span><span class="s1">&#39;Reported Job Title&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">positive_pairs</span><span class="p">)):</span>
+        <span class="n">jobs_left</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">similar_jobs</span><span class="p">))</span>
+        <span class="n">jobs_right</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">other_jobs</span><span class="p">))</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+        <span class="s1">&#39;job_left&#39;</span><span class="p">:</span> <span class="n">jobs_left</span><span class="p">,</span>
+        <span class="s1">&#39;job_right&#39;</span><span class="p">:</span> <span class="n">jobs_right</span><span class="p">,</span>
+        <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">target</span>
+    <span class="p">})</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Shuffle dataset</span>
+
+<span class="n">dataset</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>job_left</th>
+      <th>job_right</th>
+      <th>target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>116767</th>
+      <td>carman</td>
+      <td>marine design engineer</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>81897</th>
+      <td>childcare worker</td>
+      <td>recreation supervisor</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>100046</th>
+      <td>brood hatchery manager</td>
+      <td>sow farm manager</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>64558</th>
+      <td>public safety officer</td>
+      <td>traffic control officer</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>14386</th>
+      <td>senior planner</td>
+      <td>compiler</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we see that the pair "childcare worker" and "recreation supervisor" belong to the same job occupation category (second example, target = 1), while "carman" and "marine design engineer" are in different occupation categories (first example, target = 0). Note that we end up with a much bigger dataset by creating pairs. The synthetic dataset contains 218,669 pairs while the original dataset has only 8,921 samples. Of course, we have only artificially increased the dataset size because we have not generated new data, but we'll see that this technique is still very powerful.</p>
+<h3 id="Modelling">Modelling<a class="anchor-link" href="#Modelling">&#182;</a></h3><p>The general architecture of the model is based on <a href="https://medium.com/mlreview/implementing-malstm-on-kaggles-quora-question-pairs-competition-8b31b0b16a07">this very good tutorial</a>. The preprocessing is fairly simple:</p>
+<ul>
+<li>we remove parts of the jobs titles that are between parenthesis, we lowercase them, </li>
+<li>then we turn the examples into index sequences, and</li>
+<li>"pad" them to get a valid input for the neural network classifier. </li>
+</ul>
+<p>Here, again, I use convenient transformers from the <a href="https://github.com/nkthiebaut/zeugma">Zeugma</a> to perform all those steps.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span><span class="p">,</span> <span class="n">FeatureUnion</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">FunctionTransformer</span>
+<span class="kn">from</span> <span class="nn">zeugma</span> <span class="kn">import</span> <span class="n">TextsToSequences</span><span class="p">,</span> <span class="n">Padder</span><span class="p">,</span> <span class="n">ItemSelector</span>
+
+<span class="n">max_words_job_title</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># To avoid very long job titles we limit them to 10 words</span>
+<span class="n">vocab_size</span> <span class="o">=</span> <span class="mi">10000</span>  <span class="c1"># Number of most-frequent words kept in the vocabulary</span>
+
+<span class="k">def</span> <span class="nf">preprocess_job_titles</span><span class="p">(</span><span class="n">job_titles</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return a list of clean job titles &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">preprocess_job_title</span><span class="p">(</span><span class="n">raw_job_title</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Clean a single job title&quot;&quot;&quot;</span>
+        <span class="n">job_title</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\(.*\)&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">raw_job_title</span><span class="p">)</span>  <span class="c1"># Remove everything between parenthesis</span>
+        <span class="k">return</span> <span class="n">job_title</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">preprocess_job_title</span><span class="p">(</span><span class="n">jt</span><span class="p">)</span> <span class="k">for</span> <span class="n">jt</span> <span class="ow">in</span> <span class="n">job_titles</span><span class="p">]</span>
+    
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span>
+    <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">preprocess_job_titles</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>  <span class="c1"># Preprocess the text</span>
+    <span class="n">TextsToSequences</span><span class="p">(</span><span class="n">num_words</span><span class="o">=</span><span class="n">vocab_size</span><span class="p">),</span>  <span class="c1"># Turn word sequences into indexes sequences</span>
+    <span class="n">Padder</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="n">max_words_job_title</span><span class="p">),</span>  <span class="c1"># Pad shorter job titles with a dummy index</span>
+<span class="p">)</span>
+
+<span class="c1"># Note that the preprocessing pipeline must be fit on both the right and left examples</span>
+<span class="c1"># simultaneously</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;job_left&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;job_right&#39;</span><span class="p">]));</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x_left</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;job_left&#39;</span><span class="p">])</span>
+<span class="n">x_right</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;job_right&#39;</span><span class="p">])</span>
+<span class="n">x_pairs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_left</span><span class="p">,</span> <span class="n">x_right</span><span class="p">]</span>   <span class="c1"># this will be the input of the siamese network</span>
+
+<span class="n">y_pairs</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># We re-use the same embedding as with the baseline model</span>
+<span class="n">embedding_layer</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_keras_embedding</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now that we have created the pairs dataset and preprocessed the job titles we can turn our attention to the siamese model itself. It consists of a cloned sequential network, the input of which is a pair of vectors <code>x_left</code> and <code>x_right</code>. The last layer of the sequential network for <code>x_left</code> is the vector representation of the left job title and same thing for <code>x_right</code> the right input job title. The representations of the right and left inputs are used to compute the similarity between the job titles:</p>
+$$\text{sim}\left(x_{l}, x_{r}\right) = \exp \left(-\| f(x_l) - f(x_r) \|_1\right),$$<p>where $\text{sim} \in [0, 1]$, $\|\cdot\|_1$ is the L1 norm, and $f$ is the function corresponding to the application of the cloned sequential network to the left/right input.</p>
+<p>This setting is called the <a href="https://www.quora.com/What-is-Manhattan-LSTM">Manhattan LSTM</a> because we'll use LSTMs as the sequential network, and the L1 norm (used to compute the distance between two samples of a pair) is also called the <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Manhattan distance</a>. Here is the corresponding code.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">LSTM</span><span class="p">,</span> <span class="n">Bidirectional</span>
+<span class="kn">from</span> <span class="nn">keras</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Dropout</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">Subtract</span>
+<span class="kn">from</span> <span class="nn">keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
+
+<span class="k">def</span> <span class="nf">exponent_neg_manhattan_distance</span><span class="p">(</span><span class="n">arms_difference</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the exponent of the opposite of the L1 norm of a vector, to get the left/right inputs</span>
+<span class="sd">    similarity from the inputs differences. This function is used to turned the unbounded</span>
+<span class="sd">    L1 distance to a similarity measure between 0 and 1&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">K</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">arms_difference</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">siamese_lstm</span><span class="p">(</span><span class="n">max_length</span><span class="p">,</span> <span class="n">embedding_layer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Define, compile and return a siamese LSTM model &quot;&quot;&quot;</span>
+    <span class="n">input_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_length</span><span class="p">,)</span>
+    <span class="n">left_input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">input_shape</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;left_input&#39;</span><span class="p">)</span>
+    <span class="n">right_input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">input_shape</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;right_input&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Define a single sequential model for both arms.</span>
+    <span class="c1"># In this example I&#39;ve chosen a simple bidirectional LSTM with no dropout</span>
+    <span class="n">seq</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;sequential_network&#39;</span><span class="p">)</span>
+    <span class="n">seq</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">embedding_layer</span><span class="p">)</span>
+    <span class="n">seq</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Bidirectional</span><span class="p">(</span><span class="n">LSTM</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">recurrent_dropout</span><span class="o">=</span><span class="mf">0.</span><span class="p">)))</span>
+    
+    <span class="n">left_output</span> <span class="o">=</span> <span class="n">seq</span><span class="p">(</span><span class="n">left_input</span><span class="p">)</span>
+    <span class="n">right_output</span> <span class="o">=</span> <span class="n">seq</span><span class="p">(</span><span class="n">right_input</span><span class="p">)</span>
+
+    <span class="c1"># Here we subtract the neuron values of the last layer from the left arm </span>
+    <span class="c1"># with the corresponding values from the right arm</span>
+    <span class="n">subtracted</span> <span class="o">=</span> <span class="n">Subtract</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pair_representations_difference&#39;</span><span class="p">)([</span><span class="n">left_output</span><span class="p">,</span> <span class="n">right_output</span><span class="p">])</span>
+    <span class="n">malstm_distance</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">(</span><span class="n">exponent_neg_manhattan_distance</span><span class="p">,</span> 
+                             <span class="n">name</span><span class="o">=</span><span class="s1">&#39;masltsm_distance&#39;</span><span class="p">)(</span><span class="n">subtracted</span><span class="p">)</span>
+
+    <span class="n">siamese_net</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">left_input</span><span class="p">,</span> <span class="n">right_input</span><span class="p">],</span> <span class="n">outputs</span><span class="o">=</span><span class="n">malstm_distance</span><span class="p">)</span>
+    <span class="n">siamese_net</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s2">&quot;binary_crossentropy&quot;</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">siamese_net</span>
+
+<span class="n">siamese_lstm</span> <span class="o">=</span> <span class="n">siamese_lstm</span><span class="p">(</span><span class="n">max_words_job_title</span><span class="p">,</span> <span class="n">embedding_layer</span><span class="p">)</span>
+
+<span class="c1"># Print a summary of the model mainly to know the number of trainable parameters</span>
+<span class="n">siamese_lstm</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+left_input (InputLayer)         (None, 10)           0                                            
+__________________________________________________________________________________________________
+right_input (InputLayer)        (None, 10)           0                                            
+__________________________________________________________________________________________________
+sequential_network (Sequential) (None, 64)           29852698    left_input[0][0]                 
+                                                                 right_input[0][0]                
+__________________________________________________________________________________________________
+pair_representations_difference (None, 64)           0           sequential_network[1][0]         
+                                                                 sequential_network[2][0]         
+__________________________________________________________________________________________________
+masltsm_distance (Lambda)       (None, 1)            0           pair_representations_difference[0
+==================================================================================================
+Total params: 29,852,698
+Trainable params: 14,848
+Non-trainable params: 29,837,850
+__________________________________________________________________________________________________
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">siamese_lstm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_pairs</span><span class="p">,</span> <span class="n">y_pairs</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Train on 132636 samples, validate on 14738 samples
+Epoch 1/1
+132636/132636 [==============================] - 43s 321us/step - loss: 0.6732 - acc: 0.5754 - val_loss: 0.6548 - val_acc: 0.5948
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Without much effort (light preprocessing, only one epoch, no early stopping, no hyper-parameters optimization) we obtain a decent ~60 % accuracy on the validation set. But remember that this is not the final task, here we are only solving the binary classification problem of recognizing pairs of job titles that belong to the same occupations category and pairs of jobs that are sampled from different occupations categories.</p>
+<p>To address the initial problem of finding each job title's category we have to compute, for each example in the test set, the similarity score of this example with all the examples in the training set. The predicted category is the one of the closest example in training set.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x_references</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x_train</span><span class="p">)</span>  <span class="c1"># Preprocess the training set examples</span>
+
+<span class="k">def</span> <span class="nf">get_prediction</span><span class="p">(</span><span class="n">job_title</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get the predicted job title category, and the most similar job title</span>
+<span class="sd">    in the train set. Note that this way of computing a prediction is highly </span>
+<span class="sd">    not optimal, but it&#39;ll be sufficient for us now. &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">job_title</span><span class="p">])</span>
+    
+    <span class="c1"># Compute similarities of the job title with all job titles in the train set</span>
+    <span class="n">similarities</span> <span class="o">=</span> <span class="n">siamese_lstm</span><span class="o">.</span><span class="n">predict</span><span class="p">([[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">x_references</span><span class="p">),</span> <span class="n">x_references</span><span class="p">])</span>
+    <span class="n">most_similar_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">similarities</span><span class="p">)</span>
+    
+    <span class="c1"># The predicted category is the one of the most similar example from the train set</span>
+    <span class="n">prediction</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;SOC minor group&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">most_similar_index</span><span class="p">]</span>
+    <span class="n">most_similar_example</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;Reported Job Title&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">most_similar_index</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">most_similar_example</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's check a prediction example</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_idx</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">pred</span><span class="p">,</span> <span class="n">most_sim</span> <span class="o">=</span> <span class="n">get_prediction</span><span class="p">(</span><span class="n">x_test</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Sampled test job title: </span><span class="si">{</span><span class="n">x_test</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;True occupation: </span><span class="si">{</span><span class="n">test_set</span><span class="p">[</span><span class="s2">&quot;SOC minor group&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Occupation prediction: </span><span class="si">{</span><span class="n">pred</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Most similar example in train set: </span><span class="si">{</span><span class="n">most_sim</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Sampled test job title: brand inspector
+True occupation: Agricultural Workers
+Occupation prediction: Agricultural Workers
+Most similar example in train set: deputy brand inspector
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+
+<span class="n">y_pred</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_prediction</span><span class="p">(</span><span class="n">job_title</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">job_title</span> <span class="ow">in</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">&#39;Reported Job Title&#39;</span><span class="p">]]</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">classes_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">y_pred</span><span class="p">),</span> <span class="n">y_test</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Test accuracy (siamese model): </span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">accuracy</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> %&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Test accuracy (siamese model): 39.36 %
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The siamese model thus outperforms the random guess (accuracy ~0.1 %) and the nearest neighbor baseline (~25 %) by a substantial margin 🤹‍♀️ . Even though it is far from perfect, it predicts the right category for a job title roughly 2 times out of 5, while it has to choose between roughly a hundred of them.</p>
+<p>What this means is that the siamese model managed to squeeze some juice out of <strong>all</strong> the examples in the dataset, even across different categories. The original multi-class classification approach does not allow to learn "across categories" because the categorical cross-entropy that is always used to treat those problems actually treats the multi-class classification tasks as a set of independent binary classification tasks.</p>
+<p>The siamese network approach to the few-shot learning problem is definitely a 
+way out with textual data 📚. At the cost of a more complex modelling, it gives better results than standard  classification methods. Give it a shot if you want to classify your data with machine learning but don't have many examples per category, you won't regret it 🎊.</p>
+<p>Please don't hesitate to leave a comment, I'd be happy to learn about your experiments with few-shot learning problems, to clarify some parts, or to have any feedback on this post. Thanks for reading!</p>
+
+</div>
+</div>
+</div>
+ 
+
+
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['$','$'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        " linebreaks: { automatic: true, width: '95% container' }, " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+</div>
+
+  <section>
+    <p id="post-share-links" style="text-align: center">
+      Share on:
+      <a
+        href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html&title=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&summary=Learning%20multi-class%20classification%20with%20only%20a%20handful%20of%20of%20examples%20per%20class%20may%20seem%20impossible%20at%20first%2C%20let%27s%20see%20how%20we%20can%20tackle%20this%20problem%20with%20textual%20data.&source=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html"
+        target="_blank"
+        title="Share on LinkedIn"
+        ><i class="fa fa-linkedin-square"></i>
+      </a>
+      <a
+        href="https://twitter.com/intent/tweet?text=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html"
+        target="_blank"
+        title="Share on Twitter"
+        ><i class="fa fa-twitter"></i
+      ></a>
+      <a
+        href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html"
+        target="_blank"
+        title="Share on Facebook"
+        ><i class="fa fa-facebook"></i
+      ></a>
+      <a
+        href="mailto:?subject=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&amp;body=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html"
+        target="_blank"
+        title="Share via Email"
+        ><i class="fa fa-envelope"></i
+      ></a>
+    </p>
+  </section>
+ <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'data4thought';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+     Please enable JavaScript to view comments. 
+</noscript>
+   </article>
+
+      <footer>
+<p>&copy; Nicolas Thiebaut </p>
+<!--<p> Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a> </p>-->       </footer>
+    </main>
+
+ <!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-106456784-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->     <script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Data4thought: data science blog ",
+  "url" : "https://nkthiebaut.github.io",
+  "image": "https://nkthiebaut.github.io/images/PhotoThiebaut.jpg",
+  "description": "Nicolas Thiebaut's data science blog"
+}
+</script>   </body>
+</html>
