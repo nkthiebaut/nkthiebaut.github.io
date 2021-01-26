@@ -4,4 +4,5 @@ Date: 2019-12-27 16:00
 Category: posts
 Tags: python, machine learning, interpretable machine learning
 Author: Nicolas Thiebaut
-Summary: Exploring the mechanics of the SHAP feature attribution method with toy examples.Presentation of Shapley values.
+Summary: Exploring the mechanics of the SHAP feature attribution method with toy examples. Presentation of Shapley values.
+featured_image: ./images/xai-trend.png

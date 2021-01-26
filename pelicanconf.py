@@ -28,9 +28,9 @@ SOCIAL = (('linkedin', 'https://www.linkedin.com/in/nthiebaut'),
           ('github', 'https://github.com/nkthiebaut/'),
           ('twitter', 'https://twitter.com/NicoThiebaut'),)
 
-MENUITEMS = (('Archives', '/archives.html'),
-             ('Categories', '/categories.html'),
-             ('Tags', '/tags.html'),)
+#MENUITEMS = (('Archives', '/archives.html'),
+#             ('Categories', '/categories.html'),
+#             ('Tags', '/tags.html'),)
 
 DEFAULT_PAGINATION = 10
 

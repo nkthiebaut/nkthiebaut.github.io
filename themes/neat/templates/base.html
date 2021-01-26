@@ -181,8 +181,7 @@ kwargs }} {% endmacro %} {% endif %}
       {% endif %} {% block content %} {% endblock %}
 
       <footer>
-        {% if CC_LICENSE %} {% include "partial/cc_license.html" %} {% else %}
-        {% include "partial/copyright.html" %} {% endif %}
+        {% include "partial/copyright.html" %}
       </footer>
     </main>
 
