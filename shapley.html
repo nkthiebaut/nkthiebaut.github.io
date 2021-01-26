@@ -40,11 +40,11 @@
     <meta name="robots" content="" />
 
  <meta name="author" content="Nicolas Thiebaut" />
-<meta name="description" content="Exploring the mechanics of the SHAP feature attribution method with toy examples.Presentation of Shapley values." />
+<meta name="description" content="Exploring the mechanics of the SHAP feature attribution method with toy examples. Presentation of Shapley values." />
 <meta name="keywords" content="python, machine learning, interpretable machine learning" />
 <meta property="og:site_name" content="Data4thought: data science blog"/>
 <meta property="og:title" content="Understanding the SHAP interpretation method: Shapley values"/>
-<meta property="og:description" content="Exploring the mechanics of the SHAP feature attribution method with toy examples.Presentation of Shapley values."/>
+<meta property="og:description" content="Exploring the mechanics of the SHAP feature attribution method with toy examples. Presentation of Shapley values."/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:url" content="https://nkthiebaut.github.io/shapley.html"/>
 <meta property="og:type" content="article"/>
@@ -93,9 +93,6 @@ Understanding the SHAP interpretation method: Shapley values</title>
        <nav>
         <a href="https://nkthiebaut.github.io"> Home </a>
 
-        <a href="/archives.html">Archives</a>
-        <a href="/categories.html">Categories</a>
-        <a href="/tags.html">Tags</a>
           <a href="https://nkthiebaut.github.io/pages/about.html#about"
           >About</a
         >
@@ -1163,11 +1160,11 @@ h6:hover .anchor-link {
   font-style: italic;
 }
 </style>
-<style type="text/css">pre { line-height: 125%; margin: 0; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+<style type="text/css">pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
  .highlight pre  .hll { background-color: #ffffcc }
  .highlight pre  { background: #f8f8f8; }
  .highlight pre  .c { color: #408080; font-style: italic } /* Comment */
@@ -1335,7 +1332,7 @@ where $z_i \in \{0, 1\}$.</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Shapley-values:-the-most-elegant-and-accurate-feature-attribution-method">Shapley values: the most elegant and accurate feature attribution method<a class="anchor-link" href="#Shapley-values:-the-most-elegant-and-accurate-feature-attribution-method">&#182;</a></h2><p>The theoretical elegance of the SHAP article comes from the fact that they have listed the desirable properties of additive feature attribution methods:</p>
 <ol>
-<li><p>🎯 <strong>Local accuracy</strong>: the explanation model $g$ must give the same prediction has the original model for the untransformed input. This property implies  that the weight $\phi_i$ sum to the original model prediction $f(x)$, i.e. $\sum_i \phi_i = f(x)$.</p>
+<li><p>🎯 <strong>Local accuracy</strong>: the explanation model $g$ must give the same prediction has the original model for the untransformed input. This property implies  that the weight $\phi_i$ sum to the original model prediction $f(x)$ (when added to the prediction of the the null model $\phi_0$, which is the target mean), i.e. $\sum_i \phi_i + \phi_0 = f(x)$.</p>
 </li>
 <li><p>🤷‍♂️<strong>Missingness</strong>: if a feature is missing the associated weight is 0. This property might seem odd at first. It is only relevant for a dataset with constant features, for which we want the constant feature to have no weight.</p>
 </li>
@@ -1360,7 +1357,7 @@ where $z_i \in \{0, 1\}$.</p>
 <li>$3^{rd}$ coalition: "Ad?" &amp; "Rain?" $\longrightarrow \{x_a, x_r\}$</li>
 <li>$4^{th}$ coalition: "Ad?" &amp; "Weekday?" &amp; "Rain?" $\longrightarrow \{x_a, x_w, x_r\}$</li>
 </ul>
-<p>For each coalition $S \in \left\{ \{x_a, x_w\}, \{x_a, x_r\}, \{x_a, x_w, x_r\}\right\}$ we compute the contribution of the $i$-th variable to the coalition as the prediction of the model trained with the complete coalition minus the prediction of the model trained without this variable (let's note the model trained with all variables in the coalition as $f_S$ to avoid confusion with the original model $f$)</p>
+<p>For each coalition $S \in \left\{\{x_a\},  \{x_a, x_w\}, \{x_a, x_r\}, \{x_a, x_w, x_r\}\right\}$ we compute the contribution of the $i$-th variable to the coalition as the prediction of the model trained with the complete coalition minus the prediction of the model trained without this variable (let's note the model trained with all variables in the coalition as $f_S$ to avoid confusion with the original model $f$)</p>
 $$\delta_{i}^{(S)} = f_S\left(S\right)-f_{S_{-i}}\left(S_{-i} \right), $$<p>where $S_{-i} = S \;\backslash\; \{x_i\}$ is the coalition <strong>without</strong> the variable $i$.</p>
 <p>For instance the contribution of the feature $x_a$ to the coalition $\{x_a, x_r\}$ is</p>
 $$ \delta_{x_a}^{\left\{x_a, x_r\right\}} = f_{\{x_a, x_r\}}\left(\{x_a, x_r\}\right)-f_{\{x_r\}}\left(\{x_r\}\right) .$$<p>The contribution of the variable $x_a$ is then obtained with the following formula:</p>
@@ -1370,7 +1367,7 @@ $$
 \begin{align*}
 \phi_{a}&amp; =\frac{1}{4} \sum_{S \in \left\{ \{x_a\}, \{x_a, x_w\}, \{x_a, x_r\}, \{x_a, x_w, x_r\}\right\}}\left(\begin{array}{c}{p-1} \\ {|S-1|}\end{array}\right)^{-1}\delta_{a}^{(S)}\\
 &amp; = \frac{1}{4} \left[
-\left(\begin{array}{c}{2} \\ {0}\end{array}\right)^{-1}\delta_{a}^{\{x_a\}}
+\left(\begin{array}{c}{2} \\ {0}\end{array}\right)^{-1}\delta_{a}^{\{x_a\}}+
 \left(\begin{array}{c}{2} \\ {1}\end{array}\right)^{-1}\delta_{a}^{\{x_a, x_w\}}+
 \left(\begin{array}{c}{2} \\ {1}\end{array}\right)^{-1}\delta_{a}^{\{x_a, x_r\}}+
 \left(\begin{array}{c}{2} \\ {2}\end{array}\right)^{-1}\delta_{a}^{\{x_a, x_w, x_r\}}
@@ -1390,14 +1387,7 @@ $$<p>🙀 That's a lot of terms to compute and models to train, eight in total. 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This blog post introduces the Shapley values, the unavoidable pre-requisite to understanding SHAP, the current rockstar of attributionm methods. Indeed, SHAP only consists in a set a approximation.</p>
+<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h2><p>This blog post introduces the Shapley values, the unavoidable pre-requisite to understanding SHAP, the current rockstar of attributionm methods. Indeed, SHAP only consists in a set a approximation.</p>
 <p>Note that the SHAP paper is a gold mine regarding the formalization of the feature attribution and the generalization of the previsouly existing interpretation methods. After this introduction I invite you to <a href="http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions">read it</a>!</p>
 <p>The <a href="https://data4thought.com/kernel_shap.html">next blog post</a> introduces the most versatile feature attribution of the SHAP toolbox: Kernel SHAP.</p>
 
@@ -1441,7 +1431,7 @@ $$<p>🙀 That's a lot of terms to compute and models to train, eight in total. 
     <p id="post-share-links" style="text-align: center">
       Share on:
       <a
-        href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/shapley.html&title=Understanding%20the%20SHAP%20interpretation%20method%3A%20Shapley%20values&summary=Exploring%20the%20mechanics%20of%20the%20SHAP%20feature%20attribution%20method%20with%20toy%20examples.Presentation%20of%20Shapley%20values.&source=https%3A//nkthiebaut.github.io/shapley.html"
+        href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/shapley.html&title=Understanding%20the%20SHAP%20interpretation%20method%3A%20Shapley%20values&summary=Exploring%20the%20mechanics%20of%20the%20SHAP%20feature%20attribution%20method%20with%20toy%20examples.%20Presentation%20of%20Shapley%20values.&source=https%3A//nkthiebaut.github.io/shapley.html"
         target="_blank"
         title="Share on LinkedIn"
         ><i class="fa fa-linkedin-square"></i>
@@ -1481,8 +1471,8 @@ $$<p>🙀 That's a lot of terms to compute and models to train, eight in total. 
    </article>
 
       <footer>
-<p>&copy; Nicolas Thiebaut </p>
-<!--<p> Powered by <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a> </p>-->       </footer>
+<p>&copy; <a href="https://linkedin.com/in/nthiebaut">Nicolas Thiebaut</a>  </p>
+      </footer>
     </main>
 
  <!-- Google Analytics -->

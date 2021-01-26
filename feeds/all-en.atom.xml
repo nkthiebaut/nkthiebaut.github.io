@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/all-en.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2020-02-29T02:00:00+01:00</updated><subtitle>Nicolas Thiebaut's data science blog</subtitle><entry><title>Understanding the SHAP interpretation method: Kernel SHAP</title><link href="https://nkthiebaut.github.io/kernel_shap.html" rel="alternate"></link><published>2020-02-29T02:00:00+01:00</published><updated>2020-02-29T02:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2020-02-29:/kernel_shap.html</id><summary type="html">&lt;p&gt;Exploring the mechanics of the SHAP feature attribution method with toy examples.Presentation of Kernel SHAP.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Data4thought: data science blog</title><link href="https://nkthiebaut.github.io/" rel="alternate"></link><link href="https://nkthiebaut.github.io/feeds/all-en.atom.xml" rel="self"></link><id>https://nkthiebaut.github.io/</id><updated>2020-02-29T02:00:00+01:00</updated><subtitle>Nicolas Thiebaut's data science blog</subtitle><entry><title>Understanding the SHAP interpretation method: Kernel SHAP</title><link href="https://nkthiebaut.github.io/kernel_shap.html" rel="alternate"></link><published>2020-02-29T02:00:00+01:00</published><updated>2020-02-29T02:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2020-02-29:/kernel_shap.html</id><summary type="html">&lt;p&gt;Exploring the mechanics of the SHAP feature attribution method with toy examples. Presentation of Kernel SHAP.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -1042,11 +1042,11 @@ h6:hover .anchor-link {
   font-style: italic;
 }
 &lt;/style&gt;
-&lt;style type="text/css"&gt;pre { line-height: 125%; margin: 0; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+&lt;style type="text/css"&gt;pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
  .highlight pre  .hll { background-color: #ffffcc }
  .highlight pre  { background: #f8f8f8; }
  .highlight pre  .c { color: #408080; font-style: italic } /* Comment */
@@ -1875,7 +1875,7 @@ $$L\left(f, g, \pi_{x}\right)=\sum_{z^{\prime} \in Z}\left[f\left(h_{x}\left(z^{
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</content><category term="posts"></category><category term="python"></category><category term="machine learning"></category><category term="interpretable machine learning"></category></entry><entry><title>Understanding the SHAP interpretation method: Shapley values</title><link href="https://nkthiebaut.github.io/shapley.html" rel="alternate"></link><published>2019-12-27T16:00:00+01:00</published><updated>2019-12-27T16:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2019-12-27:/shapley.html</id><summary type="html">&lt;p&gt;Exploring the mechanics of the SHAP feature attribution method with toy examples.Presentation of Shapley values.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
+</content><category term="posts"></category><category term="python"></category><category term="machine learning"></category><category term="interpretable machine learning"></category></entry><entry><title>Understanding the SHAP interpretation method: Shapley values</title><link href="https://nkthiebaut.github.io/shapley.html" rel="alternate"></link><published>2019-12-27T16:00:00+01:00</published><updated>2019-12-27T16:00:00+01:00</updated><author><name>Nicolas Thiebaut</name></author><id>tag:nkthiebaut.github.io,2019-12-27:/shapley.html</id><summary type="html">&lt;p&gt;Exploring the mechanics of the SHAP feature attribution method with toy examples. Presentation of Shapley values.&lt;/p&gt;</summary><content type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -2918,11 +2918,11 @@ h6:hover .anchor-link {
   font-style: italic;
 }
 &lt;/style&gt;
-&lt;style type="text/css"&gt;pre { line-height: 125%; margin: 0; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+&lt;style type="text/css"&gt;pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
  .highlight pre  .hll { background-color: #ffffcc }
  .highlight pre  { background: #f8f8f8; }
  .highlight pre  .c { color: #408080; font-style: italic } /* Comment */
@@ -3090,7 +3090,7 @@ where $z_i \in \{0, 1\}$.&lt;/p&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;h2 id="Shapley-values:-the-most-elegant-and-accurate-feature-attribution-method"&gt;Shapley values: the most elegant and accurate feature attribution method&lt;a class="anchor-link" href="#Shapley-values:-the-most-elegant-and-accurate-feature-attribution-method"&gt;&amp;#182;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The theoretical elegance of the SHAP article comes from the fact that they have listed the desirable properties of additive feature attribution methods:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;🎯 &lt;strong&gt;Local accuracy&lt;/strong&gt;: the explanation model $g$ must give the same prediction has the original model for the untransformed input. This property implies  that the weight $\phi_i$ sum to the original model prediction $f(x)$, i.e. $\sum_i \phi_i = f(x)$.&lt;/p&gt;
+&lt;li&gt;&lt;p&gt;🎯 &lt;strong&gt;Local accuracy&lt;/strong&gt;: the explanation model $g$ must give the same prediction has the original model for the untransformed input. This property implies  that the weight $\phi_i$ sum to the original model prediction $f(x)$ (when added to the prediction of the the null model $\phi_0$, which is the target mean), i.e. $\sum_i \phi_i + \phi_0 = f(x)$.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;p&gt;🤷‍♂️&lt;strong&gt;Missingness&lt;/strong&gt;: if a feature is missing the associated weight is 0. This property might seem odd at first. It is only relevant for a dataset with constant features, for which we want the constant feature to have no weight.&lt;/p&gt;
 &lt;/li&gt;
@@ -3115,7 +3115,7 @@ where $z_i \in \{0, 1\}$.&lt;/p&gt;
 &lt;li&gt;$3^{rd}$ coalition: "Ad?" &amp;amp; "Rain?" $\longrightarrow \{x_a, x_r\}$&lt;/li&gt;
 &lt;li&gt;$4^{th}$ coalition: "Ad?" &amp;amp; "Weekday?" &amp;amp; "Rain?" $\longrightarrow \{x_a, x_w, x_r\}$&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;For each coalition $S \in \left\{ \{x_a, x_w\}, \{x_a, x_r\}, \{x_a, x_w, x_r\}\right\}$ we compute the contribution of the $i$-th variable to the coalition as the prediction of the model trained with the complete coalition minus the prediction of the model trained without this variable (let's note the model trained with all variables in the coalition as $f_S$ to avoid confusion with the original model $f$)&lt;/p&gt;
+&lt;p&gt;For each coalition $S \in \left\{\{x_a\},  \{x_a, x_w\}, \{x_a, x_r\}, \{x_a, x_w, x_r\}\right\}$ we compute the contribution of the $i$-th variable to the coalition as the prediction of the model trained with the complete coalition minus the prediction of the model trained without this variable (let's note the model trained with all variables in the coalition as $f_S$ to avoid confusion with the original model $f$)&lt;/p&gt;
 $$\delta_{i}^{(S)} = f_S\left(S\right)-f_{S_{-i}}\left(S_{-i} \right), $$&lt;p&gt;where $S_{-i} = S \;\backslash\; \{x_i\}$ is the coalition &lt;strong&gt;without&lt;/strong&gt; the variable $i$.&lt;/p&gt;
 &lt;p&gt;For instance the contribution of the feature $x_a$ to the coalition $\{x_a, x_r\}$ is&lt;/p&gt;
 $$ \delta_{x_a}^{\left\{x_a, x_r\right\}} = f_{\{x_a, x_r\}}\left(\{x_a, x_r\}\right)-f_{\{x_r\}}\left(\{x_r\}\right) .$$&lt;p&gt;The contribution of the variable $x_a$ is then obtained with the following formula:&lt;/p&gt;
@@ -3125,7 +3125,7 @@ $$
 \begin{align*}
 \phi_{a}&amp;amp; =\frac{1}{4} \sum_{S \in \left\{ \{x_a\}, \{x_a, x_w\}, \{x_a, x_r\}, \{x_a, x_w, x_r\}\right\}}\left(\begin{array}{c}{p-1} \\ {|S-1|}\end{array}\right)^{-1}\delta_{a}^{(S)}\\
 &amp;amp; = \frac{1}{4} \left[
-\left(\begin{array}{c}{2} \\ {0}\end{array}\right)^{-1}\delta_{a}^{\{x_a\}}
+\left(\begin{array}{c}{2} \\ {0}\end{array}\right)^{-1}\delta_{a}^{\{x_a\}}+
 \left(\begin{array}{c}{2} \\ {1}\end{array}\right)^{-1}\delta_{a}^{\{x_a, x_w\}}+
 \left(\begin{array}{c}{2} \\ {1}\end{array}\right)^{-1}\delta_{a}^{\{x_a, x_r\}}+
 \left(\begin{array}{c}{2} \\ {2}\end{array}\right)^{-1}\delta_{a}^{\{x_a, x_w, x_r\}}
@@ -3145,14 +3145,7 @@ $$&lt;p&gt;🙀 That's a lot of terms to compute and models to train, eight in t
 &lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="Conclusion"&gt;Conclusion&lt;a class="anchor-link" href="#Conclusion"&gt;&amp;#182;&lt;/a&gt;&lt;/h2&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
-&lt;/div&gt;&lt;div class="inner_cell"&gt;
-&lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;This blog post introduces the Shapley values, the unavoidable pre-requisite to understanding SHAP, the current rockstar of attributionm methods. Indeed, SHAP only consists in a set a approximation.&lt;/p&gt;
+&lt;h2 id="Conclusion"&gt;Conclusion&lt;a class="anchor-link" href="#Conclusion"&gt;&amp;#182;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;This blog post introduces the Shapley values, the unavoidable pre-requisite to understanding SHAP, the current rockstar of attributionm methods. Indeed, SHAP only consists in a set a approximation.&lt;/p&gt;
 &lt;p&gt;Note that the SHAP paper is a gold mine regarding the formalization of the feature attribution and the generalization of the previsouly existing interpretation methods. After this introduction I invite you to &lt;a href="http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions"&gt;read it&lt;/a&gt;!&lt;/p&gt;
 &lt;p&gt;The &lt;a href="https://data4thought.com/kernel_shap.html"&gt;next blog post&lt;/a&gt; introduces the most versatile feature attribution of the SHAP toolbox: Kernel SHAP.&lt;/p&gt;
 
@@ -4233,11 +4226,11 @@ h6:hover .anchor-link {
   font-style: italic;
 }
 &lt;/style&gt;
-&lt;style type="text/css"&gt;pre { line-height: 125%; margin: 0; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+&lt;style type="text/css"&gt;pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
  .highlight pre  .hll { background-color: #ffffcc }
  .highlight pre  { background: #f8f8f8; }
  .highlight pre  .c { color: #408080; font-style: italic } /* Comment */
@@ -6199,11 +6192,11 @@ h6:hover .anchor-link {
   font-style: italic;
 }
 &lt;/style&gt;
-&lt;style type="text/css"&gt;pre { line-height: 125%; margin: 0; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+&lt;style type="text/css"&gt;pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
  .highlight pre  .hll { background-color: #ffffcc }
  .highlight pre  { background: #f8f8f8; }
  .highlight pre  .c { color: #408080; font-style: italic } /* Comment */
@@ -8040,11 +8033,11 @@ h6:hover .anchor-link {
   font-style: italic;
 }
 &lt;/style&gt;
-&lt;style type="text/css"&gt;pre { line-height: 125%; margin: 0; }
-td.linenos pre { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-span.linenos { color: #000000; background-color: #f0f0f0; padding: 0 5px 0 5px; }
-td.linenos pre.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding: 0 5px 0 5px; }
+&lt;style type="text/css"&gt;pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
  .highlight pre  .hll { background-color: #ffffcc }
  .highlight pre  { background: #f8f8f8; }
  .highlight pre  .c { color: #408080; font-style: italic } /* Comment */
