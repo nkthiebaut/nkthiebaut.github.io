@@ -1,0 +1,2287 @@
+  
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.optimizely.com/js/12126171152.js"></script>
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://nkthiebaut.github.io/theme/stylesheet/style.min.css"
+    />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://nkthiebaut.github.io/theme/pygments/github.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://nkthiebaut.github.io/theme/font-awesome/css/font-awesome.min.css"
+    />
+
+
+    <!--     <link href="https://nkthiebaut.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Data4thought: data science blog Atom">
+ -->
+
+     <link rel="shortcut icon" href="https://nkthiebaut.github.io/images/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="https://nkthiebaut.github.io/images/favicon.ico" type="image/x-icon" />
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="" />
+
+ <meta name="author" content="Nicolas Thiebaut" />
+<meta name="description" content="Fine-tuning DistillBERT to tag toxic comments on Wikipedia, using TensorFlow and Hugging Face's transformers library." />
+<meta name="keywords" content="python, machine learning, transformers" />
+<meta property="og:site_name" content="Data4thought: data science blog"/>
+<meta property="og:title" content="Multi-label classification with BERT"/>
+<meta property="og:description" content="Fine-tuning DistillBERT to tag toxic comments on Wikipedia, using TensorFlow and Hugging Face's transformers library."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="https://nkthiebaut.github.io/toxic_comments_transformer.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2021-01-29 13:00:00+01:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="https://nkthiebaut.github.io/author/nicolas-thiebaut.html">
+<meta property="article:section" content="posts"/>
+<meta property="article:tag" content="python"/>
+<meta property="article:tag" content="machine learning"/>
+<meta property="article:tag" content="transformers"/>
+<meta property="og:image" content="https://nkthiebaut.github.io/images/PhotoThiebaut.jpg">
+ 
+    <title>Data4thought: data science blog &ndash;
+Multi-label classification with BERT</title>
+
+  </head>
+  <body>
+    <!-- <aside>
+    <div>
+      <a href="https://nkthiebaut.github.io">
+        <img src="https://nkthiebaut.github.io/images/PhotoThiebaut.jpg" alt="Data4thought" title="Data4thought">
+      </a>
+      <h1><a href="https://nkthiebaut.github.io">Data4thought</a></h1>
+
+<p>Nicolas Thiebaut's data science blog</p>
+      <nav>
+        <ul class="list">
+          <li><a href="https://nkthiebaut.github.io/pages/about.html#about">About</a></li>
+          <li><a href="https://nkthiebaut.github.io/pages/contact.html#contact">Contact</a></li>
+          <li><a href="https://nkthiebaut.github.io/pages/links.html#links">Links</a></li>
+          <li><a href="https://nkthiebaut.github.io/pages/remote_work.html#remote_work">Remote work</a></li>
+
+        </ul>
+      </nav>
+
+      <ul class="social">
+        <li><a class="sc-linkedin" href="https://www.linkedin.com/in/nthiebaut" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        <li><a class="sc-github" href="https://github.com/nkthiebaut/" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-twitter" href="https://twitter.com/NicoThiebaut" target="_blank"><i class="fa fa-twitter"></i></a></li>
+      </ul>
+    </div>
+
+
+  </aside> -->
+    <main>
+       <nav>
+        <a href="https://nkthiebaut.github.io"> Home </a>
+
+          <a href="https://nkthiebaut.github.io/pages/about.html#about"
+          >About</a
+        >
+        <a href="https://nkthiebaut.github.io/pages/contact.html#contact"
+          >Contact</a
+        >
+        <a href="https://nkthiebaut.github.io/pages/links.html#links"
+          >Links</a
+        >
+        <a href="https://nkthiebaut.github.io/pages/remote_work.html#remote_work"
+          >Remote work</a
+        >
+         <!--       <a href="https://nkthiebaut.github.io/feeds/all.atom.xml"> Atom </a>
+ -->
+
+      </nav>
+ <article class="single">
+  <header>
+    <h1 id="toxic_comments_transformer">Multi-label classification with BERT</h1>
+    <p>
+       Posted on Fri 29 January 2021      </p>
+  </header>
+
+
+  <div><style type="text/css">/*!
+*
+* IPython notebook
+*
+*/
+/* CSS font colors for translated ANSI escape sequences */
+/* The color values are a mix of
+   http://www.xcolors.net/dl/baskerville-ivorylight and
+   http://www.xcolors.net/dl/euphrasia */
+.ansi-black-fg {
+  color: #3E424D;
+}
+.ansi-black-bg {
+  background-color: #3E424D;
+}
+.ansi-black-intense-fg {
+  color: #282C36;
+}
+.ansi-black-intense-bg {
+  background-color: #282C36;
+}
+.ansi-red-fg {
+  color: #E75C58;
+}
+.ansi-red-bg {
+  background-color: #E75C58;
+}
+.ansi-red-intense-fg {
+  color: #B22B31;
+}
+.ansi-red-intense-bg {
+  background-color: #B22B31;
+}
+.ansi-green-fg {
+  color: #00A250;
+}
+.ansi-green-bg {
+  background-color: #00A250;
+}
+.ansi-green-intense-fg {
+  color: #007427;
+}
+.ansi-green-intense-bg {
+  background-color: #007427;
+}
+.ansi-yellow-fg {
+  color: #DDB62B;
+}
+.ansi-yellow-bg {
+  background-color: #DDB62B;
+}
+.ansi-yellow-intense-fg {
+  color: #B27D12;
+}
+.ansi-yellow-intense-bg {
+  background-color: #B27D12;
+}
+.ansi-blue-fg {
+  color: #208FFB;
+}
+.ansi-blue-bg {
+  background-color: #208FFB;
+}
+.ansi-blue-intense-fg {
+  color: #0065CA;
+}
+.ansi-blue-intense-bg {
+  background-color: #0065CA;
+}
+.ansi-magenta-fg {
+  color: #D160C4;
+}
+.ansi-magenta-bg {
+  background-color: #D160C4;
+}
+.ansi-magenta-intense-fg {
+  color: #A03196;
+}
+.ansi-magenta-intense-bg {
+  background-color: #A03196;
+}
+.ansi-cyan-fg {
+  color: #60C6C8;
+}
+.ansi-cyan-bg {
+  background-color: #60C6C8;
+}
+.ansi-cyan-intense-fg {
+  color: #258F8F;
+}
+.ansi-cyan-intense-bg {
+  background-color: #258F8F;
+}
+.ansi-white-fg {
+  color: #C5C1B4;
+}
+.ansi-white-bg {
+  background-color: #C5C1B4;
+}
+.ansi-white-intense-fg {
+  color: #A1A6B2;
+}
+.ansi-white-intense-bg {
+  background-color: #A1A6B2;
+}
+.ansi-default-inverse-fg {
+  color: #FFFFFF;
+}
+.ansi-default-inverse-bg {
+  background-color: #000000;
+}
+.ansi-bold {
+  font-weight: bold;
+}
+.ansi-underline {
+  text-decoration: underline;
+}
+/* The following styles are deprecated an will be removed in a future version */
+.ansibold {
+  font-weight: bold;
+}
+.ansi-inverse {
+  outline: 0.5px dotted;
+}
+/* use dark versions for foreground, to improve visibility */
+.ansiblack {
+  color: black;
+}
+.ansired {
+  color: darkred;
+}
+.ansigreen {
+  color: darkgreen;
+}
+.ansiyellow {
+  color: #c4a000;
+}
+.ansiblue {
+  color: darkblue;
+}
+.ansipurple {
+  color: darkviolet;
+}
+.ansicyan {
+  color: steelblue;
+}
+.ansigray {
+  color: gray;
+}
+/* and light for background, for the same reason */
+.ansibgblack {
+  background-color: black;
+}
+.ansibgred {
+  background-color: red;
+}
+.ansibggreen {
+  background-color: green;
+}
+.ansibgyellow {
+  background-color: yellow;
+}
+.ansibgblue {
+  background-color: blue;
+}
+.ansibgpurple {
+  background-color: magenta;
+}
+.ansibgcyan {
+  background-color: cyan;
+}
+.ansibggray {
+  background-color: gray;
+}
+div.cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  width: 100%;
+  padding: 5px;
+  /* This acts as a spacer between cells, that is outside the border */
+  margin: 0px;
+  outline: none;
+  position: relative;
+  overflow: visible;
+}
+div.cell:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: transparent;
+}
+div.cell.jupyter-soft-selected {
+  border-left-color: #E3F2FD;
+  border-left-width: 1px;
+  padding-left: 5px;
+  border-right-color: #E3F2FD;
+  border-right-width: 1px;
+  background: #E3F2FD;
+}
+@media print {
+  div.cell.jupyter-soft-selected {
+    border-color: transparent;
+  }
+}
+div.cell.selected,
+div.cell.selected.jupyter-soft-selected {
+  border-color: #ababab;
+}
+div.cell.selected:before,
+div.cell.selected.jupyter-soft-selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #42A5F5;
+}
+@media print {
+  div.cell.selected,
+  div.cell.selected.jupyter-soft-selected {
+    border-color: transparent;
+  }
+}
+.edit_mode div.cell.selected {
+  border-color: #66BB6A;
+}
+.edit_mode div.cell.selected:before {
+  position: absolute;
+  display: block;
+  top: -1px;
+  left: -1px;
+  width: 5px;
+  height: calc(100% +  2px);
+  content: '';
+  background: #66BB6A;
+}
+@media print {
+  .edit_mode div.cell.selected {
+    border-color: transparent;
+  }
+}
+.prompt {
+  /* This needs to be wide enough for 3 digit prompt numbers: In[100]: */
+  min-width: 14ex;
+  /* This padding is tuned to match the padding on the CodeMirror editor. */
+  padding: 0.4em;
+  margin: 0px;
+  font-family: monospace;
+  text-align: right;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+  /* Don't highlight prompt number selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Use default cursor */
+  cursor: default;
+}
+@media (max-width: 540px) {
+  .prompt {
+    text-align: left;
+  }
+}
+div.inner_cell {
+  min-width: 0;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_area {
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
+  background: #f7f7f7;
+  line-height: 1.21429em;
+}
+/* This is needed so that empty prompt areas can collapse to zero height when there
+   is no content in the output_subarea and the prompt. The main purpose of this is
+   to make sure that empty JavaScript output_subareas have no height. */
+div.prompt:empty {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+div.unrecognized_cell {
+  padding: 5px 5px 5px 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.unrecognized_cell .inner_cell {
+  border-radius: 2px;
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+  border: 1px solid #cfcfcf;
+  background: #eaeaea;
+}
+div.unrecognized_cell .inner_cell a {
+  color: inherit;
+  text-decoration: none;
+}
+div.unrecognized_cell .inner_cell a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+@media (max-width: 540px) {
+  div.unrecognized_cell > div.prompt {
+    display: none;
+  }
+}
+div.code_cell {
+  /* avoid page breaking on code cells when printing */
+}
+@media print {
+  div.code_cell {
+    page-break-inside: avoid;
+  }
+}
+/* any special styling for code cells that are currently running goes here */
+div.input {
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.input {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_prompt {
+  color: #303F9F;
+  border-top: 1px solid transparent;
+}
+div.input_area > div.highlight {
+  margin: 0.4em;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+div.input_area > div.highlight > pre {
+  margin: 0px;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+/* The following gets added to the <head> if it is detected that the user has a
+ * monospace font with inconsistent normal/bold/italic height.  See
+ * notebookmain.js.  Such fonts will have keywords vertically offset with
+ * respect to the rest of the text.  The user should select a better font.
+ * See: https://github.com/ipython/ipython/issues/1503
+ *
+ * .CodeMirror span {
+ *      vertical-align: bottom;
+ * }
+ */
+.CodeMirror {
+  line-height: 1.21429em;
+  /* Changed from 1em to our global default */
+  font-size: 14px;
+  height: auto;
+  /* Changed to auto to autogrow */
+  background: none;
+  /* Changed from white to allow our bg to show through */
+}
+.CodeMirror-scroll {
+  /*  The CodeMirror docs are a bit fuzzy on if overflow-y should be hidden or visible.*/
+  /*  We have found that if it is visible, vertical scrollbars appear with font size changes.*/
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+.CodeMirror-lines {
+  /* In CM2, this used to be 0.4em, but in CM3 it went to 4px. We need the em value because */
+  /* we have set a different line-height and want this to scale with that. */
+  /* Note that this should set vertical padding only, since CodeMirror assumes
+       that horizontal padding will be set on CodeMirror pre */
+  padding: 0.4em 0;
+}
+.CodeMirror-linenumber {
+  padding: 0 8px 0 4px;
+}
+.CodeMirror-gutters {
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+}
+.CodeMirror pre {
+  /* In CM3 this went to 4px from 0 in CM2. This sets horizontal padding only,
+    use .CodeMirror-lines for vertical */
+  padding: 0 0.4em;
+  border: 0;
+  border-radius: 0;
+}
+.CodeMirror-cursor {
+  border-left: 1.4px solid black;
+}
+@media screen and (min-width: 2138px) and (max-width: 4319px) {
+  .CodeMirror-cursor {
+    border-left: 2px solid black;
+  }
+}
+@media screen and (min-width: 4320px) {
+  .CodeMirror-cursor {
+    border-left: 4px solid black;
+  }
+}
+/*
+
+Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiacs.Org>
+Adapted from GitHub theme
+
+*/
+.highlight-base {
+  color: #000;
+}
+.highlight-variable {
+  color: #000;
+}
+.highlight-variable-2 {
+  color: #1a1a1a;
+}
+.highlight-variable-3 {
+  color: #333333;
+}
+.highlight-string {
+  color: #BA2121;
+}
+.highlight-comment {
+  color: #408080;
+  font-style: italic;
+}
+.highlight-number {
+  color: #080;
+}
+.highlight-atom {
+  color: #88F;
+}
+.highlight-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.highlight-builtin {
+  color: #008000;
+}
+.highlight-error {
+  color: #f00;
+}
+.highlight-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.highlight-meta {
+  color: #AA22FF;
+}
+/* previously not defined, copying from default codemirror */
+.highlight-def {
+  color: #00f;
+}
+.highlight-string-2 {
+  color: #f50;
+}
+.highlight-qualifier {
+  color: #555;
+}
+.highlight-bracket {
+  color: #997;
+}
+.highlight-tag {
+  color: #170;
+}
+.highlight-attribute {
+  color: #00c;
+}
+.highlight-header {
+  color: blue;
+}
+.highlight-quote {
+  color: #090;
+}
+.highlight-link {
+  color: #00c;
+}
+/* apply the same style to codemirror */
+.cm-s-ipython span.cm-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-atom {
+  color: #88F;
+}
+.cm-s-ipython span.cm-number {
+  color: #080;
+}
+.cm-s-ipython span.cm-def {
+  color: #00f;
+}
+.cm-s-ipython span.cm-variable {
+  color: #000;
+}
+.cm-s-ipython span.cm-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-variable-2 {
+  color: #1a1a1a;
+}
+.cm-s-ipython span.cm-variable-3 {
+  color: #333333;
+}
+.cm-s-ipython span.cm-comment {
+  color: #408080;
+  font-style: italic;
+}
+.cm-s-ipython span.cm-string {
+  color: #BA2121;
+}
+.cm-s-ipython span.cm-string-2 {
+  color: #f50;
+}
+.cm-s-ipython span.cm-meta {
+  color: #AA22FF;
+}
+.cm-s-ipython span.cm-qualifier {
+  color: #555;
+}
+.cm-s-ipython span.cm-builtin {
+  color: #008000;
+}
+.cm-s-ipython span.cm-bracket {
+  color: #997;
+}
+.cm-s-ipython span.cm-tag {
+  color: #170;
+}
+.cm-s-ipython span.cm-attribute {
+  color: #00c;
+}
+.cm-s-ipython span.cm-header {
+  color: blue;
+}
+.cm-s-ipython span.cm-quote {
+  color: #090;
+}
+.cm-s-ipython span.cm-link {
+  color: #00c;
+}
+.cm-s-ipython span.cm-error {
+  color: #f00;
+}
+.cm-s-ipython span.cm-tab {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMCAYAAAAkuj5RAAAAAXNSR0IArs4c6QAAAGFJREFUSMft1LsRQFAQheHPowAKoACx3IgEKtaEHujDjORSgWTH/ZOdnZOcM/sgk/kFFWY0qV8foQwS4MKBCS3qR6ixBJvElOobYAtivseIE120FaowJPN75GMu8j/LfMwNjh4HUpwg4LUAAAAASUVORK5CYII=);
+  background-position: right;
+  background-repeat: no-repeat;
+}
+div.output_wrapper {
+  /* this position must be relative to enable descendents to be absolute within it */
+  position: relative;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  z-index: 1;
+}
+/* class for the output area when it should be height-limited */
+div.output_scroll {
+  /* ideally, this would be max-height, but FF barfs all over that */
+  height: 24em;
+  /* FF needs this *and the wrapper* to specify full width, or it will shrinkwrap */
+  width: 100%;
+  overflow: auto;
+  border-radius: 2px;
+  -webkit-box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  display: block;
+}
+/* output div while it is collapsed */
+div.output_collapsed {
+  margin: 0px;
+  padding: 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+div.out_prompt_overlay {
+  height: 100%;
+  padding: 0px 0.4em;
+  position: absolute;
+  border-radius: 2px;
+}
+div.out_prompt_overlay:hover {
+  /* use inner shadow to get border that is computed the same on WebKit/FF */
+  -webkit-box-shadow: inset 0 0 1px #000;
+  box-shadow: inset 0 0 1px #000;
+  background: rgba(240, 240, 240, 0.5);
+}
+div.output_prompt {
+  color: #D84315;
+}
+/* This class is the outer container of all output sections. */
+div.output_area {
+  padding: 0px;
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.output_area .MathJax_Display {
+  text-align: left !important;
+}
+div.output_area 
+div.output_area 
+div.output_area img,
+div.output_area svg {
+  max-width: 100%;
+  height: auto;
+}
+div.output_area img.unconfined,
+div.output_area svg.unconfined {
+  max-width: none;
+}
+div.output_area .mglyph > img {
+  max-width: none;
+}
+/* This is needed to protect the pre formating from global settings such
+   as that of bootstrap */
+.output {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.output_area {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+div.output_area pre {
+  margin: 0;
+  padding: 1px 0 1px 0;
+  border: 0;
+  vertical-align: baseline;
+  color: black;
+  background-color: transparent;
+  border-radius: 0;
+}
+/* This class is for the output subarea inside the output_area and after
+   the prompt div. */
+div.output_subarea {
+  overflow-x: auto;
+  padding: 0.4em;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+  max-width: calc(100% - 14ex);
+}
+div.output_scroll div.output_subarea {
+  overflow-x: visible;
+}
+/* The rest of the output_* classes are for special styling of the different
+   output types */
+/* all text output has this class: */
+div.output_text {
+  text-align: left;
+  color: #000;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+}
+/* stdout/stderr are 'text' as well as 'stream', but execute_result/error are *not* streams */
+div.output_stderr {
+  background: #fdd;
+  /* very light red background for stderr */
+}
+div.output_latex {
+  text-align: left;
+}
+/* Empty output_javascript divs should have no height */
+div.output_javascript:empty {
+  padding: 0;
+}
+.js-error {
+  color: darkred;
+}
+/* raw_input styles */
+div.raw_input_container {
+  line-height: 1.21429em;
+  padding-top: 5px;
+}
+pre.raw_input_prompt {
+  /* nothing needed here. */
+}
+input.raw_input {
+  font-family: monospace;
+  font-size: inherit;
+  color: inherit;
+  width: auto;
+  /* make sure input baseline aligns with prompt */
+  vertical-align: baseline;
+  /* padding + margin = 0.5em between prompt and cursor */
+  padding: 0em 0.25em;
+  margin: 0em 0.25em;
+}
+input.raw_input:focus {
+  box-shadow: none;
+}
+p.p-space {
+  margin-bottom: 10px;
+}
+div.output_unrecognized {
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+}
+div.output_unrecognized a {
+  color: inherit;
+  text-decoration: none;
+}
+div.output_unrecognized a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+.rendered_html {
+  color: #000;
+  /* any extras will just be numbers: */
+}
+
+
+
+.rendered_html :link {
+  text-decoration: underline;
+}
+.rendered_html :visited {
+  text-decoration: underline;
+}
+
+
+
+
+
+
+.rendered_html h1:first-child {
+  margin-top: 0.538em;
+}
+.rendered_html h2:first-child {
+  margin-top: 0.636em;
+}
+.rendered_html h3:first-child {
+  margin-top: 0.777em;
+}
+.rendered_html h4:first-child {
+  margin-top: 1em;
+}
+.rendered_html h5:first-child {
+  margin-top: 1em;
+}
+.rendered_html h6:first-child {
+  margin-top: 1em;
+}
+.rendered_html ul:not(.list-inline),
+.rendered_html ol:not(.list-inline) {
+  padding-left: 2em;
+}
+
+
+
+
+
+
+
+
+.rendered_html * + ul {
+  margin-top: 1em;
+}
+.rendered_html * + ol {
+  margin-top: 1em;
+}
+
+
+
+
+
+.rendered_html pre,
+
+
+
+
+.rendered_html tr,
+.rendered_html th,
+
+
+.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+.rendered_html * + table {
+  margin-top: 1em;
+}
+
+.rendered_html * + p {
+  margin-top: 1em;
+}
+
+.rendered_html * + img {
+  margin-top: 1em;
+}
+.rendered_html img,
+
+.rendered_html img.unconfined,
+
+
+.rendered_html * + .alert {
+  margin-top: 1em;
+}
+[dir="rtl"] 
+div.text_cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.text_cell > div.prompt {
+    display: none;
+  }
+}
+div.text_cell_render {
+  /*font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;*/
+  outline: none;
+  resize: none;
+  width: inherit;
+  border-style: none;
+  padding: 0.5em 0.5em 0.5em 0.4em;
+  color: #000;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+a.anchor-link:link {
+  text-decoration: none;
+  padding: 0px 20px;
+  visibility: hidden;
+}
+h1:hover .anchor-link,
+h2:hover .anchor-link,
+h3:hover .anchor-link,
+h4:hover .anchor-link,
+h5:hover .anchor-link,
+h6:hover .anchor-link {
+  visibility: visible;
+}
+.text_cell.rendered .input_area {
+  display: none;
+}
+.text_cell.rendered 
+.text_cell.rendered .rendered_html tr,
+.text_cell.rendered .rendered_html th,
+.text_cell.rendered 
+.text_cell.unrendered .text_cell_render {
+  display: none;
+}
+.text_cell .dropzone .input_area {
+  border: 2px dashed #bababa;
+  margin: -1px;
+}
+.cm-header-1,
+.cm-header-2,
+.cm-header-3,
+.cm-header-4,
+.cm-header-5,
+.cm-header-6 {
+  font-weight: bold;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.cm-header-1 {
+  font-size: 185.7%;
+}
+.cm-header-2 {
+  font-size: 157.1%;
+}
+.cm-header-3 {
+  font-size: 128.6%;
+}
+.cm-header-4 {
+  font-size: 110%;
+}
+.cm-header-5 {
+  font-size: 100%;
+  font-style: italic;
+}
+.cm-header-6 {
+  font-size: 100%;
+  font-style: italic;
+}
+</style>
+<style type="text/css">pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+ .highlight pre  .hll { background-color: #ffffcc }
+ .highlight pre  { background: #f8f8f8; }
+ .highlight pre  .c { color: #408080; font-style: italic } /* Comment */
+ .highlight pre  .err { border: 1px solid #FF0000 } /* Error */
+ .highlight pre  .k { color: #008000; font-weight: bold } /* Keyword */
+ .highlight pre  .o { color: #666666 } /* Operator */
+ .highlight pre  .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+ .highlight pre  .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+ .highlight pre  .cp { color: #BC7A00 } /* Comment.Preproc */
+ .highlight pre  .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+ .highlight pre  .c1 { color: #408080; font-style: italic } /* Comment.Single */
+ .highlight pre  .cs { color: #408080; font-style: italic } /* Comment.Special */
+ .highlight pre  .gd { color: #A00000 } /* Generic.Deleted */
+ .highlight pre  .ge { font-style: italic } /* Generic.Emph */
+ .highlight pre  .gr { color: #FF0000 } /* Generic.Error */
+ .highlight pre  .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+ .highlight pre  .gi { color: #00A000 } /* Generic.Inserted */
+ .highlight pre  .go { color: #888888 } /* Generic.Output */
+ .highlight pre  .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+ .highlight pre  .gs { font-weight: bold } /* Generic.Strong */
+ .highlight pre  .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+ .highlight pre  .gt { color: #0044DD } /* Generic.Traceback */
+ .highlight pre  .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+ .highlight pre  .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+ .highlight pre  .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+ .highlight pre  .kp { color: #008000 } /* Keyword.Pseudo */
+ .highlight pre  .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+ .highlight pre  .kt { color: #B00040 } /* Keyword.Type */
+ .highlight pre  .m { color: #666666 } /* Literal.Number */
+ .highlight pre  .s { color: #BA2121 } /* Literal.String */
+ .highlight pre  .na { color: #7D9029 } /* Name.Attribute */
+ .highlight pre  .nb { color: #008000 } /* Name.Builtin */
+ .highlight pre  .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+ .highlight pre  .no { color: #880000 } /* Name.Constant */
+ .highlight pre  .nd { color: #AA22FF } /* Name.Decorator */
+ .highlight pre  .ni { color: #999999; font-weight: bold } /* Name.Entity */
+ .highlight pre  .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+ .highlight pre  .nf { color: #0000FF } /* Name.Function */
+ .highlight pre  .nl { color: #A0A000 } /* Name.Label */
+ .highlight pre  .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+ .highlight pre  .nt { color: #008000; font-weight: bold } /* Name.Tag */
+ .highlight pre  .nv { color: #19177C } /* Name.Variable */
+ .highlight pre  .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+ .highlight pre  .w { color: #bbbbbb } /* Text.Whitespace */
+ .highlight pre  .mb { color: #666666 } /* Literal.Number.Bin */
+ .highlight pre  .mf { color: #666666 } /* Literal.Number.Float */
+ .highlight pre  .mh { color: #666666 } /* Literal.Number.Hex */
+ .highlight pre  .mi { color: #666666 } /* Literal.Number.Integer */
+ .highlight pre  .mo { color: #666666 } /* Literal.Number.Oct */
+ .highlight pre  .sa { color: #BA2121 } /* Literal.String.Affix */
+ .highlight pre  .sb { color: #BA2121 } /* Literal.String.Backtick */
+ .highlight pre  .sc { color: #BA2121 } /* Literal.String.Char */
+ .highlight pre  .dl { color: #BA2121 } /* Literal.String.Delimiter */
+ .highlight pre  .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+ .highlight pre  .s2 { color: #BA2121 } /* Literal.String.Double */
+ .highlight pre  .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+ .highlight pre  .sh { color: #BA2121 } /* Literal.String.Heredoc */
+ .highlight pre  .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+ .highlight pre  .sx { color: #008000 } /* Literal.String.Other */
+ .highlight pre  .sr { color: #BB6688 } /* Literal.String.Regex */
+ .highlight pre  .s1 { color: #BA2121 } /* Literal.String.Single */
+ .highlight pre  .ss { color: #19177C } /* Literal.String.Symbol */
+ .highlight pre  .bp { color: #008000 } /* Name.Builtin.Pseudo */
+ .highlight pre  .fm { color: #0000FF } /* Name.Function.Magic */
+ .highlight pre  .vc { color: #19177C } /* Name.Variable.Class */
+ .highlight pre  .vg { color: #19177C } /* Name.Variable.Global */
+ .highlight pre  .vi { color: #19177C } /* Name.Variable.Instance */
+ .highlight pre  .vm { color: #19177C } /* Name.Variable.Magic */
+ .highlight pre  .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Multi-label-classification-with-BERT">Multi-label classification with BERT<a class="anchor-link" href="#Multi-label-classification-with-BERT">&#182;</a></h2><p>Transformers and their offsprings (BERT, GPT-3, T5, ...) have <a href="https://blog.seekwell.io/gpt3">revolutionized NLP</a> and, in my opinion, seem to take us closer to <a href="https://en.wikipedia.org/wiki/Artificial_general_intelligence">Artificial General Intelligence</a>. Thanks to <a href="https://huggingface.co/">Hugging Face 🤗</a>, fine-tuning transformers on your data set now boils down to a couple of lines of Python code.</p>
+<figure>
+<center>
+<img src='https://i0.wp.com/syncedreview.com/wp-content/uploads/2020/03/BERT-LANG-STREET.png?fit=3264%2C2448&ssl=1' height="200"/>
+<figcaption>BERT's family</figcaption></center>
+</figure><p>Some use cases still require a bit of tinkering, like the multi-label classification  problem I had to tackle recently. In this article I'm sharing my TensorFlow implementation which is portable to any other transformer you may prefer. If you are more of a PyTorch afficionado, feel free to have a look at <a href="https://towardsdatascience.com/transformers-for-multilabel-classification-71a1a0daf5e1">this blog post instead</a>.</p>
+<p>Today's post is not theoretical. If you want to dive into the inner workings of transformers there's a lot of good presentations on Transformers out there, notably <a href="http://jalammar.github.io/illustrated-transformer/">Transformer illustrated</a>, <a href="http://peterbloem.nl/blog/transformers">Transformers from scratch</a>, and <a href="https://nlp.seas.harvard.edu/2018/04/03/attention.html">the annotated Transformer</a>.</p>
+<p>In my experience exploring the Transformers litterature, the Transformer itself is the most complex component and the one that took me the most time to understand. Subsequent models built on top of the Transformer, like <a href="https://arxiv.org/abs/1810.04805">BERT</a> and the <a href="https://arxiv.org/abs/2005.14165">GPT</a> family (and <a href="https://huggingface.co/models">maaaaaannnny others</a>), usually easier to understand (of course they still are critical contributions too).</p>
+<p>In this blog post I fine-tune <a href="https://arxiv.org/abs/1910.01108">DistillBERT</a> (a smaller version of BERT with very close performances) on the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data">Toxic Comment Classification Challenge</a>. This challenge consists in tagging Wikipedia comments according to several "toxic behavior" labels. The task is a multi-label classification problem because a single comment can have zero, one, or up to six tags.</p>
+<p>As you'll see below, I simply fine-tuned the model on a GPU (thanks to <a href="https://colab.research.google.com/notebooks/intro.ipynb#recent=true">Colab</a>) and achieved very good performances in less than an hour.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Import-and-prepare-the-dataset">Import and prepare the dataset<a class="anchor-link" href="#Import-and-prepare-the-dataset">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip uninstall -y -q kaggle <span class="o">&amp;&amp;</span> pip install -q kaggle  
+<span class="c1"># Needed to get the latest version of the Kaggle CLI</span>
+
+<span class="kn">from</span> <span class="nn">getpass</span> <span class="kn">import</span> <span class="n">getpass</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># We&#39;ll use the Kaggle-CLI to download the dataset</span>
+<span class="c1"># To create an authentication token on Kaggle check https://www.kaggle.com/docs/api</span>
+<span class="c1"># You&#39;ll also have to accept the competition rules here: </span>
+<span class="c1"># https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/rules</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;KAGGLE_USERNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">getpass</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;Kaggle username: &#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;KAGGLE_KEY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">getpass</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;Token: &#39;</span><span class="p">)</span>
+
+<span class="o">!</span>kaggle --version
+<span class="o">!</span>kaggle competitions download -c jigsaw-toxic-comment-classification-challenge
+<span class="o">!</span>unzip jigsaw-toxic-comment-classification-challenge.zip <span class="o">&amp;&amp;</span> unzip train.csv.zip
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>     |████████████████████████████████| 61kB 3.3MB/s 
+  Building wheel for kaggle (setup.py) ... done
+Kaggle username: ··········
+Token: ··········
+Kaggle API 1.5.10
+Downloading jigsaw-toxic-comment-classification-challenge.zip to /content
+ 65% 34.0M/52.6M [00:01&lt;00:01, 11.2MB/s]
+100% 52.6M/52.6M [00:02&lt;00:00, 27.1MB/s]
+Archive:  jigsaw-toxic-comment-classification-challenge.zip
+  inflating: sample_submission.csv.zip  
+  inflating: test.csv.zip            
+  inflating: test_labels.csv.zip     
+  inflating: train.csv.zip           
+Archive:  train.csv.zip
+  inflating: train.csv               
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;train.csv&quot;</span><span class="p">)</span>
+<span class="n">texts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;comment_text&quot;</span><span class="p">])</span>
+<span class="n">label_names</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;comment_text&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">label_names</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">train_texts</span><span class="p">,</span> <span class="n">test_texts</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">,</span> <span class="n">test_labels</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">texts</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training texts sample: </span><span class="si">{</span><span class="n">train_texts</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training labels samples: </span><span class="si">{</span><span class="n">train_labels</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Training texts sample: I do not care. Refer to Ong Teng Cheong talk page. Is La goutte de pluie writing a biography or writing the history of trade unions. She is making use of the dead to push her agenda again. Right before elections too. How timely. 202.156.13.232
+Training labels samples: [0 0 0 0 0 0]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-minimalistic-Exploratory-Data-Analysis">A minimalistic Exploratory Data Analysis<a class="anchor-link" href="#A-minimalistic-Exploratory-Data-Analysis">&#182;</a></h2><p>Here we'll just have a look at the texts length distribution to choose a reasonable cut-off to speed training up (the maximum is 512 for BERT).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="n">text_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">train_texts</span><span class="p">]</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">text_lengths</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Texts length distribution (number of words)&quot;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You'll see below that the labels are pretty imbalanced, it gives us an idea of the order of magnitude for a decent accuracy.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.ticker</span> <span class="k">as</span> <span class="nn">mtick</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Labels distribution barplot</span>
+<span class="n">labels_ratio</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">label_names</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">labels_ratio</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">mtick</span><span class="o">.</span><span class="n">PercentFormatter</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ax1</span><span class="o">.</span><span class="n">patches</span><span class="p">:</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.1</span> <span class="o">*</span> <span class="n">labels_ratio</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.005</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.002</span><span class="p">))</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Labels ratio&quot;</span><span class="p">);</span>
+
+<span class="c1"># Labels correlation heatmap</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">label_names</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">())</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Labels correlation&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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zMzMbAuXyzWqy9gTeCci3gOQNIlUel56VsYpwLiIWAkQEZ9s1EoZfpOjVVn79u3p3r07PXv2pG/fjf5dxd13302PHj3o3r07++yzD7Nnf/tlxbXXXku3bt3YfffdGTt2bGn5eeedR48ePRgxYkRp2V133bVBHTMzM6tf8uhNjm2ARWmfFydl6XYFdpX0QvKm3Erf7VLbFBHbwjzzzDPsuOOO5R7r0KED//73v9l+++157LHHGDlyJK+88gpz587lxhtvZMaMGTRu3JhBgwZx6KGH0qJFC1577TXmzJnDySefzJtvvknHjh259dZbefzxx7N8Z2ZmZpYtJVkawZY0EhiZVjQhWVyjOhoBnYADgLbAs5K6R8RnFZ3gEWzLmH322Yftt98egP79+7N48WIA3nrrLfbaay+aNGlCo0aN2H///XnwwQdp0KABxcXFRARFRUUUFBRwzTXX8Nvf/paCgoJc3oqZmZnVAxExISL6pm1lg+slwE5pn9smZekWA1Mjojgi3gf+QyrgrpADbKsySRxyyCH06dOHCRM2/Y+/m2++mR//+McAdOvWjeeee44VK1ZQVFREYWEhixYtYtttt2Xw4MH06tWLVq1a0axZM1555RWOOOKIbNyOmZmZ5UiEsrJVwatAJ0kdkkU7hgJTy9R5iNToNZJ2JJUy8t6mGnWKiFXZ888/T5s2bfjkk08YMGAAu+22G/vtt99G9Z555hluvvlmnn/+eQC6dOnCeeedxyGHHMI222xDz549adgwtXLjueeey7nnngvAySefzOjRo7npppt44okn6NGjBxddVO67iczMzGwzli+riETEWkmnA9NILSt9S0TMkzSa1Ip4U5NjhyQv61oH/D4iVmyqXY9gW5W1aZPK+W/ZsiVHHnkkM2bM2KjO+nzqKVOm8N3vfre0/Je//CWzZs3i2WefZfvtt2fXXXfd4LzXX3+diKBz587cf//93Hfffbz77rssWLCg7CXMzMxsM5dP62BHRGFE7BoRu0TEFUnZqCS4JlLOioiuEdE9IiZV1qYDbKuSVatW8eWXX5buP/HEE3Tr1m2DOh988AFHHXUUd95550YB9CeffFJa58EHH2T48OEbHL/44ou57LLLKC4uZt26dQA0aNCAoqKiurolMzMzyxG/Kt0M+PjjjznyyCMBWLt2LcOHD2fQoEHccMMNAJx66qmMHj2aFStW8Jvf/AaARo0aMXPmTACOPvpoVqxYQUFBAePGjaN58+albT/00EP07duX1q1bA9CzZ0+6d+9Ojx492GOPPbJ5m2ZmZpYF2VpFJFcUVR0/z5K+ffvG+qCsMu3Pf7TO+rFwzE/qrG0zyxxJsyJi44XZrVY+PXL//PrjUIm/v9Y2112olgtmXZbrLlTb9u0OynUXqu2j03rmugvVduy9a3LdhWor/KCw2tHymx0Oy8ozpvv7D+ckkneKiFmeWbduHb169eLQQw/d6Nh///tfDjroIHr06MEBBxxQuhTiel988QVt27bl9NNPB/6ZUh8AACAASURBVGDNmjUMGjSIbt26MX78+NJ6I0eO5LXXXqvbGzEzM6tAPuVg1wUH2GZ55tprr6VLly7lHjvnnHMYMWIEc+bMYdSoUVxwwQUbHL/44os3WNll2rRp7LvvvsyZM4c777wTgNmzZ7Nu3Tp69+5ddzdhZma2CSWhrGy54gDbLI8sXryYRx99lJNPPrnc4/Pnz+dHP/oRAAceeCBTpkwpPTZr1iw+/vhjDjnkkNKygoICioqKSl/oA99OKDUzM8uVPFoHu044wDbLI2eeeSZXX301DRqU/3/NPfbYgwcffBCAf/7zn3z55ZesWLGCkpISzj77bK655poN6g8YMICFCxfSv39/zjjjDKZOnUrv3r1LJ5SamZnlQn1PEfEqIlapuppM6omkG3rkkUdo2bIlffr0Yfr06eXWueaaazj99NO57bbb2G+//WjTpg0NGzZk/PjxDB48mLZtN5zo1ahRI+655x4AiouLGThwIFOmTOGss87igw8+YMSIEQwZMqSub802Q7s+9WGuu1AtX6x5N9ddqJarN8MJgys/eCrXXai2lu0PqbxSnvnym9W57kJW1PdVRBxgm+WJF154galTp1JYWMjXX3/NF198wfHHH89dd91VWqd169alI9hfffUVDzzwAM2bN+ell17iueeeY/z48Xz11Vd88803NG3alDFjxpSeO378eEaMGMHLL79Ms2bNuPfee/nRj37kANvMzLIul+kb2eAA2yxPXHnllVx55ZUATJ8+nWuuuWaD4Bpg+fLl7LDDDjRo0IArr7ySk046CYC77767tM5tt93GzJkzNwiuV65cySOPPMK0adN4+OGHadCgAZJYvXrLGCkxM7P8Ut9HsJ2DbZbnRo0a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/37WrFnDm2++SVFREV27dmXYsGFMnTqVU089laOOOorBgwdzxBFH8PDDD9OrVy//o9HMrJ7wCLZlXZs2bVi0aFHp58WLF9OmTZsKy9ONHz+eESNG8PLLL9OsWTPuvfde/vznP2et77ZlmTFjBh07dmTnnXemcePGDB06lClTpmxQRxJffPEFAJ9//nlpkCyJVatWsXbtWlavXk3jxo3ZbrvtKCgooKioiDVr1tCwYUPWrl3L2LFjOffcc7N+f2ZmVjfq+wi2A+w8NGTIEO644w4iojRQbtWqFQMHDuSJJ55g5cqVrFy5kieeeIKBAweWnrdy5UoeeeQRRowYQVFREQ0aNEASq1evzuHdWH1WUdpSuksuuYS77rqLtm3bMnjwYK677joAjjnmGLbZZhtatWpFu3btOOecc9hhhx0YPnw4U6ZMYcCAAfzhD39g/PjxnHDCCTRp0iSr92ZmZnXHkxwt44YNG8b06dNZvnw5bdu25dJLL6W4uBiAU089lcGDB1NYWEjHjh1p0qQJt956KwA77LADF198Mf369QNg1KhRpRMeAUaPHs2FF15IgwYNGDhwIOPGjaN79+6ceuqp2b9Js8TEiRM58cQTOfvss3nppZc44YQTmDt3LjNmzKBhw4YsXbqUlStX8sMf/pCDDz6YnXfemUcffRRI/aNxzJgx/POf/+SUU05h5cqVnH322ey99945viszM6uNknqeIuIAOwcmTpy4yeOSGDduXLnHTjrpJE466aRyj/31r38t3d9qq6144oknat5JsyqoStrSzTffXLos5d57783XX3/N8uXLueeeexg0aBAFBQW0bNmSH/zgB8ycOZOdd9659NzLLruMCy+8kIkTJ7LvvvtyzDHHcNRRRzFt2rTs3KCZmVkNOEXEzGqsX79+LFiwgPfff59vvvmGSZMmbTShtl27djz11FMAvPXWW3z99de0aNGCdu3a8fTTTwOwatUqXn75ZXbbbbfS8xYsWMDixYs54IADnPJkZlbP5FOKiKRBkt6W9I6k88s5fpak+ZLmSHpK0vcra9MBtpnVWKNGjfj73//OwIED6dKlC8ceeyy77747o0aNYurUqQD8+c9/5sYbb2SPPfZg2LBh3HbbbUjitNNO46uvvmL33XenX79+/OIXv6BHjx6lbV944YVcccUVQCqt6vrrr6dfv3787ne/y8m9mplZ5pREZGWrjKSGwDjgx0BXYJikrmWqvQ70jYgewGTg6sradYqImdXK4MGDGTx48AZlo0ePLt3v2rUrL7zwwkbnNW3alPvvv7/Cdu+7777S/ZYtW/Liiy9moLdmZpYPcjkBsYw9gXci4j0ASZOAw4H56ytExDNp9V8Gjq+sUQfYZmZmZpZVeTTJsQ2wKO3zYmCvTdT/JfBYZY06wM6y9uc/WiftLhzzkzpp16y+kvRiROxTTvltwCMRMbkGbfYEWkdEYfJ5CNA1IsZIOgL4T0TM32Qj5be7kNTXk8tr0g8zs3yTrRFsSSOBkWlFEyJiQg3bOh7oC+xfWV0H2Ga2RSovuM6AnqQevoXJNaYCU5NjRwCPkPa1Yx3aoB9mZvkmWyPYSTC9qYB6CbBT2ue2SdkGJB0MXAjsHxFrKruuJzma2RZJ0lfJT0n6ezKD/F9Ay7Q6fST9W9IsSdMktUrKp0u6StIMSf+R9ENJjYHRwHGS3pB0nKQTk7b3AYYAf0qO7SLptbTrdEr/XIHfSnpN0puSdkvO21PSS5Jel/SipM4V9GMbSbck/X1d0uGZ/F2amVVXHq0i8irQSVKH5Pk5lG8HRgCQ1Av4BzAkIj6pSqMewTazGqlH6U5HAp1JzR7/HqkR5lskFQDXAYdHxDJJxwFXAOsXom8UEXtKGgz8MSIOljSKVCrH6QCSTgSIiBclTSUt9UTS55J6RsQbwC+AWyvp5/KI6C3pN8A5wMnA/wE/jIi1yejK/0bE0eX043+BpyPiJEnNgRmS/hURq9IvkP5V6q7Nd6P1Nm1r8vs0M6tUREmuuwBA8vw8HZgGNARuiYh5kkYDM5NvIv8ENAXulwTwQUQMqbBRHGCbme0HTIyIdcBSSU8n5Z2BbsCTyQO1IfBh2nkPJj9nAe1rcN2bgF9IOgs4jtRM9k1Jv95RyX4z4HZJnYAACio49xBgiKRzks9bAe2At9IrpX+VemDbAXkzA8nM6p+S/FlFhGS+SmGZslFp+wdXt02niFi99fjjj9O5c2c6duzImDFjNjp+ww030L17d3r27Mm+++7L/PnfpsZeeeWVdOzYkc6dO5e+NXDZsmXsu+++dOvWjYceeqi07uGHH87SpUvr/oYs2wTMi4ieydY9Ig5JO74+B28dNRuseIDUuquHArMiYkUl9cu73mXAMxHRDTiMVOBcHgFHp91Lu4h4q4K6ZmZ1LiKysuWKA2yrl9atW8dpp53GY489xvz585k4ceIGATTA8OHDefPNN3njjTc499xzOeusswCYP38+kyZNYt68eTz++OP85je/Yd26dUycOJFTTz2VGTNmMHbsWAAefvhhevXqRevWrbN+j5Yxz5LKV26Y5FgfmJS/DbSQtDeApAJJu1fS1pfAtlU5FhFfk/pK8noqTw+pSDO+nYxz4ib6MY1UDregNJ/QzCxnSoisbLniANvqpRkzZtCxY0d23nlnGjduzNChQ5kyZcoGdbbbbrvS/VWrVpHEHkyZMoWhQ4fyne98hw4dOtCxY0dmzJhBQUEBRUVFrFmzhoYNG7J27VrGjh3Lueeem9V7s4z7J7CAVO71HcBLABHxDXAMcJWk2cAbQGUrjzwDdF0/ubDMsUnA75NJhrskZXcDJcATNez71cCVkl5nw1H0sv24jFT6yBxJ85LPZmY5U99HsJ2DbfXSkiVL2Gmnb1fdadu2La+88spG9caNG8df/vIXvvnmG55++unSc/v377/BuUuWLGH48OEMHz6cCRMmcNVVVzF+/HhOOOEEmjRpUvc3ZBkXEU2TnwGcXkGdN0jlaJctPyBtfzlJDnZEfAr0K1P9tuTYC6QmUqbbF7g1yf/eVF/bp+3PBA5I9l8Cdk2retEm+vGrTV3DzCyb8uhFM3XCI9i2RTvttNN49913ueqqq7j8/7d37/F2VYW1x38jDytQQ9MiV00totK0iaI8RZpW0SryMPJIUGytgo29VC5i+ymFxlcBW6TaFhp8tPoRipYYfHwqBkXAetXCRQlKwAeNJVio3lZtpQiURxz9Y60TdsJ55pyz55or48vnfM5Za+cxgH3GmXvuteY899xxf+3uu+/O+vXrufHGG9l///254oorWLFiBatWrWLFihVcf/31Q0odfSDpE8BvAReUzhIRMWwdWqZvVmQGO3pp0aJF3HnnIzuf3nXXXSxatGjMX/+KV7yCU045ZdK/95xzzmH16tVcdtllLFu2jBUrVnDcccdtvSEyYiK2j93+XDvo3nu7039oO0+siOiVkpdvDENmsKOXDjroIDZt2sTmzZt58MEHWbt2LcuXb7tk5aZNm7Z+vX79evbZZx8Ali9fztq1a3nggQfYvHkzmzZt4uCDD97m99111108//nP57777mPOnDlI4v777x/Ov1z0lu1jB1b6GPnI4DoieqfvNzlmBjt6ad68eaxZs4bDDz+cLVu2cPLJJ7N06VLe8pa3cOCBB7J8+XLWrFnDNddcw/z581m4cCGXXHIJAEuXLuWEE05gyZIlzJs3j4suuoi5c+du/bNXr17N29/+dgBOPPFEjjnmGM477zzOPvvsIv+uERERten7DHYG2NFbRx55JEceeeQ25wYHwRdcMPalr6tXr2b16tWjPrZu3bqtX++5555cd91100waERGxc+n7TY4ZYEdERETEUGUGOyIiIiJiBnVpq/TZkAF2RERERAxVZrAjIiIiImZQrsGOqNBTzlw/K3/uHecdNSt/bkRExM6k5CYww5ABdkREREQMVWawIyIiIiJmUN+vwZ7WTo6SXiLpNknflnRme+7DkjZK+pOBX/cmScdMN2xERERE1M9D+qeUHZ7BljQXuAh4EXAX8BVJVwL3295X0tWSdgd2BZ5j+9wZSRwRERERVev7DPZ0LhE5GPi27dsBJK0FjgJ2kTQHmA9sAc4G3jrdoBERERHRD30fYE/nEpFFwJ0Dx3e1574P3ARcATwdmGP7pmn8PRERERER1dCOvoKQtAJ4ie3fbo9fRXMpyKkDv+YK4HeAk4BnAVfb/ptR/qzXAa9rDxcDt+1QqIntAfxglv7s2VBbXkjmYagtL8xu5r1sP36W/uyYYZJeZ/uvS+eYitoy15YXknkYastbu+kMsJ8LvM324e3xWQC2/7Q9fhmwH/B3wJm2T5Z0FXCs7ftmIvwOZL7R9oEl/u4dUVteSOZhqC0v1Jk5ZkeNz4XaMteWF5J5GGrLW7vpXCLyFWAfSXtLegzwCuCTAJLmA6cD5wO7wNbbOOcCj5nG3xkRERER0Wk7PMC2/TBwKnAV8E1gne2vtw+/HriknaneCOwq6RZgg+0fTTNzRERERERnTWujGdtXAleOcv4vB742cOJ0/p4ZVNu1R7XlhWQehtryQp2ZY3bU+FyoLXNteSGZh6G2vFXb4WuwIyIiIiLi0aa1k2NERERERGwrA+yIiIiIiBmUAXZERERExAzq9QC7XULwsQPHu0h6SrlE/SZp19IZJkPST03mXJdIWjmZc13Uft8tLp0jykgPD1d6eHbV2sXp4eHr9QAbuBz4ycDxlvZcZ0l6vaSfGTheKOl3S2aaiKRDJX0D+FZ7/CxJ7y4cazzXT/Jcl5w1yXOdIumlwNeAz7THz5b0ybKpYsiq62Gor4vTw0NTXRenh8uY1jJ9FZhn+8GRA9sPtpvidNkq2xeNHNj+T0mrgC4X5V8Ah9NuNGT7Zkm/VjbSo0l6ArAI2EXSfoDahxYAnZz1kXQEcCSwSNKFAw8tAB4uk2pK3gYcDHwewPbXJO1dMlAMXY09DPV1cXp4FlXexW8jPTx0fR9gf1/SctsjO0y+DPhB4UwTmStJ7frhSKpi90vbd0oaPLWlVJZxHA68Bvh54M8Hzt8D/FGJQJPwXWADsLz9POIe4I1FEk3NQ7bv3u65kbVBdy419jBU2MXp4VlVcxenhwvo+wD7fwMflrSG5lXyncBvlY00oc8AH5H0vvb4d9pzXXanpEMBS5oPvIFmd89OsX0JcImk421/rHSeybB9M3CzpA+1u6fW5uuSXkkzWNkHOA24rnCmGK4aexjq6+L0SdfmfAAADu5JREFU8CyqvIvTwwXsFBvNSPppANs/Lp1lIpLm0BT5C9tTVwPvt93FmQgAJO0BXAD8Os0P0M8Cb7D9w6LBxiHpKGApsPXmK9tnl0s0Okm3MM5Mg+19hxhnytobrlYDL25PXQWcY/uBcqmihJp6GOrr4vTw7Kq5i9PDZfRygC3pN21/SNLvjfa47T8f7XzsHCS9l+Zav8OA9wMrgC/bfm3RYKOQtNd4j9v+zrCy7AhJK21fPtG56J/0cIynph6Gurs4PVxGXy8R2a39/LiiKaZA0jrbJ4z1Krnjr44fD6wCnsLAc8r2yaUyTeBQ2/tK2mj7jyW9C/h06VCj6XJpT9JZPHrFiNHORf9U18NQbxenh2dX5V2cHi6glwNs2+9rP//x9o91+O71N7Sfjy6aYsf8PfBF4Bq6eVPN9u5vP98n6UnAD4EnFswzIUn38MgP+8cA84F7bS8ol2psld9xHzOg0h6Gers4PTwENXVxerisXg6wR0j6PPAa23e0xwfRvBX1rIKxRmX7e+2Xu9n+xuBjkp4PdPnV8662/7B0iCn4VLu+7Z8BN9GU5fvLRhqf7a2zgGpuBX8ZcEi5RBP6LnAjdd5xHzOoph6Gqrs4PTwElXVxerigXl6DPULS4TQ3fVxIs+7mEcBv276paLBxSLoVuBQ4n+bGj/OBA20/t2iwcUg6F7jO9pWls0yVmp3DHmv77tJZpkrSV23vVzrHeCTNt/1Q6RxRTo09DPV1cXq4nK53cXq4jF4PsGHrjMPVNOuu7mf7/5dNND5JuwHvAA6guXbxw8A7bP9k3N9YUPuW2W7Ag+2HAHfxLTPYekf17wO/YHtVu2zRYtufKhxtTJKOGzicAxwIPK+rP+xHtP9t/xRYwrYrBTy1WKgYutp6GOrr4vTwcNTYxenhMvp+icibgROAXwP2BT4v6fdtry+bbFwP0VybtgvNN8Lmrhb6iMG3zCrxQZq3y0YK8V9pbvbocrG/dODrh4E7aN6a7LoPAm+l2WXuMOAkmh9KsZOotIehsi5ODw9NjV2cHi6g1zPYkv4SOMv2/e3xXjTrmL6obLKxSbqZ5maVc4A9gPcCD9peWTTYONrr0H4D2Nv2OZKeDDzR9pcLRxuVpBttHzj4tp6km2138prQmknaYPsASbfYfubgudLZYjhq7GGor4vTwzGW9HAZvX4FY/t0YIGkoyUdDdzf9VIHXmv7LbYfsv092y8DPlk61ATeTTML8cr2+MfAReXiTOhBSbvQ3gku6WlApxfcl3S+pAWS5ku6VtL3Jf1m6VyT8EC7YccmSadKOhb46dKhYngq7WGor4vTw0NQaRenhwvo9QBb0krgy8BKmrcob5C0omyqCd0s6TRJH20/TgXWlg41gefYfj3w3wC2/5Nm+aKueivNlsdPlvRh4FrgjLKRJvRi2/9Fs3TYHcDTgT8ommhy3kCzmcRpNNeyvgp4ddFEMVSV9jDU18Xp4eGosYvTwwX0+hps4E3AQbb/HbYuxH8N8NGiqcb3Hpp1Nd/dHr+q/XpVsUQTe0jSXB6ZiXg80MlrFdtX8QuB42iWVhLNdsI/KBpsYiPfq0cBl9u+u3lHuNtsf6X98sc01/3FzqfGHob6ujg9PBzVdXF6uIy+D7DnjJR664d0f9b+oO2uQftcey1gl10IfALYU9Lbaba8fVPZSKOz/RNJZ9heB3T9JqtBn5L0LZqbrk5pf3j+d+FME5L0izSzO3ux7e5yLygWKoatxh6G+ro4PTwc1XVxeriMvt/keD7NZgaXtadeDmzs8mL8km4CVtr+5/b4qcBHbe9fNtn4JP0S8EKamYhrbX+zcKQxSTqPZrmwjwD3jpy3/R/FQk2CpJ8F7ra9pV3iakHXlztrByTvpVktYOvucrY3jPmboldq7GGos4vTw8NRWxenh8vo+wD7HcANwLL21BeBQ7pc7JJeSLOkzu00JbkXcLLtzxUNNg5JhwBft31Pe7wA+GXbN5RNNjpJm0c57a6vCSrpUOApbDsD8bfFAk1C7lSPGnsY6uvi9PDw1NbF6eEy+j7Avmn72QZJG23vWyrTRNTsaAWwuP18G4Dtzt5dLemrwP5un0zt9XU3dnmmpzaSLgWeBnyNR2YgbPu0cqnG1s7wQHNTzb/TvHW99TlcwyxVzIwaexjq6+L08HDU1MXp4bJ6eQ22pFOA3wWeKmnjwEOPA/6xTKpJu74txK2527cqu1yS8sArtfb6uk4/t2qbgaDZLWyJ63lFvIHmZquRu38G77I30PlZqpieynsY6uvi9PBw1NTF6eGCOv3NNw1/B3yaZmvQMwfO39PVV2ySngAsAnaRtB+PfEMsoFlep8tul3QazV330PxQvb1gnnGNNQMBdLnYbwWeAHyvdJDJsL33ZH6dpBfZvnq280QR1fUwVN3F6eHhqKaL08Nl9foSkZpIejXwGppXx1/hkVL/L+AS2x8vFG1CkvakuYP9BTQFeS1w+nYrB3SGpG9SzwwEAJL+AXg2zXrCg2/xLS8WagaMdvlAREm1dnF6eDj62MXp4dmRAXbHSDre9sfGefzVti8ZZqa+kXQ5cJrtzs9AjJD0vNHO2/6/w84ykzSwTXJEl6SLZ1eNPQz97OL08OzIALsyXXyl2S7DdS7NuqCfAfYF3mj7Q0WDbUfSFTQzO4+jZzMQteri8zliMrr23E0Px47q2nO5L/p6DXafdXHLqBfbPkPSsTRbxx4HfAHoVLED76T57/cO4JiB8yPnOkfSl2wvk3QP7Q5tIw/R3Lm+oFC0iJ1d17o4PTyL0sUxVRlg16eLbzlUsXXsyFt4kuZv/3aepF3KpBqf7WXt58eVzjJL7igdIGIHda2L08OzqOddfEfpAH1Uw3a1sa3uNeYjW8ceAFzb1a1jJZ0i6RZgsaSNAx+bGViKK2aOpA2SXi9p4WiP2z5u2JkiZkjXujg9HKNKD5eRa7ArI2mN7VNL59heDVvHStodWEhly4bVTNLTgZNotse+kWZnvM/WtnJAxPa62MXp4RhNeriMDLA7RtL/Av4EeJLtIyQtAZ5r+wOFo41J0mNp1lxdRvO26ZeA99ju3OxJlNHuKnc0zRq9W2gK/oL8QI2uqq2L08MxkfTwcOUSke65GLgKeFJ7/E/A6cXSTM7fAkuBvwLWAEuAS4smis6QtC/wLuDPgI8BK2nWFP5cyVwRE7iYuro4PRxjSg8PX25y7J49bK+TdBaA7YclbZnoNxX2DNtLBo7/QdI3iqWJzpC0AfgR8AHgTNsjy3HdIOlXyiWLmFBtXZwejlGlh8vIALt77pX0c7R3qEs6BLi7bKQJ3STpENv/D0DSc2iu84pYaXub7Zol7W17c26siY6rrYvTwzGW9HABuQa7YyTtT/MW3zOAW4HHAytsd+7u6vZOcAPzgcXAv7THewHf2m42JXZCo21gIGmD7QNKZYqYjFq6OD0cE0kPl5EZ7A6RNBd4XvuxmGYZqNtsP1Q02NiOHvh6IfCr7ddfoHk7KnZSkn6J5nrQ3SUNzpAsAB5bJlXE5FTWxenhGFV6uKzc5NghtrcAJ9p+2PbXbd/a0UIHwPZ3bH+HZjeuS4E9aGZ5LgWy3e3ObTHND/6fAV468LE/sKpgrogJ1dTF6eEYR3q4oFwi0jGS/oLmrb6PAPeOnLd9U7FQE5C0kWb5qnvb492A623vWzZZlCbpubavL50jYqpq6+L0cIwlPVxGLhHpnme3n88eOGfgBQWyTJZo1tQcsYXu7XIWQyTpDNvnA6+UdOL2j9s+rUCsiKmorYvTw7GN9HBZGWB3jO3DSmfYAR+kWe7nE+3xMTTLAcXO65vt56xiEFWqsIvTw7G99HBBuUSkY2rbPWxEe8f9svbwi7a/WjJPdIOklbYvn+hcRNfU2MXp4RhNeriMDLA7RtKnaWYiVtt+lqR5wFdtP7NwtIgpG2N5qEedi+iadHH0RXq4jFwi0j217R4W8SiSjgCOBBZJunDgoQXAw2VSRUxJujiqlh4uKwPs7qlt97CI0XyX5rq/5cCGgfP3AG8skihiatLFUbv0cEG5RKRjJB0AXEjHdw+LmAxJ87u6fnDEeNLF0Rfp4TIywO6g9lq/ru8eFjEhSb8CvI1m2+Z5NM9p235qyVwRk5Eujj5ID5eRAXbHtJsFrAU+YvufS+eJmA5J36J5K3IDA2v02v5hsVARk5Aujr5ID5eRAXbHSNoLeHn78ROaXcTW2f6XosEidoCkG2w/p3SOiKlKF0dfpIfLyAC7wyTtA7wZ+A3bc0vniZgqSecBc4GPAw+MnO/qdtMRo0kXR83Sw2VkFZEO2m7mZAtwRtlEETtsZNbkwIFzXd5uOmKrdHH0RHq4gMxgd4ykG4D5wOU01/7dXjhSRMROJ10cEdORAXbHSFps+7bSOSJmQo3bTUdAujj6Iz1cxpzSAeJRfiTpA+02vUhaIum1pUNF7KCLgauAJ7XH/wScXixNxOSli6MvLiY9PHQZYHfPxeQbIfpjD9vraFZhwPbDDCwTFdFhF5Mujn5IDxeQAXb35Bsh+iTbTUet0sXRF+nhArKKSPfkGyH65PeATwJPk/SPtNtNl40UMSnp4uiL9HABucmxYyTtD/wV8AzgVtpvBNsbiwaL2EHZbjpqlC6OPkkPD19msLvnacARwJOB42nWr8z/p6iKpOPGeOgXJWH740MNFDF16eKoWnq4rJRF97zZ9uWSFgKHAe8E3sMjC8VH1OCl7ec9gUOBz7XHhwHX0ewoFtFl6eKoXXq4oNzk2D0jN9EcBfyN7fXAYwrmiZgy2yfZPolmo44lto+3fTywtD0X0XXp4qhaerisDLC7518lvY9ma94rJf0U+f8U9Xqy7e8NHP8b8AulwkRMQbo4+iI9XEBucuwYSbsCLwFusb1J0hOBZ9r+bOFoEVMmaQ2wD3BZe+rlwLdt/59yqSImli6OvkgPl5EBdkTMqvZGm19tD79g+xMl80RE7GzSw8OXAXZERERExAzKKiIRMeMkfcn2Mkn30G7UMfIQYNsLCkWLiNgppIfLygx2RERERMQMyh3REREREREzKAPsiIiIiIgZlAF2RERERMQMygA7IiIiImIGZYAdERERETGD/ge9ibGbPW6z+AAAAABJRU5ErkJggg==
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For benchmark purpose it is always useful to know the performance of dummy classifier that always predicts the label ratio as the label probability. Note that for multi-label classification we make a distinction between the accuracy (all predicted labels are correct) and the binary accuracy (how many individual labels were predicte correctly). The latter is always larger than the former because it is harder to predict <strong>all</strong> labels correctly.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  
+<span class="kn">from</span> <span class="nn">sklearn.dummy</span> <span class="kn">import</span> <span class="n">DummyClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">log_loss</span>
+
+<span class="n">dummy</span> <span class="o">=</span> <span class="n">DummyClassifier</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s2">&quot;prior&quot;</span><span class="p">)</span>
+<span class="n">dummy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_texts</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">dummy</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_texts</span><span class="p">)</span>
+<span class="n">y_prob</span> <span class="o">=</span> <span class="n">dummy</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">test_texts</span><span class="p">)</span>
+<span class="n">y_prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_prob</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dummy classifier:&quot;</span><span class="p">)</span> 
+<span class="n">multilabel_accuracy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">y_pred</span> <span class="o">==</span> <span class="n">test_labels</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy: </span><span class="si">{</span><span class="n">multilabel_accuracy</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">binary_accuracy</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_pred</span> <span class="o">==</span> <span class="n">test_labels</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Binary accuracy: </span><span class="si">{</span><span class="n">binary_accuracy</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loss: </span><span class="si">{</span><span class="n">log_loss</span><span class="p">(</span><span class="n">test_labels</span><span class="p">,</span> <span class="n">y_prob</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Dummy classifier:
+Accuracy: 0.898
+Binary accuracy: 0.963
+Loss: 0.302
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Setting-a-baseline">Setting a baseline<a class="anchor-link" href="#Setting-a-baseline">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Fine-tuning-DistillBERT">Fine-tuning DistillBERT<a class="anchor-link" href="#Fine-tuning-DistillBERT">&#182;</a></h2><p>The <a href="https://huggingface.co/transformers/">Transformers package</a> provides pre-trained transformer-based models, plus the corresponding pre-processing and tokenizing functions (the tokenizers even have optimized implementations in Rust!).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip install -q transformers &gt; /dev/null
+
+<span class="kn">import</span> <span class="nn">transformers</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transformers package version: </span><span class="si">{</span><span class="n">transformers</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Transformers package version: 4.2.2
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">TFDistilBertForSequenceClassification</span><span class="p">,</span> \
+    <span class="n">DistilBertConfig</span><span class="p">,</span> <span class="n">DistilBertTokenizerFast</span>
+
+<span class="n">MODEL_NAME</span> <span class="o">=</span> <span class="s1">&#39;distilbert-base-uncased&#39;</span>
+<span class="n">MAX_LENGTH</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># We truncate anything after the 200-th word to speed up training</span>
+
+<span class="c1"># The configuration is not needed if you don&#39;t have to customize the </span>
+<span class="c1"># network architecture. Here we will need it to replacee the output of the model</span>
+<span class="c1"># with a multi-label prediction layer (i.e. sigmoid activations + binary cross-entropy</span>
+<span class="c1"># instead of softmax + categorical cross-entropy of multi-class classification)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">DistilBertConfig</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">MODEL_NAME</span><span class="p">)</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">DistilBertTokenizerFast</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">MODEL_NAME</span><span class="p">)</span>
+
+
+<span class="n">train_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">train_texts</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                            <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;tf&quot;</span><span class="p">)</span>
+<span class="n">test_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">test_texts</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                           <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;tf&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create TensorFlow datasets to feed the model for training and evaluation</span>
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">((</span><span class="nb">dict</span><span class="p">(</span><span class="n">train_encodings</span><span class="p">),</span> <span class="n">train_labels</span><span class="p">))</span>
+<span class="n">test_dataset</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">((</span><span class="nb">dict</span><span class="p">(</span><span class="n">test_encodings</span><span class="p">),</span> <span class="n">test_labels</span><span class="p">))</span>
+
+<span class="c1"># Tokenizer output example</span>
+<span class="n">sample_text</span> <span class="o">=</span> <span class="s2">&quot;I have changed the headers to small letters, since I was basically...&quot;</span>
+<span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">(</span><span class="n">sample_text</span><span class="p">)[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+
+ 
+ 
+<div id="003fe2d8-02e9-485f-b529-6584bdfa3286"></div>
+<div class="output_subarea output_widget_view ">
+<script type="text/javascript">
+var element = $('#003fe2d8-02e9-485f-b529-6584bdfa3286');
+</script>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "1a68b8b5297c41619d15a716d9bdc048", "version_minor": 0, "version_major": 2}
+</script>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+
+ 
+ 
+<div id="fbf92334-f1af-44fe-a418-2c4f3a70dcee"></div>
+<div class="output_subarea output_widget_view ">
+<script type="text/javascript">
+var element = $('#fbf92334-f1af-44fe-a418-2c4f3a70dcee');
+</script>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "048410417c0f4edb9f1b6132a9b39629", "version_minor": 0, "version_major": 2}
+</script>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+
+ 
+ 
+<div id="f69fe34c-9936-4802-bea8-e9f155b8969f"></div>
+<div class="output_subarea output_widget_view ">
+<script type="text/javascript">
+var element = $('#f69fe34c-9936-4802-bea8-e9f155b8969f');
+</script>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "11c12bead905442e8332d1f8d336e1aa", "version_minor": 0, "version_major": 2}
+</script>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;[CLS] i have changed the headers to small letters, since i was basically... [SEP]&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The "[CLS]" special token is prepended to each text and will be used for classification, and a "[SEP]" token is appended.</p>
+<p>Note that thanks to BERT adding customizable special tokens, you can also take into account custom vocabularies that maybe specific to your dataset (e.g. domain-specific tags, or unusual characters with a specific meaning). To do so,you just have to add the following line <code>tokenizer.add_special_tokens({"additional_special_tokens": ["[unused1]"]})</code> and map your custom symbols to "[unused1]" (or "[unused2]", ..., up to "[unused999]"). We won't need it here.</p>
+<p>Now that the tokenizer is available, we have to customize the output of the BERT model for our multi-label problem.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.initializers</span> <span class="kn">import</span> <span class="n">TruncatedNormal</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Dropout</span><span class="p">,</span> <span class="n">Dense</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.losses</span> <span class="kn">import</span> <span class="n">BinaryCrossentropy</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.optimizers</span> <span class="kn">import</span> <span class="n">Adam</span>
+
+<span class="n">transformer_model</span> <span class="o">=</span> <span class="n">TFDistilBertForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+    <span class="n">MODEL_NAME</span><span class="p">,</span> <span class="n">output_hidden_states</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="n">bert</span> <span class="o">=</span> <span class="n">transformer_model</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># The input is a dictionary of word identifiers </span>
+<span class="n">input_ids</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">MAX_LENGTH</span><span class="p">,),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;input_ids&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;input_ids&#39;</span><span class="p">:</span> <span class="n">input_ids</span><span class="p">}</span>
+
+<span class="c1"># Here we select the representation of the first token ([CLS]) for classification</span>
+<span class="c1"># (a.k.a. &quot;pooled representation&quot;)</span>
+<span class="n">bert_model</span> <span class="o">=</span> <span class="n">bert</span><span class="p">(</span><span class="n">inputs</span><span class="p">)[</span><span class="mi">0</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> 
+
+<span class="c1"># Add a dropout layer and the output layer</span>
+<span class="n">dropout</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dropout</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;pooled_output&#39;</span><span class="p">)</span>
+<span class="n">pooled_output</span> <span class="o">=</span> <span class="n">dropout</span><span class="p">(</span><span class="n">bert_model</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span>
+    <span class="n">units</span><span class="o">=</span><span class="n">train_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">kernel_initializer</span><span class="o">=</span><span class="n">TruncatedNormal</span><span class="p">(</span><span class="n">stddev</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">initializer_range</span><span class="p">),</span> 
+    <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;sigmoid&quot;</span><span class="p">,</span>  <span class="c1"># Choose a sigmoid for multi-label classification</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;output&#39;</span>
+<span class="p">)(</span><span class="n">pooled_output</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;BERT_MultiLabel&#39;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+
+ 
+ 
+<div id="aa429071-20c0-464a-964e-50e03915d86e"></div>
+<div class="output_subarea output_widget_view ">
+<script type="text/javascript">
+var element = $('#aa429071-20c0-464a-964e-50e03915d86e');
+</script>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "1abd055406ff41cd90096cf285cc91ce", "version_minor": 0, "version_major": 2}
+</script>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Some layers from the model checkpoint at distilbert-base-uncased were not used when initializing TFDistilBertForSequenceClassification: [&#39;activation_13&#39;, &#39;vocab_transform&#39;, &#39;vocab_projector&#39;, &#39;vocab_layer_norm&#39;]
+- This IS expected if you are initializing TFDistilBertForSequenceClassification from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing TFDistilBertForSequenceClassification from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Some layers of TFDistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;dropout_19&#39;, &#39;classifier&#39;, &#39;pre_classifier&#39;]
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Model: &#34;BERT_MultiLabel&#34;
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input_ids (InputLayer)       [(None, 200)]             0         
+_________________________________________________________________
+distilbert (TFDistilBertMain TFBaseModelOutput(last_hi 66362880  
+_________________________________________________________________
+tf.__operators__.getitem (Sl (None, 768)               0         
+_________________________________________________________________
+pooled_output (Dropout)      (None, 768)               0         
+_________________________________________________________________
+output (Dense)               (None, 6)                 4614      
+=================================================================
+Total params: 66,367,494
+Trainable params: 66,367,494
+Non-trainable params: 0
+_________________________________________________________________
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now we can train the model in a few lines of code!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">loss</span> <span class="o">=</span> <span class="n">BinaryCrossentropy</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="mf">5e-5</span><span class="p">)</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="s2">&quot;binary_accuracy&quot;</span><span class="p">]</span>
+ 
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">)</span>
+<span class="n">training_history</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">train_dataset</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> 
+    <span class="n">validation_data</span><span class="o">=</span><span class="n">test_dataset</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Epoch 1/3
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/usr/local/lib/python3.6/dist-packages/tensorflow/python/keras/engine/functional.py:595: UserWarning: Input dict contained keys [&#39;attention_mask&#39;] which did not match any model input. They will be ignored by the model.
+  [n for n in tensors.keys() if n not in ref_input_names])
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>7979/7979 [==============================] - 1753s 219ms/step - loss: 0.0619 - accuracy: 0.9315 - binary_accuracy: 0.9790 - val_loss: 0.0448 - val_accuracy: 0.9921 - val_binary_accuracy: 0.9815
+Epoch 2/3
+7979/7979 [==============================] - 1735s 217ms/step - loss: 0.0376 - accuracy: 0.9496 - binary_accuracy: 0.9849 - val_loss: 0.0400 - val_accuracy: 0.9922 - val_binary_accuracy: 0.9842
+Epoch 3/3
+7979/7979 [==============================] - 1744s 219ms/step - loss: 0.0311 - accuracy: 0.9211 - binary_accuracy: 0.9874 - val_loss: 0.0442 - val_accuracy: 0.9897 - val_binary_accuracy: 0.9846
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The model achieves a good accuracy compared to the random model, and to the baseline.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">benchmarks</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+    <span class="n">test_dataset</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="mi">16</span><span class="p">),</span> <span class="n">return_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span>
+<span class="p">)</span>
+<span class="n">benchmarks</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1995/1995 [==============================] - 143s 71ms/step - loss: 0.0442 - accuracy: 0.9897 - binary_accuracy: 0.9846
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;accuracy&#39;: 0.989722728729248,
+ &#39;binary_accuracy&#39;: 0.9846078157424927,
+ &#39;loss&#39;: 0.044167641550302505}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>~99 % accuracy and binary accuracy! This model is pretty good. That is usually where you would start a deeper analyses (other metrics, confusion matrix, optimal thresholds, individual examples, feature importance, ...) but this will be enough for this post.</p>
+<p>We can now save our trained model. Here the first few lines of code are specific to using Colab and allow to mount your Google Drive as a local drive, for persistence (very convenient 😊).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+
+<span class="n">drive</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;/gdrive&#39;</span><span class="p">)</span>  <span class="c1"># A new tab will open and you will have to accept</span>
+<span class="c1"># the conditions and copy paste the token below </span>
+<span class="n">BASE_PATH</span> <span class="o">=</span> <span class="s2">&quot;/gdrive/My Drive/toxic_comments_transformer&quot;</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">BASE_PATH</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">BASE_PATH</span><span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE_PATH</span><span class="si">}</span><span class="s2">/fine_tuned_distilbert&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Mounted at /gdrive
+WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21fd625da0&gt;, because it is not built.
+WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21e8f54ef0&gt;, because it is not built.
+WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21fcd98160&gt;, because it is not built.
+WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21fd625a20&gt;, because it is not built.
+WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21fcdb9588&gt;, because it is not built.
+WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21fcd4a7b8&gt;, because it is not built.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>WARNING:absl:Found untraced functions such as embeddings_layer_call_and_return_conditional_losses, embeddings_layer_call_fn, transformer_layer_call_and_return_conditional_losses, transformer_layer_call_fn, position_embeddings_layer_call_and_return_conditional_losses while saving (showing 5 of 420). These functions will not be directly callable after loading.
+WARNING:absl:Found untraced functions such as embeddings_layer_call_and_return_conditional_losses, embeddings_layer_call_fn, transformer_layer_call_and_return_conditional_losses, transformer_layer_call_fn, position_embeddings_layer_call_and_return_conditional_losses while saving (showing 5 of 420). These functions will not be directly callable after loading.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>INFO:tensorflow:Assets written to: /gdrive/My Drive/toxic_comments_transformer/fine_tuned_distilbert/assets
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>INFO:tensorflow:Assets written to: /gdrive/My Drive/toxic_comments_transformer/fine_tuned_distilbert/assets
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Inference">Inference<a class="anchor-link" href="#Inference">&#182;</a></h2><p>Here's an example of how you'd used your shiny trained model in production, plus a measure of the typical latency that we should expect.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">load_model</span>
+
+<span class="c1"># Load model and/or tokenizer if needed</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="p">:</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;./models/fine_tuned_distilbert&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">tokenizer</span><span class="p">:</span>
+    <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">DistilBertTokenizerFast</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">MODEL_NAME</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">score_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">):</span>
+    <span class="n">padded_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode_plus</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span> <span class="c1"># truncates if len(s) &gt; max_length</span>
+        <span class="n">return_token_type_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">return_attention_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;max_length&#39;</span><span class="p">,</span>
+        <span class="n">return_tensors</span><span class="o">=</span><span class="s1">&#39;tf&#39;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span><span class="p">(</span><span class="n">padded_encodings</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;I am a nice forum user.&quot;</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="p">{</span><span class="n">label</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span> 
+          <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">label_names</span><span class="p">,</span> <span class="n">score_text</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="mi">0</span><span class="p">])}</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scores: </span><span class="si">{</span><span class="n">scores</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latency: </span><span class="si">{</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Scores: {&#39;toxic&#39;: &#39;0.00&#39;, &#39;severe_toxic&#39;: &#39;0.00&#39;, &#39;obscene&#39;: &#39;0.00&#39;, &#39;threat&#39;: &#39;0.00&#39;, &#39;insult&#39;: &#39;0.00&#39;, &#39;identity_hate&#39;: &#39;0.00&#39;}
+Latency: 0.074 seconds
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pretty fast! We can now use our shiny-fine-tuned-transformer in production 🎉</p>
+
+</div>
+</div>
+</div>
+ 
+
+<script type="application/vnd.jupyter.widget-state+json">
+{"1a68b8b5297c41619d15a716d9bdc048": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_f33a11d8df0046ae919eb81c5a566fd3", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_9913133349f84d388d3fe1920d40cc90", "IPY_MODEL_ca9f14d9b18148b5bc86276cb2956362"]}}, "f33a11d8df0046ae919eb81c5a566fd3": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "9913133349f84d388d3fe1920d40cc90": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_207810de67434987a5cc303d93c5bf29", "_dom_classes": [], "description": "Downloading: 100%", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 442, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 442, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_fc32a96b13704edd868ea8dcc87b71fa"}}, "ca9f14d9b18148b5bc86276cb2956362": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_7955abcbbb664c0aa9b490b1a73a8a22", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 442/442 [00:30&lt;00:00, 14.7B/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_9e88babc09b141dcb0e699707c12153f"}}, "207810de67434987a5cc303d93c5bf29": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "initial", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "fc32a96b13704edd868ea8dcc87b71fa": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "7955abcbbb664c0aa9b490b1a73a8a22": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "9e88babc09b141dcb0e699707c12153f": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "048410417c0f4edb9f1b6132a9b39629": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_a54b19489e604a0a8e5430447d7081f1", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_b1139907804342ab85722382f2a4d439", "IPY_MODEL_40e83b3266f44155aaa24d7372351540"]}}, "a54b19489e604a0a8e5430447d7081f1": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "b1139907804342ab85722382f2a4d439": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_26bdb6a8fa3c45fca9fdff1f30f342b3", "_dom_classes": [], "description": "Downloading: 100%", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 231508, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 231508, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_b1e7cf1ad6534d24a2649b0ceb9b0cb1"}}, "40e83b3266f44155aaa24d7372351540": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_11d5b575b93446d789d34974cedc6181", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 232k/232k [00:01&lt;00:00, 125kB/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_c0aa7708a37543de8f31abefb6e9c1f3"}}, "26bdb6a8fa3c45fca9fdff1f30f342b3": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "initial", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "b1e7cf1ad6534d24a2649b0ceb9b0cb1": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "11d5b575b93446d789d34974cedc6181": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "c0aa7708a37543de8f31abefb6e9c1f3": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "11c12bead905442e8332d1f8d336e1aa": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_7ceb62e493414164be626914be0206b8", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_30acd4864c43409d9ee92fd5b137822d", "IPY_MODEL_45ed736758ab497c93800cee7e50233f"]}}, "7ceb62e493414164be626914be0206b8": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "30acd4864c43409d9ee92fd5b137822d": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_50ad9a4968394b239a6678ca17bc20b3", "_dom_classes": [], "description": "Downloading: 100%", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 466062, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 466062, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_50c6cc782dca40f6971d426a46f3f471"}}, "45ed736758ab497c93800cee7e50233f": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_27fc69049bb94708ba5331254a18449c", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 466k/466k [00:27&lt;00:00, 17.1kB/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_d00ee01a5d81457b8f992f00d3d8a7b7"}}, "50ad9a4968394b239a6678ca17bc20b3": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "initial", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "50c6cc782dca40f6971d426a46f3f471": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "27fc69049bb94708ba5331254a18449c": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "d00ee01a5d81457b8f992f00d3d8a7b7": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "1abd055406ff41cd90096cf285cc91ce": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_fe2cb77014cc4818b6354642b1b5d1d7", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_eca562e3dde94f629665caf64c47c07d", "IPY_MODEL_196c23fe3c3d4471a99a9957de2c26aa"]}}, "fe2cb77014cc4818b6354642b1b5d1d7": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "eca562e3dde94f629665caf64c47c07d": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_22b009606e6743598c46377542d478ba", "_dom_classes": [], "description": "Downloading: 100%", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 363423424, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 363423424, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_08c8cee6b3e240898cd2acd60f981688"}}, "196c23fe3c3d4471a99a9957de2c26aa": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_84cac8cbd4e447f8b57cdb6a96ab4e75", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 363M/363M [00:04&lt;00:00, 73.2MB/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_b11942c9e6734ed2af140983d4169aab"}}, "22b009606e6743598c46377542d478ba": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "initial", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "08c8cee6b3e240898cd2acd60f981688": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "84cac8cbd4e447f8b57cdb6a96ab4e75": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "b11942c9e6734ed2af140983d4169aab": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}}
+</script>
+
+
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['$','$'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        " linebreaks: { automatic: true, width: '95% container' }, " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+</div>
+
+  <section>
+    <p id="post-share-links" style="text-align: center">
+      Share on:
+      <a
+        href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html&title=Multi-label%20classification%20with%20BERT&summary=Fine-tuning%20DistillBERT%20to%20tag%20toxic%20comments%20on%20Wikipedia%2C%20using%20TensorFlow%20and%20Hugging%20Face%27s%20transformers%20library.&source=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html"
+        target="_blank"
+        title="Share on LinkedIn"
+        ><i class="fa fa-linkedin-square"></i>
+      </a>
+      <a
+        href="https://twitter.com/intent/tweet?text=Multi-label%20classification%20with%20BERT&url=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html"
+        target="_blank"
+        title="Share on Twitter"
+        ><i class="fa fa-twitter"></i
+      ></a>
+      <a
+        href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html"
+        target="_blank"
+        title="Share on Facebook"
+        ><i class="fa fa-facebook"></i
+      ></a>
+      <a
+        href="mailto:?subject=Multi-label%20classification%20with%20BERT&amp;body=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html"
+        target="_blank"
+        title="Share via Email"
+        ><i class="fa fa-envelope"></i
+      ></a>
+    </p>
+  </section>
+ <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'data4thought';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>
+     Please enable JavaScript to view comments. 
+</noscript>
+   </article>
+
+      <footer>
+<p>&copy; <a href="https://linkedin.com/in/nthiebaut">Nicolas Thiebaut</a>  </p>
+      </footer>
+    </main>
+
+ <!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-106456784-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->     <script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Data4thought: data science blog ",
+  "url" : "https://nkthiebaut.github.io",
+  "image": "https://nkthiebaut.github.io/images/PhotoThiebaut.jpg",
+  "description": "Nicolas Thiebaut's data science blog"
+}
+</script>   </body>
+</html>
