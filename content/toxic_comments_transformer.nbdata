@@ -1,0 +1,8 @@
+Title: Multi-label classification with BERT
+Slug: toxic_comments_transformer
+Date: 2021-01-29 13:00
+Category: posts
+Tags: python, machine learning, transformers
+Author: Nicolas Thiebaut
+Summary: Fine-tuning DistillBERT to tag toxic comments on Wikipedia, using TensorFlow and Hugging Face's transformers library.
+featured_image: https://i0.wp.com/syncedreview.com/wp-content/uploads/2020/03/BERT-LANG-STREET.png?resize=1440%2C580&ssl=1
