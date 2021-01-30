@@ -1243,7 +1243,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <figcaption>BERT's family</figcaption></center>
 </figure><p>Some use cases still require a bit of tinkering, like the multi-label classification  problem I had to tackle recently. In this article I'm sharing my TensorFlow implementation which is portable to any other transformer you may prefer. If you are more of a PyTorch afficionado, feel free to have a look at <a href="https://towardsdatascience.com/transformers-for-multilabel-classification-71a1a0daf5e1">this blog post instead</a>.</p>
 <p>Today's post is not theoretical. If you want to dive into the inner workings of transformers there's a lot of good presentations on Transformers out there, notably <a href="http://jalammar.github.io/illustrated-transformer/">Transformer illustrated</a>, <a href="http://peterbloem.nl/blog/transformers">Transformers from scratch</a>, and <a href="https://nlp.seas.harvard.edu/2018/04/03/attention.html">the annotated Transformer</a>.</p>
-<p>In my experience exploring the Transformers litterature, the Transformer itself is the most complex component and the one that took me the most time to understand. Subsequent models built on top of the Transformer, like <a href="https://arxiv.org/abs/1810.04805">BERT</a> and the <a href="https://arxiv.org/abs/2005.14165">GPT</a> family (and <a href="https://huggingface.co/models">maaaaaannnny others</a>), usually easier to understand (of course they still are critical contributions too).</p>
+<p>In my experience exploring the Transformers litterature, the Transformer itself is the most complex component and the one that took me the most time to understand. With a solid understanding of the Transformer subsequent models built on top of it are fairly easy to grasp (like <a href="https://arxiv.org/abs/1810.04805">BERT</a>, the <a href="https://arxiv.org/abs/2005.14165">GPT</a> family, and <a href="https://huggingface.co/models">maaaaaannnny others</a>).</p>
 <p>In this blog post I fine-tune <a href="https://arxiv.org/abs/1910.01108">DistillBERT</a> (a smaller version of BERT with very close performances) on the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data">Toxic Comment Classification Challenge</a>. This challenge consists in tagging Wikipedia comments according to several "toxic behavior" labels. The task is a multi-label classification problem because a single comment can have zero, one, or up to six tags.</p>
 <p>As you'll see below, I simply fine-tuned the model on a GPU (thanks to <a href="https://colab.research.google.com/notebooks/intro.ipynb#recent=true">Colab</a>) and achieved very good performances in less than an hour.</p>
 
@@ -1262,7 +1262,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip uninstall -y -q kaggle <span class="o">&amp;&amp;</span> pip install -q kaggle  
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%capture</span>  # Ignore the cell output
+<span class="err">!</span><span class="n">pip</span> <span class="n">uninstall</span> <span class="o">-</span><span class="n">y</span> <span class="o">-</span><span class="n">q</span> <span class="n">kaggle</span> <span class="o">&amp;&amp;</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">kaggle</span> 
 <span class="c1"># Needed to get the latest version of the Kaggle CLI</span>
 
 <span class="kn">from</span> <span class="nn">getpass</span> <span class="kn">import</span> <span class="n">getpass</span>
@@ -1276,9 +1277,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;KAGGLE_USERNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">getpass</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;Kaggle username: &#39;</span><span class="p">)</span>
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;KAGGLE_KEY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">getpass</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;Token: &#39;</span><span class="p">)</span>
 
-<span class="o">!</span>kaggle --version
-<span class="o">!</span>kaggle competitions download -c jigsaw-toxic-comment-classification-challenge
-<span class="o">!</span>unzip jigsaw-toxic-comment-classification-challenge.zip <span class="o">&amp;&amp;</span> unzip train.csv.zip
+<span class="err">!</span><span class="n">kaggle</span> <span class="o">--</span><span class="n">version</span>
+<span class="err">!</span><span class="n">kaggle</span> <span class="n">competitions</span> <span class="n">download</span> <span class="o">-</span><span class="n">c</span> <span class="n">jigsaw</span><span class="o">-</span><span class="n">toxic</span><span class="o">-</span><span class="n">comment</span><span class="o">-</span><span class="n">classification</span><span class="o">-</span><span class="n">challenge</span>
+<span class="err">!</span><span class="n">unzip</span> <span class="n">jigsaw</span><span class="o">-</span><span class="n">toxic</span><span class="o">-</span><span class="n">comment</span><span class="o">-</span><span class="n">classification</span><span class="o">-</span><span class="n">challenge</span><span class="o">.</span><span class="n">zip</span> <span class="o">&amp;&amp;</span> <span class="n">unzip</span> <span class="n">train</span><span class="o">.</span><span class="n">csv</span><span class="o">.</span><span class="n">zip</span>
 </pre></div>
 
     </div>
@@ -1295,21 +1296,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>     |████████████████████████████████| 61kB 3.3MB/s 
-  Building wheel for kaggle (setup.py) ... done
-Kaggle username: ··········
+<pre>Kaggle username: ··········
 Token: ··········
-Kaggle API 1.5.10
-Downloading jigsaw-toxic-comment-classification-challenge.zip to /content
- 65% 34.0M/52.6M [00:01&lt;00:01, 11.2MB/s]
-100% 52.6M/52.6M [00:02&lt;00:00, 27.1MB/s]
-Archive:  jigsaw-toxic-comment-classification-challenge.zip
-  inflating: sample_submission.csv.zip  
-  inflating: test.csv.zip            
-  inflating: test_labels.csv.zip     
-  inflating: train.csv.zip           
-Archive:  train.csv.zip
-  inflating: train.csv               
 </pre>
 </div>
 </div>
@@ -1318,9 +1306,17 @@ Archive:  train.csv.zip
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The above cell is just meant to download and unpack the data, now let's load and prepare the dataset.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -1335,8 +1331,9 @@ Archive:  train.csv.zip
     <span class="n">texts</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
 <span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training texts sample: </span><span class="si">{</span><span class="n">train_texts</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training labels samples: </span><span class="si">{</span><span class="n">train_labels</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">sample_idx</span> <span class="o">=</span> <span class="mi">23</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Sample: &quot;</span><span class="si">{</span><span class="n">train_texts</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Labels: </span><span class="si">{</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">train_labels</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">],</span> <span class="n">label_names</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1353,8 +1350,8 @@ Archive:  train.csv.zip
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Training texts sample: I do not care. Refer to Ong Teng Cheong talk page. Is La goutte de pluie writing a biography or writing the history of trade unions. She is making use of the dead to push her agenda again. Right before elections too. How timely. 202.156.13.232
-Training labels samples: [0 0 0 0 0 0]
+<pre>Sample: &#34;what the fuck who deleted the spider loc and hot rod sections fucking wikipedia stupid ass ignorant people can we get it back ?&#34;
+Labels: {&#39;toxic&#39;: 1, &#39;severe_toxic&#39;: 0, &#39;obscene&#39;: 1, &#39;threat&#39;: 0, &#39;insult&#39;: 1, &#39;identity_hate&#39;: 0}
 </pre>
 </div>
 </div>
@@ -1366,14 +1363,14 @@ Training labels samples: [0 0 0 0 0 0]
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="A-minimalistic-Exploratory-Data-Analysis">A minimalistic Exploratory Data Analysis<a class="anchor-link" href="#A-minimalistic-Exploratory-Data-Analysis">&#182;</a></h2><p>Here we'll just have a look at the texts length distribution to choose a reasonable cut-off to speed training up (the maximum is 512 for BERT).</p>
+<h2 id="A-minimalistic-Exploratory-Data-Analysis">A minimalistic Exploratory Data Analysis<a class="anchor-link" href="#A-minimalistic-Exploratory-Data-Analysis">&#182;</a></h2><p>Here we'll just have a look at the texts length distribution. That will help us choose a reasonable cut-off for number of words, in order to speed up training (the maximum is 512 for BERT).</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
@@ -1413,14 +1410,16 @@ Training labels samples: [0 0 0 0 0 0]
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>You'll see below that the labels are pretty imbalanced, it gives us an idea of the order of magnitude for a decent accuracy.</p>
+<p>Let's choose a cutoff of 200 words, since most 
+texts are shorter than this.</p>
+<p>You'll see below that the labels are pretty imbalanced, it gives us an idea of the order of magnitude of what a decent accuracy could be.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -1473,19 +1472,22 @@ Training labels samples: [0 0 0 0 0 0]
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For benchmark purpose it is always useful to know the performance of dummy classifier that always predicts the label ratio as the label probability. Note that for multi-label classification we make a distinction between the accuracy (all predicted labels are correct) and the binary accuracy (how many individual labels were predicte correctly). The latter is always larger than the former because it is harder to predict <strong>all</strong> labels correctly.</p>
+<p>Note that labels are largely correlated. It should make traning easier since the patterns learned by the transformer will generalize accross labels.</p>
+<p>For benchmark purpose it is always useful to know the performance of a dummy classifier that always predicts the label ratio as the label probability. Note that for multi-label classification we make a distinction between the accuracy (all predicted labels are correct) and the binary accuracy (how many <em>individual labels</em> are correct). The latter is always larger than the former because it is harder to predict <strong>all</strong> labels correctly.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  
 <span class="kn">from</span> <span class="nn">sklearn.dummy</span> <span class="kn">import</span> <span class="n">DummyClassifier</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">log_loss</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.precision&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
 <span class="n">dummy</span> <span class="o">=</span> <span class="n">DummyClassifier</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="s2">&quot;prior&quot;</span><span class="p">)</span>
 <span class="n">dummy</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_texts</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">)</span>
@@ -1493,12 +1495,17 @@ Training labels samples: [0 0 0 0 0 0]
 <span class="n">y_prob</span> <span class="o">=</span> <span class="n">dummy</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">test_texts</span><span class="p">)</span>
 <span class="n">y_prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y_prob</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dummy classifier:&quot;</span><span class="p">)</span> 
-<span class="n">multilabel_accuracy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">y_pred</span> <span class="o">==</span> <span class="n">test_labels</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy: </span><span class="si">{</span><span class="n">multilabel_accuracy</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">binary_accuracy</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_pred</span> <span class="o">==</span> <span class="n">test_labels</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Binary accuracy: </span><span class="si">{</span><span class="n">binary_accuracy</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loss: </span><span class="si">{</span><span class="n">log_loss</span><span class="p">(</span><span class="n">test_labels</span><span class="p">,</span> <span class="n">y_prob</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_prob</span><span class="p">):</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_prob</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">y_pred</span> <span class="o">==</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;binary_accuracy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_pred</span> <span class="o">==</span> <span class="n">y_true</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_loss</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_prob</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">test_labels</span><span class="p">,</span> <span class="n">y_prob</span><span class="p">)</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Dummy classifier&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">())</span>
 </pre></div>
 
     </div>
@@ -1515,10 +1522,11 @@ Training labels samples: [0 0 0 0 0 0]
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Dummy classifier:
-Accuracy: 0.898
-Binary accuracy: 0.963
-Loss: 0.302
+<pre>|                 |   Dummy classifier |
+|:----------------|-------------------:|
+| accuracy        |           0.898355 |
+| binary_accuracy |           0.963058 |
+| loss            |           0.302386 |
 </pre>
 </div>
 </div>
@@ -1536,13 +1544,54 @@ Loss: 0.302
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.multiclass</span> <span class="kn">import</span> <span class="n">OneVsRestClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span>
+
+<span class="c1"># We take into account unigrams and bigrams that occur at least 10 times </span>
+<span class="c1"># in the train set, but less than 50 % of the time</span>
+<span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">min_df</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">max_df</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ngram_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1"># We set the (L2) regularization weight to 1/2 (inverse of C)</span>
+<span class="n">classifier</span> <span class="o">=</span> <span class="n">OneVsRestClassifier</span><span class="p">(</span><span class="n">LogisticRegression</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+
+<span class="n">baseline</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">tfidf</span><span class="p">,</span> <span class="n">classifier</span><span class="p">)</span>
+<span class="n">baseline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_texts</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">)</span>
+
+<span class="n">y_prob</span> <span class="o">=</span> <span class="n">baseline</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">test_texts</span><span class="p">)</span>
+
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">test_labels</span><span class="p">,</span> <span class="n">y_prob</span><span class="p">)</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;TF-IDF + Logistic Regression&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">())</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>|                 |   TF-IDF + Logistic Regression |
+|:----------------|-------------------------------:|
+| accuracy        |                       0.91938  |
+| binary_accuracy |                       0.980871 |
+| loss            |                       0.280769 |
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -1550,6 +1599,7 @@ Loss: 0.302
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>So we have a small improvement over the random baseline, let's se how transformers perform on this task.</p>
 <h2 id="Fine-tuning-DistillBERT">Fine-tuning DistillBERT<a class="anchor-link" href="#Fine-tuning-DistillBERT">&#182;</a></h2><p>The <a href="https://huggingface.co/transformers/">Transformers package</a> provides pre-trained transformer-based models, plus the corresponding pre-processing and tokenizing functions (the tokenizers even have optimized implementations in Rust!).</p>
 
 </div>
@@ -1557,7 +1607,7 @@ Loss: 0.302
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>pip install -q transformers &gt; /dev/null
@@ -1591,7 +1641,7 @@ Loss: 0.302
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
@@ -1642,10 +1692,10 @@ Loss: 0.302
 
  
  
-<div id="003fe2d8-02e9-485f-b529-6584bdfa3286"></div>
+<div id="2706bb32-a109-4a04-8a1c-150cd25486d8"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#003fe2d8-02e9-485f-b529-6584bdfa3286');
+var element = $('#2706bb32-a109-4a04-8a1c-150cd25486d8');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "1a68b8b5297c41619d15a716d9bdc048", "version_minor": 0, "version_major": 2}
@@ -1675,10 +1725,10 @@ var element = $('#003fe2d8-02e9-485f-b529-6584bdfa3286');
 
  
  
-<div id="fbf92334-f1af-44fe-a418-2c4f3a70dcee"></div>
+<div id="fdffc3c7-098c-49ae-8704-29a4f653bdcc"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#fbf92334-f1af-44fe-a418-2c4f3a70dcee');
+var element = $('#fdffc3c7-098c-49ae-8704-29a4f653bdcc');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "048410417c0f4edb9f1b6132a9b39629", "version_minor": 0, "version_major": 2}
@@ -1708,10 +1758,10 @@ var element = $('#fbf92334-f1af-44fe-a418-2c4f3a70dcee');
 
  
  
-<div id="f69fe34c-9936-4802-bea8-e9f155b8969f"></div>
+<div id="bb8d33ad-4d43-4660-b39d-515b2a0d6ab7"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#f69fe34c-9936-4802-bea8-e9f155b8969f');
+var element = $('#bb8d33ad-4d43-4660-b39d-515b2a0d6ab7');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "11c12bead905442e8332d1f8d336e1aa", "version_minor": 0, "version_major": 2}
@@ -1733,7 +1783,7 @@ var element = $('#f69fe34c-9936-4802-bea8-e9f155b8969f');
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[10]:</div>
+    <div class="prompt output_prompt">Out[&nbsp;]:</div>
 
 
 
@@ -1760,7 +1810,7 @@ var element = $('#f69fe34c-9936-4802-bea8-e9f155b8969f');
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tensorflow.keras.initializers</span> <span class="kn">import</span> <span class="n">TruncatedNormal</span>
@@ -1815,10 +1865,10 @@ var element = $('#f69fe34c-9936-4802-bea8-e9f155b8969f');
 
  
  
-<div id="aa429071-20c0-464a-964e-50e03915d86e"></div>
+<div id="eb1f0b28-4373-4d9f-8f90-c6d9256ce2a6"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#aa429071-20c0-464a-964e-50e03915d86e');
+var element = $('#eb1f0b28-4373-4d9f-8f90-c6d9256ce2a6');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "1abd055406ff41cd90096cf285cc91ce", "version_minor": 0, "version_major": 2}
@@ -1888,6 +1938,7 @@ _________________________________________________________________
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>So we will fine-tune ~66M parameters on our dataset. That may sound like a lot, and one may be concerned with overfitting risks, but BERT has proven very robust to fine-tuning.</p>
 <p>Now we can train the model in a few lines of code!</p>
 
 </div>
@@ -1895,7 +1946,7 @@ _________________________________________________________________
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">loss</span> <span class="o">=</span> <span class="n">BinaryCrossentropy</span><span class="p">()</span>
@@ -1962,14 +2013,14 @@ Epoch 3/3
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The model achieves a good accuracy compared to the random model, and to the baseline.</p>
+<p>The model achieves a good accuracy compared to the random model, and to the baseline. Let's run the evaluate method on the test set once more, as a sanity check.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">benchmarks</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
@@ -1999,7 +2050,7 @@ Epoch 3/3
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[14]:</div>
+    <div class="prompt output_prompt">Out[&nbsp;]:</div>
 
 
 
@@ -2019,15 +2070,15 @@ Epoch 3/3
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>~99 % accuracy and binary accuracy! This model is pretty good. That is usually where you would start a deeper analyses (other metrics, confusion matrix, optimal thresholds, individual examples, feature importance, ...) but this will be enough for this post.</p>
-<p>We can now save our trained model. Here the first few lines of code are specific to using Colab and allow to mount your Google Drive as a local drive, for persistence (very convenient 😊).</p>
+<p>~99 % accuracy and binary accuracy! This model is pretty good. That is usually the point at which you would start a deeper analysis (other metrics, confusion matrix, optimal thresholds, individual examples, feature importance, ...) but this is beyond the scope of this post.</p>
+<p>We can now save our trained model. In the following cell the first few lines of code are specific to using Colab and mount your Google Drive as a local drive, for persistence (very convenient 😊).</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
@@ -2057,46 +2108,6 @@ Epoch 3/3
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Mounted at /gdrive
-WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21fd625da0&gt;, because it is not built.
-WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21e8f54ef0&gt;, because it is not built.
-WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21fcd98160&gt;, because it is not built.
-WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21fd625a20&gt;, because it is not built.
-WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21fcdb9588&gt;, because it is not built.
-WARNING:tensorflow:Skipping full serialization of Keras layer &lt;tensorflow.python.keras.layers.core.Dropout object at 0x7f21fcd4a7b8&gt;, because it is not built.
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>WARNING:absl:Found untraced functions such as embeddings_layer_call_and_return_conditional_losses, embeddings_layer_call_fn, transformer_layer_call_and_return_conditional_losses, transformer_layer_call_fn, position_embeddings_layer_call_and_return_conditional_losses while saving (showing 5 of 420). These functions will not be directly callable after loading.
-WARNING:absl:Found untraced functions such as embeddings_layer_call_and_return_conditional_losses, embeddings_layer_call_fn, transformer_layer_call_and_return_conditional_losses, transformer_layer_call_fn, position_embeddings_layer_call_and_return_conditional_losses while saving (showing 5 of 420). These functions will not be directly callable after loading.
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>INFO:tensorflow:Assets written to: /gdrive/My Drive/toxic_comments_transformer/fine_tuned_distilbert/assets
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>INFO:tensorflow:Assets written to: /gdrive/My Drive/toxic_comments_transformer/fine_tuned_distilbert/assets
 </pre>
 </div>
 </div>
@@ -2115,17 +2126,17 @@ WARNING:absl:Found untraced functions such as embeddings_layer_call_and_return_c
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[52]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 <span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">load_model</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">DistilBertTokenizerFast</span>
 
-<span class="c1"># Load model and/or tokenizer if needed</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="p">:</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;./models/fine_tuned_distilbert&quot;</span><span class="p">)</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">tokenizer</span><span class="p">:</span>
-    <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">DistilBertTokenizerFast</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">MODEL_NAME</span><span class="p">)</span>
+<span class="c1"># Mimicking a production scenario: load the model and tokenizer</span>
+<span class="n">MAX_LENGTH</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE_PATH</span><span class="si">}</span><span class="s2">/fine_tuned_distilbert&quot;</span><span class="p">)</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">DistilBertTokenizerFast</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s1">&#39;distilbert-base-uncased&#39;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">score_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">):</span>
     <span class="n">padded_encodings</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode_plus</span><span class="p">(</span>
@@ -2139,12 +2150,19 @@ WARNING:absl:Found untraced functions such as embeddings_layer_call_and_return_c
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">model</span><span class="p">(</span><span class="n">padded_encodings</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
-<span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;I am a nice forum user.&quot;</span>
+<span class="n">score_text</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># running a dummy prediction as a work-around the extra latency of the </span>
+<span class="c1"># first prediction of a loaded TensorFlow model.</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;I am a nice Wikipedia user, I mean no harm, </span>
+<span class="s2">I will not insult anybody or be offensive anyhow.&quot;&quot;&quot;</span>
+
 <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-<span class="n">scores</span> <span class="o">=</span> <span class="p">{</span><span class="n">label</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span> 
-          <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">label_names</span><span class="p">,</span> <span class="n">score_text</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="mi">0</span><span class="p">])}</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scores: </span><span class="si">{</span><span class="n">scores</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latency: </span><span class="si">{</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">score_text</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">latency</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+<span class="n">scores</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">label_names</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;scores&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Latency: </span><span class="si">{</span><span class="n">latency</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -2161,8 +2179,17 @@ WARNING:absl:Found untraced functions such as embeddings_layer_call_and_return_c
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Scores: {&#39;toxic&#39;: &#39;0.00&#39;, &#39;severe_toxic&#39;: &#39;0.00&#39;, &#39;obscene&#39;: &#39;0.00&#39;, &#39;threat&#39;: &#39;0.00&#39;, &#39;insult&#39;: &#39;0.00&#39;, &#39;identity_hate&#39;: &#39;0.00&#39;}
-Latency: 0.074 seconds
+<pre>WARNING:tensorflow:5 out of the last 11 calls to &lt;function recreate_function.&lt;locals&gt;.restored_function_body at 0x7fb03a183488&gt; triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has experimental_relax_shapes=True option that relaxes argument shapes that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+|               |      scores |
+|:--------------|------------:|
+| toxic         | 0.000570323 |
+| severe_toxic  | 3.81275e-05 |
+| obscene       | 0.00016416  |
+| threat        | 0.000135869 |
+| insult        | 0.000126574 |
+| identity_hate | 3.07387e-05 |
+
+Latency: 0.009 seconds
 </pre>
 </div>
 </div>
