@@ -8,6 +8,11 @@
   <header>
     <h1 id="{{ article.slug }}">{{ article.title }}</h1>
     <p>
+      <a href="https://colab.research.google.com/github/nkthiebaut/nkthiebaut.github.io/blob/source/content/{{ article.slug }}.ipynb" rel="nofollow">
+      <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg" data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" style="max-width:100%;">
+      </a>
+    </p>
+    <p>
       {{ _('Posted on %(when)s', when=article.locale_date, ) }} {% if
       'post_stats' in PLUGINS %} &#8226; {{ article.stats['read_mins'] }} min
       read {% endif %}
