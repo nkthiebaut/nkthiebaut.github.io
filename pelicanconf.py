@@ -3,32 +3,34 @@
 from __future__ import unicode_literals
 import os
 
-AUTHOR = 'Nicolas Thiebaut'
+AUTHOR = "Nicolas Thiebaut"
 SITENAME = "Data4thought: data science blog"
-SITEURL = 'https://nkthiebaut.github.io'
+SITEURL = "https://nkthiebaut.github.io"
 SITETITLE = "Data4thought"
 SITESUBTITLE = "Nicolas Thiebaut's data science blog"
 SITEDESCRIPTION = "Nicolas Thiebaut's data science blog"
-SITELOGO = SITEURL + '/images/PhotoThiebaut.jpg'
-FAVICON = SITEURL + '/images/favicon.ico'
+SITELOGO = SITEURL + "/images/PhotoThiebaut.jpg"
+FAVICON = SITEURL + "/images/favicon.ico"
 
-PATH = 'content'
+PATH = "content"
 MAIN_MENU = True
-STATIC_PATHS = ['images', 'pdfs']
+STATIC_PATHS = ["images", "pdfs"]
 
-TIMEZONE = 'Europe/Paris'
+TIMEZONE = "Europe/Paris"
 THEME = os.path.join(os.getcwd(), "themes", "neat")
 
-DEFAULT_LANG = 'en'
+DEFAULT_LANG = "en"
 # Blogroll
 # LINKS = (('Pelican', 'http://getpelican.com/'),)
 
 # Social widget
-SOCIAL = (('linkedin', 'https://www.linkedin.com/in/nthiebaut'),
-          ('github', 'https://github.com/nkthiebaut/'),
-          ('twitter', 'https://twitter.com/NicoThiebaut'),)
+SOCIAL = (
+    ("linkedin", "https://www.linkedin.com/in/nthiebaut"),
+    ("github", "https://github.com/nkthiebaut/"),
+    ("twitter", "https://twitter.com/NicoThiebaut"),
+)
 
-#MENUITEMS = (('Archives', '/archives.html'),
+# MENUITEMS = (('Archives', '/archives.html'),
 #             ('Categories', '/categories.html'),
 #             ('Tags', '/tags.html'),)
 
@@ -36,14 +38,19 @@ DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
 RELATIVE_URLS = True
-MARKUP = ('md', 'ipynb')
+MARKUP = ("md", "ipynb")
 
 from pelican_jupyter import markup as nb_markup
+
 PLUGINS = [nb_markup]
+IPYNB_FIX_CSS = True
+IPYNB_SKIP_CSS = False
+# IPYNB_EXPORT_TEMPLATE = "./export.tpl"
 
-PLUGIN_PATHS = ['./plugins']
-PLUGINS = ['share_post.share_post']
-IGNORE_FILES = ['.ipynb_checkpoints']
 
-#PLUGIN_PATHS = ['./plugins']
-#PLUGINS = ['ipynb.markup', 'share_post.share_post']
+PLUGIN_PATHS = ["./plugins"]
+PLUGINS = ["share_post.share_post"]
+IGNORE_FILES = [".ipynb_checkpoints"]
+
+# PLUGIN_PATHS = ['./plugins']
+# PLUGINS = ['ipynb.markup', 'share_post.share_post']
