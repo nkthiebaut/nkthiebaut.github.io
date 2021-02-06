@@ -30,7 +30,7 @@ help:
 	
 local: 
 	rm -fr content/.ipynb_checkpoints
-	$(PELICAN) $(INPUTDIR) -D -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS)
+	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS)
 	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome http://localhost:8000
 	pelican --listen
 

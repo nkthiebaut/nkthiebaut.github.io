@@ -31,7 +31,7 @@ GOOGLE_ADSENSE.ads.index_top %}
   <div>
   {% if summarise or article.metadata['summary'] or SUMMARY_MAX_LENGTH %}
     {% if  article.featured_image %}
-      <img height="200" style="display: block;margin-left: auto;margin-right: auto;" src="{{ article.featured_image }}">
+      <img width="400" style="display: block;margin-left: auto;margin-right: auto;" src="{{ article.featured_image }}">
     {% endif %}
     {{ article.summary }}
   {% else %}
