@@ -45,7 +45,7 @@ github: publish
 	git push --all
 	ghp-import -m "Generate Pelican site" -b $(GITHUB_PAGES_BRANCH) $(OUTPUTDIR)
 	git checkout master
-	git merge  $(GITHUB_PAGES_BRANCH)
+	git merge  $(GITHUB_PAGES_BRANCH) -m "Merging gh-pages into master"
 	git push --all
 	git checkout source
 
