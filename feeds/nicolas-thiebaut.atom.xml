@@ -1123,9 +1123,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 &lt;center&gt;
 &lt;img src='https://i0.wp.com/syncedreview.com/wp-content/uploads/2020/03/BERT-LANG-STREET.png?fit=3264%2C2448&amp;ssl=1' height="200"/&gt;
 &lt;figcaption&gt;BERT's family&lt;/figcaption&gt;&lt;/center&gt;
-&lt;/figure&gt;&lt;p&gt;Some use cases still require a bit of tinkering, like the multi-label classification  problem I had to tackle recently. In this article I'm sharing my TensorFlow implementation which is portable to any other transformer you may prefer. If you are more of a PyTorch afficionado, feel free to have a look at &lt;a href="https://towardsdatascience.com/transformers-for-multilabel-classification-71a1a0daf5e1"&gt;this blog post instead&lt;/a&gt;.&lt;/p&gt;
+&lt;/figure&gt;&lt;p&gt;Some use cases still require a bit of tinkering, like the multi-label classification  problem I had to tackle recently. In this article I'm sharing my TensorFlow implementation which is portable to any other transformer you may prefer. If you are more of a PyTorch aficionado, feel free to have a look at &lt;a href="https://medium.com/huggingface/multi-label-text-classification-using-bert-the-mighty-transformer-69714fa3fb3d"&gt;this blog post instead&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Today's post is not theoretical. If you want to dive into the inner workings of transformers there's a lot of good presentations on Transformers out there, notably &lt;a href="http://jalammar.github.io/illustrated-transformer/"&gt;Transformer illustrated&lt;/a&gt;, &lt;a href="http://peterbloem.nl/blog/transformers"&gt;Transformers from scratch&lt;/a&gt;, and &lt;a href="https://nlp.seas.harvard.edu/2018/04/03/attention.html"&gt;the annotated Transformer&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;In my experience exploring the Transformers litterature, the Transformer itself is the most complex component and the one that took me the most time to understand. With a solid understanding of the Transformer subsequent models built on top of it are fairly easy to grasp (like &lt;a href="https://arxiv.org/abs/1810.04805"&gt;BERT&lt;/a&gt;, the &lt;a href="https://arxiv.org/abs/2005.14165"&gt;GPT&lt;/a&gt; family, and &lt;a href="https://huggingface.co/models"&gt;maaaaaannnny others&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;In my experience exploring the Transformers literature, the Transformer itself is the most complex component and the one that took me the most time to understand. With a solid understanding of the Transformer subsequent models built on top of it are fairly easy to grasp (like &lt;a href="https://arxiv.org/abs/1810.04805"&gt;BERT&lt;/a&gt;, the &lt;a href="https://arxiv.org/abs/2005.14165"&gt;GPT&lt;/a&gt; family, and &lt;a href="https://huggingface.co/models"&gt;maaaaaannnny others&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;In this blog post I fine-tune &lt;a href="https://arxiv.org/abs/1910.01108"&gt;DistillBERT&lt;/a&gt; (a smaller version of BERT with very close performances) on the &lt;a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data"&gt;Toxic Comment Classification Challenge&lt;/a&gt;. This challenge consists in tagging Wikipedia comments according to several "toxic behavior" labels. The task is a multi-label classification problem because a single comment can have zero, one, or up to six tags.&lt;/p&gt;
 &lt;p&gt;As you'll see below, I simply fine-tuned the model on a GPU (thanks to &lt;a href="https://colab.research.google.com/notebooks/intro.ipynb#recent=true"&gt;Colab&lt;/a&gt;) and achieved very good performances in less than an hour.&lt;/p&gt;
 
@@ -1654,10 +1654,10 @@ texts are shorter than this.&lt;/p&gt;
 
  
  
-&lt;div id="4d80c2e5-7cd4-4520-82b2-8ae22f367782"&gt;&lt;/div&gt;
+&lt;div id="26ab5169-1da8-4892-b48f-7f145963d9b0"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#4d80c2e5-7cd4-4520-82b2-8ae22f367782');
+var element = $('#26ab5169-1da8-4892-b48f-7f145963d9b0');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "707ae041060741568b39fe87086ba7f2", "version_major": 2, "version_minor": 0}
@@ -1687,10 +1687,10 @@ var element = $('#4d80c2e5-7cd4-4520-82b2-8ae22f367782');
 
  
  
-&lt;div id="6b62ee14-d909-4bb3-80f4-b87a4ad74e78"&gt;&lt;/div&gt;
+&lt;div id="83028486-955b-4a82-b023-17f1e96a122e"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#6b62ee14-d909-4bb3-80f4-b87a4ad74e78');
+var element = $('#83028486-955b-4a82-b023-17f1e96a122e');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "d30ef4eb2e454f9db556763415ae22b8", "version_major": 2, "version_minor": 0}
@@ -1720,10 +1720,10 @@ var element = $('#6b62ee14-d909-4bb3-80f4-b87a4ad74e78');
 
  
  
-&lt;div id="209920ae-a4c0-4946-8848-e042d15b4121"&gt;&lt;/div&gt;
+&lt;div id="8e3fea5a-9102-4bd2-bb9b-d63e8338ae02"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#209920ae-a4c0-4946-8848-e042d15b4121');
+var element = $('#8e3fea5a-9102-4bd2-bb9b-d63e8338ae02');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "e712dba76f9449c5a89a51f08e64a079", "version_major": 2, "version_minor": 0}
@@ -1819,10 +1819,10 @@ var element = $('#209920ae-a4c0-4946-8848-e042d15b4121');
 
  
  
-&lt;div id="c3e5cd27-3033-4d7e-ac1c-6d29e10c06d3"&gt;&lt;/div&gt;
+&lt;div id="fd820b12-0cb9-453c-a9a2-086e110bcd21"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#c3e5cd27-3033-4d7e-ac1c-6d29e10c06d3');
+var element = $('#fd820b12-0cb9-453c-a9a2-086e110bcd21');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "b9c3329f82484e0195cc3d01591d1778", "version_major": 2, "version_minor": 0}
