@@ -5,4 +5,4 @@ Category: posts
 Tags: python, machine learning, transformers
 Author: Nicolas Thiebaut
 Summary: Leaner and faster Transformers with distillation. Fine-tuning BERT-tiny in a couple of minutes with PyTorch.
-featured_image: https://github.com/nkthiebaut/nkthiebaut.github.io/blob/master/images/Knowledge_distillation.png?raw=true
+featured_image: https://github.com/nkthiebaut/nkthiebaut.github.io/blob/master/images/knowledge_distillation.png?raw=true
