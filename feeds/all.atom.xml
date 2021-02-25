@@ -1120,7 +1120,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
 &lt;p&gt;Over the past few years, transformers have spurted tremendous progress in natural language processing. This success is partly explained by their impressive scaling capabilities. It seems as if their perfomance improvement with the number of parameters had no ceiling, as emphasized in the &lt;a href="https://arxiv.org/abs/2005.14165"&gt;GPT-3 paper&lt;/a&gt; by OpenAI. Following this observation, transformers models have become bigger and bigger. The latest &lt;a href="https://venturebeat.com/2021/01/12/google-trained-a-trillion-parameter-ai-language-model/"&gt;Switch Transformer&lt;/a&gt; model from Google has more than a trillion parameters.&lt;/p&gt;
 &lt;p&gt;Using those humongous models for practical applications is challenging. Fine-tuning a transformer model for custom use-cases requires special hardware and setups, is costly, time-consuming, and inference may be slow.&lt;/p&gt;
-&lt;h2 id="Knowledge-distillation-to-the-rescue"&gt;Knowledge distillation to the rescue&lt;a class="anchor-link" href="#Knowledge-distillation-to-the-rescue"&gt;&amp;#182;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;img src="https://github.com/nkthiebaut/nkthiebaut.github.io/blob/master/images/Knowledge_distillation.png?raw=true" alt="Knowledge distillation"&gt;&lt;/p&gt;
+&lt;h2 id="Knowledge-distillation-to-the-rescue"&gt;Knowledge distillation to the rescue&lt;a class="anchor-link" href="#Knowledge-distillation-to-the-rescue"&gt;&amp;#182;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;&lt;img src="https://github.com/nkthiebaut/nkthiebaut.github.io/blob/master/images/knowledge_distillation.png?raw=true" alt="drawing" width="75%"/&gt;&lt;/p&gt;
 &lt;p&gt;Luckily, part of the ML community focuses on producing leaner and faster transformers while retaining most of their predictive power. This is usually done via knowledge distillation, where a small model (the "student") is trained to reproduce the predictions of a larger model (the "teacher"). Knowledge distillation is different from the original classification task since for a given example the student's predictions ($s_i$) have to match probabilities predicted by the teacher ($t_i$), rather than binary labels. To train the student, one typically combines the regular log loss (that doesn't depend on the teacher) $L_\text{classif.} = \sum_i y_i \log (s_i)$ with a &lt;em&gt;distillation loss&lt;/em&gt; (that takes into account the teacher) $L_\text{distil.} = \sum_i t_i \log (s_i).$&lt;/p&gt;
 &lt;p&gt;In practice, knowledge distillation benefits from a bunch of tricks such as probabilities smoothing, adding other terms to the loss functions, or pre-training the student modeel. More details &lt;a href="https://en.wikipedia.org/wiki/Knowledge_distillation"&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="Using-smaller-transformers-without-missing-out-on-performance"&gt;Using smaller transformers without missing out on performance&lt;a class="anchor-link" href="#Using-smaller-transformers-without-missing-out-on-performance"&gt;&amp;#182;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;In my last post I've shown how to fine-tune &lt;a href="https://arxiv.org/pdf/1910.01108.pdf"&gt;DistilBERT&lt;/a&gt; for a multi-label classification task. DistilBERT is already a distilled version of BERT-base, with ~60M parameters instead of ~110M, but in this post my goal is to evaluate much smaller distilled versions of BERT, down to BERT-Tiny that was introduced in &lt;a href="https://huggingface.co/google/bert_uncased_L-2_H-128_A-2"&gt;a Google paper&lt;/a&gt; with a slew of distilled BERT models. BERT-Tiny has only 2 transformer layers with 128 hidden units each (distributed among 2 self-attention heads), totalling a lean 4.4M parameters.&lt;/p&gt;
@@ -3406,10 +3406,10 @@ texts are shorter than this.&lt;/p&gt;
 
  
  
-&lt;div id="eb0478cd-c91f-453e-818c-27ae017df273"&gt;&lt;/div&gt;
+&lt;div id="fe14853a-ce37-402f-a7fc-82bec34de1b8"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#eb0478cd-c91f-453e-818c-27ae017df273');
+var element = $('#fe14853a-ce37-402f-a7fc-82bec34de1b8');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "707ae041060741568b39fe87086ba7f2", "version_major": 2, "version_minor": 0}
@@ -3439,10 +3439,10 @@ var element = $('#eb0478cd-c91f-453e-818c-27ae017df273');
 
  
  
-&lt;div id="a6a07020-c092-485d-929c-9e2f3556778a"&gt;&lt;/div&gt;
+&lt;div id="0f9f9dce-90f1-4fa2-a839-966d952f04b0"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#a6a07020-c092-485d-929c-9e2f3556778a');
+var element = $('#0f9f9dce-90f1-4fa2-a839-966d952f04b0');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "d30ef4eb2e454f9db556763415ae22b8", "version_major": 2, "version_minor": 0}
@@ -3472,10 +3472,10 @@ var element = $('#a6a07020-c092-485d-929c-9e2f3556778a');
 
  
  
-&lt;div id="d9f71d14-39f2-469b-992f-709e19eb9186"&gt;&lt;/div&gt;
+&lt;div id="b3a83261-a900-4fb0-9c1c-121662af8c8b"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#d9f71d14-39f2-469b-992f-709e19eb9186');
+var element = $('#b3a83261-a900-4fb0-9c1c-121662af8c8b');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "e712dba76f9449c5a89a51f08e64a079", "version_major": 2, "version_minor": 0}
@@ -3571,10 +3571,10 @@ var element = $('#d9f71d14-39f2-469b-992f-709e19eb9186');
 
  
  
-&lt;div id="27995232-0732-4724-9fd8-84ce3bef2de2"&gt;&lt;/div&gt;
+&lt;div id="8c43190c-f19c-4439-99bd-ebabd40f326f"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#27995232-0732-4724-9fd8-84ce3bef2de2');
+var element = $('#8c43190c-f19c-4439-99bd-ebabd40f326f');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "b9c3329f82484e0195cc3d01591d1778", "version_major": 2, "version_minor": 0}
