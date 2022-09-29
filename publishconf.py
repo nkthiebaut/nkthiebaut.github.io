@@ -21,4 +21,4 @@ DELETE_OUTPUT_DIRECTORY = True
 # Following items are often useful when publishing
 
 DISQUS_SITENAME = "data4thought"
-GOOGLE_ANALYTICS = "UA-106456784-1"
+GOOGLE_ANALYTICS = "G-CKLVBTP0H3"

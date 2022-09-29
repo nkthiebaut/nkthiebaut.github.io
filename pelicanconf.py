@@ -41,8 +41,17 @@ RELATIVE_URLS = True
 MARKUP = ("md", "ipynb")
 
 from pelican_jupyter import markup as nb_markup
+from pelican_jupyter import liquid as nb_liquid # import pelican-jupyter
+from pelican.plugins import liquid_tags
 
-PLUGINS = [nb_markup]
+PLUGINS = [liquid_tags, nb_markup, 'liquid_tags.img', nb_liquid, 'representative_image']
+
+LIQUID_TAGS = ["img", "include_code", "gram", "video", "youtube", "notebook"]
+LIQUID_CONFIGS = (("IPYNB_FIX_CSS", "False", ""), 
+                  ("IPYNB_SKIP_CSS", "False", ""), 
+                  ("IPYNB_EXPORT_TEMPLATE", "base", ""),)
+
+
 IPYNB_FIX_CSS = True
 IPYNB_SKIP_CSS = False
 # IPYNB_EXPORT_TEMPLATE = "./export.tpl"
