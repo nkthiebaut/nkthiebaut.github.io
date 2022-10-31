@@ -1592,7 +1592,7 @@ End of epoch 900: loss=-260.864
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that the loss can become negative because the paper that introduces it (<a href="http://jmlr.org/papers/volume6/hyvarinen05a/old.pdf">Hyvärinen (2005)</a>) is only equal to Fisher divergence up to an additive (negative) term.</p>
+<p>Note that the loss can become negative because it is only equal to the Fisher divergence (which is positive) up to an additive term.</p>
 <p>Let's look at the score function learned by the model.</p>
 
 </div>
@@ -1642,10 +1642,10 @@ End of epoch 900: loss=-260.864
 <p>Not perfect, but not too bad. If you were to generate samples by:</p>
 <ol>
 <li>starting from a random location of the feature space </li>
-<li>then following the learned score function,</li>
+<li>following the learned score function,</li>
 </ol>
 <p>then you would more or less sample from the original distribution.</p>
-<p>In practice, one can add a bit of noise to the process that I just described to avoid being stck in stationary points of the score function. The corresponding sampling process is called  <a href="https://en.wikipedia.org/wiki/Metropolis-adjusted_Langevin_algorithm">Langevin sampling</a>.</p>
+<p>In practice, one can add a bit of noise to the process that I just described to avoid being stuck in stationary points of the score function. The corresponding sampling process is called  <a href="https://en.wikipedia.org/wiki/Metropolis-adjusted_Langevin_algorithm">Langevin sampling</a>.</p>
 
 </div>
 </div>
