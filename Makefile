@@ -1,4 +1,4 @@
-PY?=python3
+pPY?=python3
 PELICAN?=pelican
 PELICANOPTS=
 
@@ -36,7 +36,7 @@ local:
 
 publish:
 	rm -fr content/.ipynb_checkpoints
-	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(PUBLISHCONF) $(PELICANOPTS)
+	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(PUBLISHCONF) $(PELICANOPTS) --ignore-cache
 
 github: publish
 	rm -fr content/.ipynb_checkpoints

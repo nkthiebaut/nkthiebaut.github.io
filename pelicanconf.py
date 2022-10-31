@@ -45,13 +45,13 @@ from pelican_jupyter import liquid as nb_liquid # import pelican-jupyter
 from pelican.plugins import liquid_tags
 from pelican.plugins import render_math
 
-PLUGINS = [liquid_tags, nb_markup, 'liquid_tags.img', nb_liquid, 'representative_image', render_math]
+PLUGINS = [liquid_tags, nb_markup, 'liquid_tags.img', nb_liquid, 'representative_image', "render_math"]
 
 LIQUID_TAGS = ["img", "include_code", "gram", "video", "youtube", "notebook"]
 LIQUID_CONFIGS = (("IPYNB_FIX_CSS", "False", ""), 
                   ("IPYNB_SKIP_CSS", "False", ""), 
                   ("IPYNB_EXPORT_TEMPLATE", "base", ""),)
-RENDER_MATH_MATH_JAX = {'tex_extensions': ['color.js']}
+MATH_JAX = {'tex_extensions': ['color.js']}
 
 IPYNB_FIX_CSS = True
 IPYNB_SKIP_CSS = False
