@@ -1466,7 +1466,7 @@ End of epoch 900: loss=-260.864
 &lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;p&gt;Note that the loss can become negative because the paper that introduces it (&lt;a href="http://jmlr.org/papers/volume6/hyvarinen05a/old.pdf"&gt;Hyvärinen (2005)&lt;/a&gt;) is only equal to Fisher divergence up to an additive (negative) term.&lt;/p&gt;
+&lt;p&gt;Note that the loss can become negative because it is only equal to the Fisher divergence (which is positive) up to an additive term.&lt;/p&gt;
 &lt;p&gt;Let's look at the score function learned by the model.&lt;/p&gt;
 
 &lt;/div&gt;
@@ -1516,10 +1516,10 @@ End of epoch 900: loss=-260.864
 &lt;p&gt;Not perfect, but not too bad. If you were to generate samples by:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;starting from a random location of the feature space &lt;/li&gt;
-&lt;li&gt;then following the learned score function,&lt;/li&gt;
+&lt;li&gt;following the learned score function,&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;then you would more or less sample from the original distribution.&lt;/p&gt;
-&lt;p&gt;In practice, one can add a bit of noise to the process that I just described to avoid being stck in stationary points of the score function. The corresponding sampling process is called  &lt;a href="https://en.wikipedia.org/wiki/Metropolis-adjusted_Langevin_algorithm"&gt;Langevin sampling&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In practice, one can add a bit of noise to the process that I just described to avoid being stuck in stationary points of the score function. The corresponding sampling process is called  &lt;a href="https://en.wikipedia.org/wiki/Metropolis-adjusted_Langevin_algorithm"&gt;Langevin sampling&lt;/a&gt;.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -4981,10 +4981,10 @@ texts are shorter than this.&lt;/p&gt;
 
  
  
-&lt;div id="293c32f3-6912-433c-afd2-4126466da6a2"&gt;&lt;/div&gt;
+&lt;div id="b6430330-41c1-4749-be0c-27458c8f3f38"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#293c32f3-6912-433c-afd2-4126466da6a2');
+var element = $('#b6430330-41c1-4749-be0c-27458c8f3f38');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "707ae041060741568b39fe87086ba7f2", "version_major": 2, "version_minor": 0}
@@ -5014,10 +5014,10 @@ var element = $('#293c32f3-6912-433c-afd2-4126466da6a2');
 
  
  
-&lt;div id="a416305d-b6e3-4772-9f05-4cbc44c0c054"&gt;&lt;/div&gt;
+&lt;div id="407c8a21-f93e-4de3-b8f2-b5c08693254d"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#a416305d-b6e3-4772-9f05-4cbc44c0c054');
+var element = $('#407c8a21-f93e-4de3-b8f2-b5c08693254d');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "d30ef4eb2e454f9db556763415ae22b8", "version_major": 2, "version_minor": 0}
@@ -5047,10 +5047,10 @@ var element = $('#a416305d-b6e3-4772-9f05-4cbc44c0c054');
 
  
  
-&lt;div id="0bd80ca9-3d7d-427b-a60c-c5e9633fc796"&gt;&lt;/div&gt;
+&lt;div id="be3e19fc-c201-4784-a2e3-ba7d4c0cbda7"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#0bd80ca9-3d7d-427b-a60c-c5e9633fc796');
+var element = $('#be3e19fc-c201-4784-a2e3-ba7d4c0cbda7');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "e712dba76f9449c5a89a51f08e64a079", "version_major": 2, "version_minor": 0}
@@ -5146,10 +5146,10 @@ var element = $('#0bd80ca9-3d7d-427b-a60c-c5e9633fc796');
 
  
  
-&lt;div id="a77ba776-793f-4cfb-a7de-ca444778b25c"&gt;&lt;/div&gt;
+&lt;div id="9a3c1d17-2e31-4496-9155-8d513169abc8"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#a77ba776-793f-4cfb-a7de-ca444778b25c');
+var element = $('#9a3c1d17-2e31-4496-9155-8d513169abc8');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "b9c3329f82484e0195cc3d01591d1778", "version_major": 2, "version_minor": 0}
