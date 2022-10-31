@@ -1,4 +1,4 @@
-🗺 Remote work
+🌏 Remote work
 ##############
 
 :date: 2020-03-18 12:20
