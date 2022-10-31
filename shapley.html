@@ -39,7 +39,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="" />
 
- <meta name="author" content="Nicolas Thiebaut" />
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+</script>
+
+<meta name="author" content="Nicolas Thiebaut" />
 <meta name="description" content="Exploring the mechanics of the SHAP feature attribution method with toy examples. Presentation of Shapley values." />
 <meta name="keywords" content="python, machine learning, interpretable machine learning" />
 <meta property="og:site_name" content="Data4thought: data science blog"/>
@@ -113,8 +117,10 @@ Understanding the SHAP interpretation method: Shapley values</title>
   <header>
     <h1 id="shapley">Understanding the SHAP interpretation method: Shapley values</h1>
     <p>
-      <a href="https://colab.research.google.com/github/nkthiebaut/nkthiebaut.github.io/blob/source/content/shapley.ipynb" rel="nofollow">
-      <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg" data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" style="max-width:100%;">
+      <a href="https://colab.research.google.com/github/nkthiebaut/nkthiebaut.github.io/blob/source/content/shapley.ipynb"
+        rel="nofollow">
+        <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg"
+          data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" style="max-width:100%;">
       </a>
     </p>
     <p>
@@ -1435,30 +1441,15 @@ $$<p>🙀 That's a lot of terms to compute and models to train, eight in total. 
   <section>
     <p id="post-share-links" style="text-align: center">
       Share on:
-      <a
-        href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/shapley.html&title=Understanding%20the%20SHAP%20interpretation%20method%3A%20Shapley%20values&summary=Exploring%20the%20mechanics%20of%20the%20SHAP%20feature%20attribution%20method%20with%20toy%20examples.%20Presentation%20of%20Shapley%20values.&source=https%3A//nkthiebaut.github.io/shapley.html"
-        target="_blank"
-        title="Share on LinkedIn"
-        ><i class="fa fa-linkedin-square"></i>
+      <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/shapley.html&title=Understanding%20the%20SHAP%20interpretation%20method%3A%20Shapley%20values&summary=Exploring%20the%20mechanics%20of%20the%20SHAP%20feature%20attribution%20method%20with%20toy%20examples.%20Presentation%20of%20Shapley%20values.&source=https%3A//nkthiebaut.github.io/shapley.html" target="_blank" title="Share on LinkedIn"><i
+          class="fa fa-linkedin-square"></i>
       </a>
-      <a
-        href="https://twitter.com/intent/tweet?text=Understanding%20the%20SHAP%20interpretation%20method%3A%20Shapley%20values&url=https%3A//nkthiebaut.github.io/shapley.html"
-        target="_blank"
-        title="Share on Twitter"
-        ><i class="fa fa-twitter"></i
-      ></a>
-      <a
-        href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/shapley.html"
-        target="_blank"
-        title="Share on Facebook"
-        ><i class="fa fa-facebook"></i
-      ></a>
-      <a
-        href="mailto:?subject=Understanding%20the%20SHAP%20interpretation%20method%3A%20Shapley%20values&amp;body=https%3A//nkthiebaut.github.io/shapley.html"
-        target="_blank"
-        title="Share via Email"
-        ><i class="fa fa-envelope"></i
-      ></a>
+      <a href="https://twitter.com/intent/tweet?text=Understanding%20the%20SHAP%20interpretation%20method%3A%20Shapley%20values&url=https%3A//nkthiebaut.github.io/shapley.html" target="_blank" title="Share on Twitter"><i
+          class="fa fa-twitter"></i></a>
+      <a href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/shapley.html" target="_blank" title="Share on Facebook"><i
+          class="fa fa-facebook"></i></a>
+      <a href="mailto:?subject=Understanding%20the%20SHAP%20interpretation%20method%3A%20Shapley%20values&amp;body=https%3A//nkthiebaut.github.io/shapley.html" target="_blank" title="Share via Email"><i
+          class="fa fa-envelope"></i></a>
     </p>
   </section>
  <div id="disqus_thread"></div>

@@ -39,7 +39,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="" />
 
- <meta name="author" content="Nicolas Thiebaut" />
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+</script>
+
+<meta name="author" content="Nicolas Thiebaut" />
 <meta name="description" content="Fine-tuning DistillBERT to tag toxic comments on Wikipedia, using TensorFlow and Hugging Face's transformers library." />
 <meta name="keywords" content="python, machine learning, transformers" />
 <meta property="og:site_name" content="Data4thought: data science blog"/>
@@ -113,8 +117,10 @@ Multi-label classification with BERT</title>
   <header>
     <h1 id="toxic_comments_transformer">Multi-label classification with BERT</h1>
     <p>
-      <a href="https://colab.research.google.com/github/nkthiebaut/nkthiebaut.github.io/blob/source/content/toxic_comments_transformer.ipynb" rel="nofollow">
-      <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg" data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" style="max-width:100%;">
+      <a href="https://colab.research.google.com/github/nkthiebaut/nkthiebaut.github.io/blob/source/content/toxic_comments_transformer.ipynb"
+        rel="nofollow">
+        <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg"
+          data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" style="max-width:100%;">
       </a>
     </p>
     <p>
@@ -1777,10 +1783,10 @@ texts are shorter than this.</p>
 
  
  
-<div id="0336f04b-e183-4130-a684-984692c26a7f"></div>
+<div id="7408c726-89ba-4a61-bd89-160d1b8d8491"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#0336f04b-e183-4130-a684-984692c26a7f');
+var element = $('#7408c726-89ba-4a61-bd89-160d1b8d8491');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "707ae041060741568b39fe87086ba7f2", "version_major": 2, "version_minor": 0}
@@ -1810,10 +1816,10 @@ var element = $('#0336f04b-e183-4130-a684-984692c26a7f');
 
  
  
-<div id="b10b9315-f2de-4f05-8822-a63820e6fc1d"></div>
+<div id="ccbfd90b-f335-4dae-bf77-b0957605c7bd"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#b10b9315-f2de-4f05-8822-a63820e6fc1d');
+var element = $('#ccbfd90b-f335-4dae-bf77-b0957605c7bd');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "d30ef4eb2e454f9db556763415ae22b8", "version_major": 2, "version_minor": 0}
@@ -1843,10 +1849,10 @@ var element = $('#b10b9315-f2de-4f05-8822-a63820e6fc1d');
 
  
  
-<div id="73188fe2-af22-4e0c-b67e-da1cd2c1b1a4"></div>
+<div id="c76b1d84-4029-4898-9514-4a8eac8694f4"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#73188fe2-af22-4e0c-b67e-da1cd2c1b1a4');
+var element = $('#c76b1d84-4029-4898-9514-4a8eac8694f4');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "e712dba76f9449c5a89a51f08e64a079", "version_major": 2, "version_minor": 0}
@@ -1942,10 +1948,10 @@ var element = $('#73188fe2-af22-4e0c-b67e-da1cd2c1b1a4');
 
  
  
-<div id="3dc73771-fb69-4a97-b57b-1941f25aebc3"></div>
+<div id="6796d1b7-81a4-46b8-9711-1f40ff6f7a5d"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#3dc73771-fb69-4a97-b57b-1941f25aebc3');
+var element = $('#6796d1b7-81a4-46b8-9711-1f40ff6f7a5d');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "b9c3329f82484e0195cc3d01591d1778", "version_major": 2, "version_minor": 0}
@@ -2322,30 +2328,15 @@ Latency: 0.070 seconds
   <section>
     <p id="post-share-links" style="text-align: center">
       Share on:
-      <a
-        href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html&title=Multi-label%20classification%20with%20BERT&summary=Fine-tuning%20DistillBERT%20to%20tag%20toxic%20comments%20on%20Wikipedia%2C%20using%20TensorFlow%20and%20Hugging%20Face%27s%20transformers%20library.&source=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html"
-        target="_blank"
-        title="Share on LinkedIn"
-        ><i class="fa fa-linkedin-square"></i>
+      <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html&title=Multi-label%20classification%20with%20BERT&summary=Fine-tuning%20DistillBERT%20to%20tag%20toxic%20comments%20on%20Wikipedia%2C%20using%20TensorFlow%20and%20Hugging%20Face%27s%20transformers%20library.&source=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html" target="_blank" title="Share on LinkedIn"><i
+          class="fa fa-linkedin-square"></i>
       </a>
-      <a
-        href="https://twitter.com/intent/tweet?text=Multi-label%20classification%20with%20BERT&url=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html"
-        target="_blank"
-        title="Share on Twitter"
-        ><i class="fa fa-twitter"></i
-      ></a>
-      <a
-        href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html"
-        target="_blank"
-        title="Share on Facebook"
-        ><i class="fa fa-facebook"></i
-      ></a>
-      <a
-        href="mailto:?subject=Multi-label%20classification%20with%20BERT&amp;body=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html"
-        target="_blank"
-        title="Share via Email"
-        ><i class="fa fa-envelope"></i
-      ></a>
+      <a href="https://twitter.com/intent/tweet?text=Multi-label%20classification%20with%20BERT&url=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html" target="_blank" title="Share on Twitter"><i
+          class="fa fa-twitter"></i></a>
+      <a href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html" target="_blank" title="Share on Facebook"><i
+          class="fa fa-facebook"></i></a>
+      <a href="mailto:?subject=Multi-label%20classification%20with%20BERT&amp;body=https%3A//nkthiebaut.github.io/toxic_comments_transformer.html" target="_blank" title="Share via Email"><i
+          class="fa fa-envelope"></i></a>
     </p>
   </section>
  <div id="disqus_thread"></div>

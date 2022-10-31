@@ -39,7 +39,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="" />
 
- <meta name="author" content="Nicolas Thiebaut" />
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+</script>
+
+<meta name="author" content="Nicolas Thiebaut" />
 <meta name="description" content="Learning multi-class classification with only a handful of of examples per class may seem impossible at first, let's see how we can tackle this problem with textual data." />
 <meta name="keywords" content="python, machine learning, deep learning, natural language processing" />
 <meta property="og:site_name" content="Data4thought: data science blog"/>
@@ -114,8 +118,10 @@ Few-shot learning in NLP: many-classes classification from few examples</title>
   <header>
     <h1 id="fewshot_learning_nlp">Few-shot learning in NLP: many-classes classification from few examples</h1>
     <p>
-      <a href="https://colab.research.google.com/github/nkthiebaut/nkthiebaut.github.io/blob/source/content/fewshot_learning_nlp.ipynb" rel="nofollow">
-      <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg" data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" style="max-width:100%;">
+      <a href="https://colab.research.google.com/github/nkthiebaut/nkthiebaut.github.io/blob/source/content/fewshot_learning_nlp.ipynb"
+        rel="nofollow">
+        <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg"
+          data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" style="max-width:100%;">
       </a>
     </p>
     <p>
@@ -2094,30 +2100,15 @@ way out with textual data 📚. At the cost of a more complex modelling, it give
   <section>
     <p id="post-share-links" style="text-align: center">
       Share on:
-      <a
-        href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html&title=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&summary=Learning%20multi-class%20classification%20with%20only%20a%20handful%20of%20of%20examples%20per%20class%20may%20seem%20impossible%20at%20first%2C%20let%27s%20see%20how%20we%20can%20tackle%20this%20problem%20with%20textual%20data.&source=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html"
-        target="_blank"
-        title="Share on LinkedIn"
-        ><i class="fa fa-linkedin-square"></i>
+      <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html&title=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&summary=Learning%20multi-class%20classification%20with%20only%20a%20handful%20of%20of%20examples%20per%20class%20may%20seem%20impossible%20at%20first%2C%20let%27s%20see%20how%20we%20can%20tackle%20this%20problem%20with%20textual%20data.&source=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on LinkedIn"><i
+          class="fa fa-linkedin-square"></i>
       </a>
-      <a
-        href="https://twitter.com/intent/tweet?text=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html"
-        target="_blank"
-        title="Share on Twitter"
-        ><i class="fa fa-twitter"></i
-      ></a>
-      <a
-        href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html"
-        target="_blank"
-        title="Share on Facebook"
-        ><i class="fa fa-facebook"></i
-      ></a>
-      <a
-        href="mailto:?subject=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&amp;body=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html"
-        target="_blank"
-        title="Share via Email"
-        ><i class="fa fa-envelope"></i
-      ></a>
+      <a href="https://twitter.com/intent/tweet?text=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&url=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on Twitter"><i
+          class="fa fa-twitter"></i></a>
+      <a href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share on Facebook"><i
+          class="fa fa-facebook"></i></a>
+      <a href="mailto:?subject=Few-shot%20learning%20in%20NLP%3A%20many-classes%20classification%20from%20few%20examples&amp;body=https%3A//nkthiebaut.github.io/fewshot_learning_nlp.html" target="_blank" title="Share via Email"><i
+          class="fa fa-envelope"></i></a>
     </p>
   </section>
  <div id="disqus_thread"></div>

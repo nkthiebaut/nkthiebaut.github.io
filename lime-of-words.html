@@ -39,7 +39,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="" />
 
- <meta name="author" content="Nicolas Thiebaut" />
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+</script>
+
+<meta name="author" content="Nicolas Thiebaut" />
 <meta name="description" content="Playing with the LIME machine learning model interpretation tool." />
 <meta name="keywords" content="python, machine learning" />
 <meta property="og:site_name" content="Data4thought: data science blog"/>
@@ -112,8 +116,10 @@ LIME of words: how to interpret your machine learning model predictions</title>
   <header>
     <h1 id="lime-of-words">LIME of words: how to interpret your machine learning model predictions</h1>
     <p>
-      <a href="https://colab.research.google.com/github/nkthiebaut/nkthiebaut.github.io/blob/source/content/lime-of-words.ipynb" rel="nofollow">
-      <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg" data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" style="max-width:100%;">
+      <a href="https://colab.research.google.com/github/nkthiebaut/nkthiebaut.github.io/blob/source/content/lime-of-words.ipynb"
+        rel="nofollow">
+        <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg"
+          data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" style="max-width:100%;">
       </a>
     </p>
     <p>
@@ -1775,30 +1781,15 @@ $$\mathcal{L}(f, g, \Pi_x)= \sum_{z, z'} \Pi_x(z) \left[f(z) - g(z') \right]^2.$
   <section>
     <p id="post-share-links" style="text-align: center">
       Share on:
-      <a
-        href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/lime-of-words.html&title=LIME%20of%20words%3A%20how%20to%20interpret%20your%20machine%20learning%20model%20predictions&summary=Playing%20with%20the%20LIME%20machine%20learning%20model%20interpretation%20tool.&source=https%3A//nkthiebaut.github.io/lime-of-words.html"
-        target="_blank"
-        title="Share on LinkedIn"
-        ><i class="fa fa-linkedin-square"></i>
+      <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/lime-of-words.html&title=LIME%20of%20words%3A%20how%20to%20interpret%20your%20machine%20learning%20model%20predictions&summary=Playing%20with%20the%20LIME%20machine%20learning%20model%20interpretation%20tool.&source=https%3A//nkthiebaut.github.io/lime-of-words.html" target="_blank" title="Share on LinkedIn"><i
+          class="fa fa-linkedin-square"></i>
       </a>
-      <a
-        href="https://twitter.com/intent/tweet?text=LIME%20of%20words%3A%20how%20to%20interpret%20your%20machine%20learning%20model%20predictions&url=https%3A//nkthiebaut.github.io/lime-of-words.html"
-        target="_blank"
-        title="Share on Twitter"
-        ><i class="fa fa-twitter"></i
-      ></a>
-      <a
-        href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/lime-of-words.html"
-        target="_blank"
-        title="Share on Facebook"
-        ><i class="fa fa-facebook"></i
-      ></a>
-      <a
-        href="mailto:?subject=LIME%20of%20words%3A%20how%20to%20interpret%20your%20machine%20learning%20model%20predictions&amp;body=https%3A//nkthiebaut.github.io/lime-of-words.html"
-        target="_blank"
-        title="Share via Email"
-        ><i class="fa fa-envelope"></i
-      ></a>
+      <a href="https://twitter.com/intent/tweet?text=LIME%20of%20words%3A%20how%20to%20interpret%20your%20machine%20learning%20model%20predictions&url=https%3A//nkthiebaut.github.io/lime-of-words.html" target="_blank" title="Share on Twitter"><i
+          class="fa fa-twitter"></i></a>
+      <a href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/lime-of-words.html" target="_blank" title="Share on Facebook"><i
+          class="fa fa-facebook"></i></a>
+      <a href="mailto:?subject=LIME%20of%20words%3A%20how%20to%20interpret%20your%20machine%20learning%20model%20predictions&amp;body=https%3A//nkthiebaut.github.io/lime-of-words.html" target="_blank" title="Share via Email"><i
+          class="fa fa-envelope"></i></a>
     </p>
   </section>
  <div id="disqus_thread"></div>
