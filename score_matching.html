@@ -1369,12 +1369,13 @@ a ring, with radial normal noise and uniform angular distribution.</p>
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>For this toy distribution, the score function can be computed analytically, it reads:</p>
-<p>$\begin{aligned} 
+$$
+\begin{aligned} 
  s(\mathbf{x}) &amp;= \nabla_{\mathbf{x}} \log p(\mathbf{x}) \\
 &amp;=\nabla_{\mathbf{x}} \log \left(\sqrt{\frac{1}{2\pi}}\exp\left(-\frac{\left(r/R\right)^2}{2}\right)\right) \\
 &amp;= (\frac{R}{r} - 1) \mathbf{x}
-\end{aligned}$</p>
-<p>This fact allows us to visualize the score function that we're trying to learn, as a vector field.</p>
+\end{aligned}
+$$<p>This fact allows us to visualize the score function that we're trying to learn, as a vector field.</p>
 
 </div>
 </div>
