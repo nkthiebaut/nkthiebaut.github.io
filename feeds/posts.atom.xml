@@ -1246,7 +1246,7 @@ a ring, with radial normal noise and uniform angular distribution.&lt;/p&gt;
 $$
 \begin{aligned} 
  s(\mathbf{x}) &amp;amp;= \nabla_{\mathbf{x}} \log p(\mathbf{x}) \\
-&amp;amp;=\nabla_{\mathbf{x}} \log \left(\sqrt{\frac{1}{2\pi}}\exp\left(-\frac{\left(r/R\right)^2}{2}\right)\right) \\
+&amp;amp;=\nabla_{\mathbf{x}} \log \left(\sqrt{\frac{1}{2\pi}}\exp\left(-\frac{\left(r-R\right)^2}{2}\right)\right) \\
 &amp;amp;= (\frac{R}{r} - 1) \mathbf{x}
 \end{aligned}
 $$&lt;p&gt;This fact allows us to visualize the score function that we're trying to learn, as a vector field.&lt;/p&gt;
@@ -4981,10 +4981,10 @@ texts are shorter than this.&lt;/p&gt;
 
  
  
-&lt;div id="097b8963-3cfc-4ba3-a091-007d9c84327c"&gt;&lt;/div&gt;
+&lt;div id="293c32f3-6912-433c-afd2-4126466da6a2"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#097b8963-3cfc-4ba3-a091-007d9c84327c');
+var element = $('#293c32f3-6912-433c-afd2-4126466da6a2');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "707ae041060741568b39fe87086ba7f2", "version_major": 2, "version_minor": 0}
@@ -5014,10 +5014,10 @@ var element = $('#097b8963-3cfc-4ba3-a091-007d9c84327c');
 
  
  
-&lt;div id="9aa87bf2-2d9c-437d-aa55-c6a369acbc84"&gt;&lt;/div&gt;
+&lt;div id="a416305d-b6e3-4772-9f05-4cbc44c0c054"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#9aa87bf2-2d9c-437d-aa55-c6a369acbc84');
+var element = $('#a416305d-b6e3-4772-9f05-4cbc44c0c054');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "d30ef4eb2e454f9db556763415ae22b8", "version_major": 2, "version_minor": 0}
@@ -5047,10 +5047,10 @@ var element = $('#9aa87bf2-2d9c-437d-aa55-c6a369acbc84');
 
  
  
-&lt;div id="65dcd68a-6400-4ef8-aa3f-052445757a7e"&gt;&lt;/div&gt;
+&lt;div id="0bd80ca9-3d7d-427b-a60c-c5e9633fc796"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#65dcd68a-6400-4ef8-aa3f-052445757a7e');
+var element = $('#0bd80ca9-3d7d-427b-a60c-c5e9633fc796');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "e712dba76f9449c5a89a51f08e64a079", "version_major": 2, "version_minor": 0}
@@ -5146,10 +5146,10 @@ var element = $('#65dcd68a-6400-4ef8-aa3f-052445757a7e');
 
  
  
-&lt;div id="f25607a2-1249-4cbe-abe3-6ad76383990f"&gt;&lt;/div&gt;
+&lt;div id="a77ba776-793f-4cfb-a7de-ca444778b25c"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#f25607a2-1249-4cbe-abe3-6ad76383990f');
+var element = $('#a77ba776-793f-4cfb-a7de-ca444778b25c');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "b9c3329f82484e0195cc3d01591d1778", "version_major": 2, "version_minor": 0}

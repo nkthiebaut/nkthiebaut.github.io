@@ -1372,7 +1372,7 @@ a ring, with radial normal noise and uniform angular distribution.</p>
 $$
 \begin{aligned} 
  s(\mathbf{x}) &amp;= \nabla_{\mathbf{x}} \log p(\mathbf{x}) \\
-&amp;=\nabla_{\mathbf{x}} \log \left(\sqrt{\frac{1}{2\pi}}\exp\left(-\frac{\left(r/R\right)^2}{2}\right)\right) \\
+&amp;=\nabla_{\mathbf{x}} \log \left(\sqrt{\frac{1}{2\pi}}\exp\left(-\frac{\left(r-R\right)^2}{2}\right)\right) \\
 &amp;= (\frac{R}{r} - 1) \mathbf{x}
 \end{aligned}
 $$<p>This fact allows us to visualize the score function that we're trying to learn, as a vector field.</p>
