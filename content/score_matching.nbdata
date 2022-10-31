@@ -1,0 +1,8 @@
+Title: Score Matching, Toy Datasets, and JAX
+Slug: score_matching
+Date: 2022-10-31 01:00
+Category: posts
+Tags: python, machine learning, score maching
+Author: Nicolas Thiebaut
+Summary: Exploring the score matching technique on the ring dataset with JAX
+featured_image: https://github.com/nkthiebaut/nkthiebaut.github.io/blob/master/images/score_matching_example.png?raw=true
