@@ -51,7 +51,7 @@ LIQUID_TAGS = ["img", "include_code", "gram", "video", "youtube", "notebook"]
 LIQUID_CONFIGS = (("IPYNB_FIX_CSS", "False", ""), 
                   ("IPYNB_SKIP_CSS", "False", ""), 
                   ("IPYNB_EXPORT_TEMPLATE", "base", ""),)
-MATH_JAX = {'tex_extensions': ['color.js']}
+RENDER_MATH_MATH_JAX = {'tex_extensions': ['color.js']}
 
 IPYNB_FIX_CSS = True
 IPYNB_SKIP_CSS = False
