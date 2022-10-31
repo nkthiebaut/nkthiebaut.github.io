@@ -39,7 +39,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="" />
 
- <meta name="author" content="Nicolas Thiebaut" />
+ <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js"] }});
+</script>
+
+<meta name="author" content="Nicolas Thiebaut" />
 <meta name="description" content="Leaner and faster Transformers with distillation. Fine-tuning BERT-tiny in a couple of minutes with PyTorch." />
 <meta name="keywords" content="python, machine learning, transformers" />
 <meta property="og:site_name" content="Data4thought: data science blog"/>
@@ -113,8 +117,10 @@ Speed and power: fine-tuning distilled transformers models</title>
   <header>
     <h1 id="fine_tuning_tiny_bert">Speed and power: fine-tuning distilled transformers models</h1>
     <p>
-      <a href="https://colab.research.google.com/github/nkthiebaut/nkthiebaut.github.io/blob/source/content/fine_tuning_tiny_bert.ipynb" rel="nofollow">
-      <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg" data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" style="max-width:100%;">
+      <a href="https://colab.research.google.com/github/nkthiebaut/nkthiebaut.github.io/blob/source/content/fine_tuning_tiny_bert.ipynb"
+        rel="nofollow">
+        <img alt="Colab" src="https://colab.research.google.com/assets/colab-badge.svg"
+          data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" style="max-width:100%;">
       </a>
     </p>
     <p>
@@ -1879,30 +1885,15 @@ Latency: 0.006 seconds
   <section>
     <p id="post-share-links" style="text-align: center">
       Share on:
-      <a
-        href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/fine_tuning_tiny_bert.html&title=Speed%20and%20power%3A%20fine-tuning%20distilled%20transformers%20models&summary=Leaner%20and%20faster%20Transformers%20with%20distillation.%20Fine-tuning%20BERT-tiny%20in%20a%20couple%20of%20minutes%20with%20PyTorch.&source=https%3A//nkthiebaut.github.io/fine_tuning_tiny_bert.html"
-        target="_blank"
-        title="Share on LinkedIn"
-        ><i class="fa fa-linkedin-square"></i>
+      <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//nkthiebaut.github.io/fine_tuning_tiny_bert.html&title=Speed%20and%20power%3A%20fine-tuning%20distilled%20transformers%20models&summary=Leaner%20and%20faster%20Transformers%20with%20distillation.%20Fine-tuning%20BERT-tiny%20in%20a%20couple%20of%20minutes%20with%20PyTorch.&source=https%3A//nkthiebaut.github.io/fine_tuning_tiny_bert.html" target="_blank" title="Share on LinkedIn"><i
+          class="fa fa-linkedin-square"></i>
       </a>
-      <a
-        href="https://twitter.com/intent/tweet?text=Speed%20and%20power%3A%20fine-tuning%20distilled%20transformers%20models&url=https%3A//nkthiebaut.github.io/fine_tuning_tiny_bert.html"
-        target="_blank"
-        title="Share on Twitter"
-        ><i class="fa fa-twitter"></i
-      ></a>
-      <a
-        href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/fine_tuning_tiny_bert.html"
-        target="_blank"
-        title="Share on Facebook"
-        ><i class="fa fa-facebook"></i
-      ></a>
-      <a
-        href="mailto:?subject=Speed%20and%20power%3A%20fine-tuning%20distilled%20transformers%20models&amp;body=https%3A//nkthiebaut.github.io/fine_tuning_tiny_bert.html"
-        target="_blank"
-        title="Share via Email"
-        ><i class="fa fa-envelope"></i
-      ></a>
+      <a href="https://twitter.com/intent/tweet?text=Speed%20and%20power%3A%20fine-tuning%20distilled%20transformers%20models&url=https%3A//nkthiebaut.github.io/fine_tuning_tiny_bert.html" target="_blank" title="Share on Twitter"><i
+          class="fa fa-twitter"></i></a>
+      <a href="http://www.facebook.com/sharer/sharer.php?u=https%3A//nkthiebaut.github.io/fine_tuning_tiny_bert.html" target="_blank" title="Share on Facebook"><i
+          class="fa fa-facebook"></i></a>
+      <a href="mailto:?subject=Speed%20and%20power%3A%20fine-tuning%20distilled%20transformers%20models&amp;body=https%3A//nkthiebaut.github.io/fine_tuning_tiny_bert.html" target="_blank" title="Share via Email"><i
+          class="fa fa-envelope"></i></a>
     </p>
   </section>
  <div id="disqus_thread"></div>
