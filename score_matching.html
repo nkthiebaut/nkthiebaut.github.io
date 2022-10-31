@@ -1256,7 +1256,7 @@ $$
 $$<p>i.e. the gradient of the log of the density is the gradient of the density, weighted by the inverse density.</p>
 <p>Optimizing the score function is equivalent to minimizing the <a href="https://en.wikipedia.org/wiki/Fisher_information_metric">Fisher divergence</a> between our model $s_m$ and the real score function $\mathbf{s}_{d}$ that we're trying to learn.</p>
 $$L(\boldsymbol{\theta}) \triangleq \frac{1}{2} \mathbb{E}_{p_{d}}\left[\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})-\mathbf{s}_{d}(\mathbf{x})\right\|_{2}^{2}\right],$$<p><a href="http://jmlr.org/papers/volume6/hyvarinen05a/old.pdf">Hyvärinen (2005)</a> showed that the Fisher divergence $L(\boldsymbol{\theta})$ is equal to</p>
-$$J(\boldsymbol{\theta}) \triangleq \mathbb{E}_{p_{d}}\left[\color{green}{\operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right)}+\color{red}{\frac{1}{2}\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right\|_{2}^{2}}\right],$$<p>up to an additive constant. In other words, for samples from the distribution $p_d$, the score function should have minimal <span style="color:green">gradient trace (i.e. be constant around sample coordinates)</span> and <span style="color:red">norm (i.e. be as small as possible)</span>. This loss function is still not tractable in large dimensional spaces, but we can compute it in smaller dimensions. For larger dimensions, tricks (like <a href="http://blog.shakirm.com/2015/09/machine-learning-trick-of-the-day-3-hutchinsons-trick/">Hutchinson's</a>) are needed to evaluate the gradient trace.</p>
+$$J(\boldsymbol{\theta}) \triangleq \mathbb{E}_{p_{d}}\left[{\color{green} \operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right)}+{\color{red} \frac{1}{2}\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right\|_{2}^{2}}\right],$$<p>up to an additive constant. In other words, for samples from the distribution $p_d$, the score function should have minimal <span style="color:green">gradient trace (i.e. be constant around sample coordinates)</span> and <span style="color:red">norm (i.e. be as small as possible)</span>. This loss function is still not tractable in large dimensional spaces, but we can compute it in smaller dimensions. For larger dimensions, tricks (like <a href="http://blog.shakirm.com/2015/09/machine-learning-trick-of-the-day-3-hutchinsons-trick/">Hutchinson's</a>) are needed to evaluate the gradient trace.</p>
 <p>I'll be using the <a href="https://github.com/google/jax">Jax deep learning framework</a>, the latest cool kid on the neural networks block. Compared to PyTorch and TensorFlow, Jax is interesting because it has a functional spin and an interface very similar to Numpy. But let's get back to score matching.</p>
 
 </div>
@@ -1649,18 +1649,11 @@ End of epoch 900: loss=-260.864
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Scaling-with-Sliced-Score-Matching">Scaling with Sliced Score Matching<a class="anchor-link" href="#Scaling-with-Sliced-Score-Matching">&#182;</a></h3><p>When trying the above learning process in higher dimensional spaces (e.g., for images), one faces a challenge posed by the trace term $\color{green}{\operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right)}$ in the score matching loss function. A naive approach to computing the gradients of this term for the gradient descent requires as many backward passes as there are dimensions, which can be a lot. Fortunately there are several ways out of this problem. Sliced Score Matching is one of them.</p>
+<h3 id="Scaling-with-Sliced-Score-Matching">Scaling with Sliced Score Matching<a class="anchor-link" href="#Scaling-with-Sliced-Score-Matching">&#182;</a></h3><p>When trying the above learning process in higher dimensional spaces (e.g., for images), one faces a challenge posed by the trace term ${\color{green} \operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right)}$ in the score matching loss function. A naive approach to computing the gradients of this term for the gradient descent requires as many backward passes as there are dimensions, which can be a lot. Fortunately there are several ways out of this problem. Sliced Score Matching is one of them.</p>
 <p><a href="http://arxiv.org/abs/1905.07088">Sliced score matching</a> uses the <a href="http://blog.shakirm.com/2015/09/machine-learning-trick-of-the-day-3-hutchinsons-trick/">Hutchinson trick</a> to compute the trace approximately with a stochastic sampling technique. The idea is to sample random vectors $\mathbf{v}$ with zero mean unit and unit variance and use the identity 
 $$ \operatorname{tr}\left(A\right) =  \mathbb{E}_{p_\mathbf{v}} \left[ \mathbf{v}^T A \mathbf{v}\right].$$</p>
 <p>For each datapoint $\mathbf{x}_i$ we draw $M$ random projection vectors $\mathbf{v}_{ij}$, such that the (tractable) estimated loss function reads:</p>
 $$J(\boldsymbol{\theta}) \simeq \frac1N \sum_{i=1}^N \left[\frac1M \sum_{j=1}^M\mathbf{v}_{ij}^T \left(\nabla_{\mathbf{x}} \mathbf{s}_{m}(\mathbf{x}_i ; \boldsymbol{\theta})\right) \mathbf{v}_{ij}+\frac{1}{2}\left\|\mathbf{s}_{m}(\mathbf{x}_i ; \boldsymbol{\theta})\right\|_{2}^{2}\right].$$<p>More on this in a future post!</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 
 </div>
 </div>
