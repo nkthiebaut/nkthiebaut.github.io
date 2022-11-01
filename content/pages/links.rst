@@ -12,13 +12,14 @@ A few websites about data science I like:
 
 Machine learning, Deep learning and NLP:
 
-* Distill: AI and Deep Learning blog: `<https://distill.pub/>`_
 * The Batch: a vey nice weekly newsletter by Andrew Ng himself: `<https://www.deeplearning.ai/thebatch/>`_
-* A lot of clarity on maths behind ML: `<http://gregorygundersen.com/blog/>`_
+* Lil'Log: a clear, theoretical blog on modern Deep Learning: `<https://lilianweng.github.io/>`_
+* Gregory Gundersen's blog: A lot of clarity on maths behind ML: `<http://gregorygundersen.com/blog/>`_
 * Insightful ML research blog: `<https://roberttlange.github.io/>`_
 * Sebastian Ruder's blog, focused on NLP: `<http://ruder.io>`_
 * Cathy O'Neill's blog, mostly on ethics and data science: `<https://mathbabe.org>`_ 
-
+* Distill: AI and Deep Learning blog. Not active anymore, but still a gold mine of knowledge: `<https://distill.pub/>`_
+  
 Tech:
 
 * Hacker News for geeky updates: `<https://news.ycombinator.com>`_
