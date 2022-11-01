@@ -1118,11 +1118,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
  .highlight pre  .il { color: #666666 } /* Literal.Number.Integer.Long */&lt;/style&gt;&lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h1 id="Score-matching,-toy-datasets,-and-Jax"&gt;Score matching, toy datasets, and Jax&lt;a class="anchor-link" href="#Score-matching,-toy-datasets,-and-Jax"&gt;&amp;#182;&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;&lt;a href="https://yang-song.net/blog/2021/score/"&gt;Score matching&lt;/a&gt; is a technique to learn (the gradient of) data distributions, with applications in generative modelling and beyond. This post explores score matching on toy datasets.&lt;/p&gt;
+&lt;h1 id="Score-matching,-toy-datasets,-and-Jax"&gt;Score matching, toy datasets, and Jax&lt;a class="anchor-link" href="#Score-matching,-toy-datasets,-and-Jax"&gt;&amp;#182;&lt;/a&gt;&lt;/h1&gt;&lt;p&gt;&lt;a href="https://yang-song.net/blog/2021/score/"&gt;Score matching&lt;/a&gt; is a technique to learn (the gradient of) data distributions, with applications in generative modeling and beyond. This post explores score matching on toy datasets.&lt;/p&gt;
 &lt;p&gt;The method was introduced &lt;a href="http://jmlr.org/papers/volume6/hyvarinen05a/old.pdf"&gt;in 2005&lt;/a&gt; but really came back into the spotlight &lt;a href="https://arxiv.org/abs/1907.05600"&gt;in 2019&lt;/a&gt; when Song and Hermon used the technique to generate pictures that soon rivaled Generative Adversarial Networks. Score matching is also a &lt;a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/"&gt;core component of diffusion models&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The goal is to approximate a data distribution $p_d$ with a model distribution $p_m$. In practice, one usually introduces an unnormalized parametric model $\tilde p_\theta$ and partition function $Z_\theta=\int \tilde p_\theta(x) \mathrm{d}x$ (normalization term) such that $p_m(x) = \frac{\tilde p_\theta(x)}{Z_\theta}$. Unfortunately, fitting the parameters of $p_m$ is intractable in large dimensional spaces because of the partition function that requires integrating over the entire dataset for every set of parameters during the training process.&lt;/p&gt;
-&lt;p&gt;Methods that circumvent this difficulty include &lt;a href="https://en.wikipedia.org/wiki/Kernel_density_estimation"&gt;Kernel density estimation&lt;/a&gt; which make strong assumptions on the form of the density estimator, or &lt;a href="https://lilianweng.github.io/posts/2018-08-12-vae/"&gt;Variational Autoencoders&lt;/a&gt; that also make a normality assumption on the latent variables distribution.&lt;/p&gt;
-&lt;p&gt;Note that instead of learning the data distribution itself, we can try to learn its gradient. Score matching does exactly this: it introduces a so-called "score function" $s_m$ (with a set parameters $\boldsymbol{\theta}$, typically the weights in a neural network) which models the gradient of (the log of) the data distribution $p_{d}$.&lt;/p&gt;
+&lt;p&gt;Methods that circumvent this difficulty include &lt;a href="https://en.wikipedia.org/wiki/Kernel_density_estimation"&gt;Kernel density estimation&lt;/a&gt; which makes strong assumptions on the form of the density estimator, or &lt;a href="https://lilianweng.github.io/posts/2018-08-12-vae/"&gt;Variational Autoencoders&lt;/a&gt; which also make a normality assumption on the distribution of the latent variables.&lt;/p&gt;
+&lt;p&gt;Note that instead of learning the data distribution itself, we can try to learn its gradient. Score matching does exactly this: it introduces a so-called "score function" $\mathbf{s}_m$ (with a set of parameters $\boldsymbol{\theta}$, typically the weights in a neural network) which models the gradient of (the log of) the data distribution $p_{d}$.&lt;/p&gt;
 $$
 \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta}) \triangleq \nabla_{\mathbf{x}} \log p_{m}(\mathbf{x} ; \boldsymbol{\theta}) = \nabla_{\mathbf{x}} \log \tilde p_{m}(\mathbf{x} ; \boldsymbol{\theta}) 
 $$&lt;p&gt;&lt;/p&gt;
@@ -1130,11 +1130,11 @@ $$&lt;p&gt;&lt;/p&gt;
 &lt;p&gt;Note that the presence of the log doesn't steer us away from the initial goal since&lt;/p&gt;
 $$
 \nabla_{\mathbf{x}} \log p(\mathbf{x}) = \frac1{p(\mathbf{x})}{\nabla_{\mathbf{x}} p(\mathbf{x})},
-$$&lt;p&gt;i.e. the gradient of the log of the density is the gradient of the density, weighted by the inverse density.&lt;/p&gt;
-&lt;p&gt;Optimizing the score function is equivalent to minimizing the &lt;a href="https://en.wikipedia.org/wiki/Fisher_information_metric"&gt;Fisher divergence&lt;/a&gt; between our model $s_m$ and the real score function $\mathbf{s}_{d}$ that we're trying to learn.&lt;/p&gt;
-$$L(\boldsymbol{\theta}) \triangleq \frac{1}{2} \mathbb{E}_{p_{d}}\left[\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})-\mathbf{s}_{d}(\mathbf{x})\right\|_{2}^{2}\right],$$&lt;p&gt;&lt;a href="http://jmlr.org/papers/volume6/hyvarinen05a/old.pdf"&gt;Hyvärinen (2005)&lt;/a&gt; showed that the Fisher divergence $L(\boldsymbol{\theta})$ is equal to&lt;/p&gt;
-$$J(\boldsymbol{\theta}) \triangleq \mathbb{E}_{p_{d}}\left[\operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right)+\frac{1}{2}\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right\|_{2}^{2}\right],$$&lt;p&gt;up to an additive constant. In other words, for samples from the distribution $p_d$, the score function should have minimal gradient trace (i.e. be constant around sample coordinates) and norm (i.e. be as small as possible). This loss function is still not tractable in large dimensional spaces, but we can compute it in smaller dimensions. For larger dimensions, tricks (like &lt;a href="http://blog.shakirm.com/2015/09/machine-learning-trick-of-the-day-3-hutchinsons-trick/"&gt;Hutchinson's&lt;/a&gt;) are needed to evaluate the gradient trace.&lt;/p&gt;
-&lt;p&gt;I'll be using the &lt;a href="https://github.com/google/jax"&gt;Jax deep learning framework&lt;/a&gt;, the latest cool kid on the neural networks block. Compared to PyTorch and TensorFlow, Jax is interesting because it has a functional spin and an interface very similar to Numpy. But let's get back to score matching.&lt;/p&gt;
+$$&lt;p&gt;i.e., the gradient of the log of the density is the gradient of the density, weighted by the inverse density.&lt;/p&gt;
+&lt;p&gt;Optimizing the score function is equivalent to minimizing the &lt;a href="https://en.wikipedia.org/wiki/Fisher_information_metric"&gt;Fisher divergence&lt;/a&gt; between our model $\mathbf{s}_m$ and the real score function $\mathbf{s}_{d}$ that we're trying to learn.&lt;/p&gt;
+$$L(\boldsymbol{\theta}) \triangleq \frac{1}{2} \mathbb{E}_{p_{d}}\left[\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})-\mathbf{s}_{d}(\mathbf{x})\right\|_{2}^{2}\right],$$&lt;p&gt;&lt;a href="http://jmlr.org/papers/volume6/hyvarinen05a/old.pdf"&gt;Hyvärinen (2005)&lt;/a&gt; showed that the Fisher divergence $L(\boldsymbol{\theta})$ is equal to a loss function $J$ defined as&lt;/p&gt;
+$$J(\boldsymbol{\theta}) \triangleq \mathbb{E}_{p_{d}}\left[\operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right)+\frac{1}{2}\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right\|_{2}^{2}\right],$$&lt;p&gt;up to an additive constant. In other words, for samples from the distribution $p_d$, the score function should have minimal gradient trace (i.e., be constant around sample coordinates) and norm (i.e., be as small as possible). This loss function is still not tractable in large dimensional spaces, but we can compute it in smaller dimensions. For larger dimensions, tricks (like &lt;a href="http://blog.shakirm.com/2015/09/machine-learning-trick-of-the-day-3-hutchinsons-trick/"&gt;Hutchinson's&lt;/a&gt;) are needed to evaluate the gradient trace (more on this later).&lt;/p&gt;
+&lt;p&gt;I'll be using the &lt;a href="https://github.com/google/jax"&gt;JAX deep learning framework&lt;/a&gt;, the latest cool kid on the neural networks' block. Compared to PyTorch and TensorFlow, JAX is interesting because it has a functional spin and an interface very similar to Numpy. But let's get back to score matching.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1155,7 +1155,7 @@ $$J(\boldsymbol{\theta}) \triangleq \mathbb{E}_{p_{d}}\left[\operatorname{tr}\le
 &lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="Illustrative-example:-the-ring-dataset"&gt;Illustrative example: the ring dataset&lt;a class="anchor-link" href="#Illustrative-example:-the-ring-dataset"&gt;&amp;#182;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;To give a concrete example of score-matching I use a data distribution centered around 
+&lt;h2 id="Illustrative-example:-the-ring-dataset"&gt;Illustrative example: the ring dataset&lt;a class="anchor-link" href="#Illustrative-example:-the-ring-dataset"&gt;&amp;#182;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;To give a concrete example of score matching let's use a synthetic data distribution centered around 
 a ring, with radial normal noise and uniform angular distribution.&lt;/p&gt;
 
 &lt;/div&gt;
@@ -1163,7 +1163,7 @@ a ring, with radial normal noise and uniform angular distribution.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="cell border-box-sizing code_cell rendered"&gt;
 &lt;div class="input"&gt;
-&lt;div class="prompt input_prompt"&gt;In&amp;nbsp;[15]:&lt;/div&gt;
+&lt;div class="prompt input_prompt"&gt;In&amp;nbsp;[5]:&lt;/div&gt;
 &lt;div class="inner_cell"&gt;
     &lt;div class="input_area"&gt;
 &lt;div class=" highlight hl-ipython3"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
@@ -1174,12 +1174,11 @@ a ring, with radial normal noise and uniform angular distribution.&lt;/p&gt;
 &lt;span class="c1"&gt;# Matplotlib parameters&lt;/span&gt;
 &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rcParams&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;figure.figsize&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rcParams&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;image.cmap&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;RdBu&amp;#39;&lt;/span&gt;
-&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tight_layout&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 &lt;span class="n"&gt;bright_colormap&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ListedColormap&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;#FF0000&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;#0000FF&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
 
 &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;RingDistribution&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;Two-dimensional probability distribution centered around a ring, with radial &lt;/span&gt;
-&lt;span class="sd"&gt;    normal noise and uniform angular distribution.&lt;/span&gt;
+    &lt;span class="sd"&gt;&amp;quot;&amp;quot;&amp;quot;Two-dimensional probability distribution centered around a ring, with &lt;/span&gt;
+&lt;span class="sd"&gt;    radial normal noise and uniform angular distribution.&lt;/span&gt;
 &lt;span class="sd"&gt;    &amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
     &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;radius&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;radius&lt;/span&gt;
@@ -1211,30 +1210,10 @@ a ring, with radial normal noise and uniform angular distribution.&lt;/p&gt;
 &lt;span class="n"&gt;STD&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mf"&gt;0.1&lt;/span&gt;
 &lt;span class="n"&gt;distribution&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;RingDistribution&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;radius&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;RADIUS&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;STD&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;span class="n"&gt;X&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;distribution&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_samples&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;10000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;X&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;distribution&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n_samples&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;10000&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
     &lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div class="output_wrapper"&gt;
-&lt;div class="output"&gt;
-
-
-&lt;div class="output_area"&gt;
-
-    &lt;div class="prompt"&gt;&lt;/div&gt;
-
-
-
-
-&lt;div class="output_text output_subarea "&gt;
-&lt;pre&gt;&amp;lt;Figure size 720x720 with 0 Axes&amp;gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;/div&gt;
-
 &lt;/div&gt;
 &lt;/div&gt;
 
@@ -1249,7 +1228,7 @@ $$
 &amp;amp;=\nabla_{\mathbf{x}} \log \left(\sqrt{\frac{1}{2\pi}}\exp\left(-\frac{\left(r-R\right)^2}{2}\right)\right) \\
 &amp;amp;= (\frac{R}{r} - 1) \mathbf{x}
 \end{aligned}
-$$&lt;p&gt;This fact allows us to visualize the score function that we're trying to learn, as a vector field.&lt;/p&gt;
+$$&lt;p&gt;The fact that the score function can be computed analytically allows us to visualize the score function that we're trying to learn, as a vector field.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1306,7 +1285,12 @@ $$&lt;p&gt;This fact allows us to visualize the score function that we're trying
 &lt;div class="cell border-box-sizing text_cell rendered"&gt;&lt;div class="prompt input_prompt"&gt;
 &lt;/div&gt;&lt;div class="inner_cell"&gt;
 &lt;div class="text_cell_render border-box-sizing rendered_html"&gt;
-&lt;h2 id="Learning-the-score-function-with-JAX"&gt;Learning the score function with JAX&lt;a class="anchor-link" href="#Learning-the-score-function-with-JAX"&gt;&amp;#182;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;In the following we define a few util functions in JAX then initialize a Multilayer Perceptron (MLP) to model and learn the score function. The output of the MLP has the same dimension as the input since the output is a vector field in the feature space.&lt;/p&gt;
+&lt;p&gt;As expected, the score function is rotation-invariant and points to the ring, with smaller scores near the data distribution, and larger ones far from it.&lt;/p&gt;
+&lt;p&gt;The score is larger when moving away from the data distribution because of the log term in the score definition: since $\mathbf{s}_m(\mathbf{x})=\nabla_\mathbf{x} \log(p(\mathbf{x})) = \left(\nabla_\mathbf{x} p(\mathbf{x})\right) / p(\mathbf{x})$, the score becomes large in regions of low probability. This property is useful for generative modeling, since the score points to the data distribution more forcefully in regions of the feature space that are "out of distribution".&lt;/p&gt;
+&lt;h2 id="Learning-the-score-function-with-JAX"&gt;Learning the score function with JAX&lt;a class="anchor-link" href="#Learning-the-score-function-with-JAX"&gt;&amp;#182;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;To try to learn the score function introduced above, we can use a deep learning model, the loss function 
+$$J(\boldsymbol{\theta}) \triangleq \mathbb{E}_{p_{d}}\left[\operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right)+\frac{1}{2}\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right\|_{2}^{2}\right],$$
+introduced above, and our good old gradient descent will do the rest.&lt;/p&gt;
+&lt;p&gt;In the following we define a few util functions in JAX then initialize a Multilayer Perceptron (MLP) to model the score function. The output of the MLP has the same dimension as the input since the output is a vector in the original feature space.&lt;/p&gt;
 
 &lt;/div&gt;
 &lt;/div&gt;
@@ -4981,10 +4965,10 @@ texts are shorter than this.&lt;/p&gt;
 
  
  
-&lt;div id="3710f5cc-a19a-4a2b-84d9-9bf356b8ce25"&gt;&lt;/div&gt;
+&lt;div id="6b154864-0fe5-4dc3-8da3-0aa7e9e51be7"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#3710f5cc-a19a-4a2b-84d9-9bf356b8ce25');
+var element = $('#6b154864-0fe5-4dc3-8da3-0aa7e9e51be7');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "707ae041060741568b39fe87086ba7f2", "version_major": 2, "version_minor": 0}
@@ -5014,10 +4998,10 @@ var element = $('#3710f5cc-a19a-4a2b-84d9-9bf356b8ce25');
 
  
  
-&lt;div id="3684c406-008c-4cd0-9c5b-30e399289299"&gt;&lt;/div&gt;
+&lt;div id="f5b5e870-21b9-4b84-8d59-5efbdd15a8f9"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#3684c406-008c-4cd0-9c5b-30e399289299');
+var element = $('#f5b5e870-21b9-4b84-8d59-5efbdd15a8f9');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "d30ef4eb2e454f9db556763415ae22b8", "version_major": 2, "version_minor": 0}
@@ -5047,10 +5031,10 @@ var element = $('#3684c406-008c-4cd0-9c5b-30e399289299');
 
  
  
-&lt;div id="bbd92cb2-41eb-402c-b67e-427bfd050a86"&gt;&lt;/div&gt;
+&lt;div id="2c83390f-3b69-42a0-afa4-66d70733240a"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#bbd92cb2-41eb-402c-b67e-427bfd050a86');
+var element = $('#2c83390f-3b69-42a0-afa4-66d70733240a');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "e712dba76f9449c5a89a51f08e64a079", "version_major": 2, "version_minor": 0}
@@ -5146,10 +5130,10 @@ var element = $('#bbd92cb2-41eb-402c-b67e-427bfd050a86');
 
  
  
-&lt;div id="a296db68-16a4-4d9b-becf-f32af24742a1"&gt;&lt;/div&gt;
+&lt;div id="1e35da3f-5bcb-48cc-9dcb-8e9601d0dbe5"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_widget_view "&gt;
 &lt;script type="text/javascript"&gt;
-var element = $('#a296db68-16a4-4d9b-becf-f32af24742a1');
+var element = $('#1e35da3f-5bcb-48cc-9dcb-8e9601d0dbe5');
 &lt;/script&gt;
 &lt;script type="application/vnd.jupyter.widget-view+json"&gt;
 {"model_id": "b9c3329f82484e0195cc3d01591d1778", "version_major": 2, "version_minor": 0}
