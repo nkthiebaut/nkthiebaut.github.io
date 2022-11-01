@@ -1244,11 +1244,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
  .highlight pre  .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Score-matching,-toy-datasets,-and-Jax">Score matching, toy datasets, and Jax<a class="anchor-link" href="#Score-matching,-toy-datasets,-and-Jax">&#182;</a></h1><p><a href="https://yang-song.net/blog/2021/score/">Score matching</a> is a technique to learn (the gradient of) data distributions, with applications in generative modelling and beyond. This post explores score matching on toy datasets.</p>
+<h1 id="Score-matching,-toy-datasets,-and-Jax">Score matching, toy datasets, and Jax<a class="anchor-link" href="#Score-matching,-toy-datasets,-and-Jax">&#182;</a></h1><p><a href="https://yang-song.net/blog/2021/score/">Score matching</a> is a technique to learn (the gradient of) data distributions, with applications in generative modeling and beyond. This post explores score matching on toy datasets.</p>
 <p>The method was introduced <a href="http://jmlr.org/papers/volume6/hyvarinen05a/old.pdf">in 2005</a> but really came back into the spotlight <a href="https://arxiv.org/abs/1907.05600">in 2019</a> when Song and Hermon used the technique to generate pictures that soon rivaled Generative Adversarial Networks. Score matching is also a <a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/">core component of diffusion models</a>.</p>
 <p>The goal is to approximate a data distribution $p_d$ with a model distribution $p_m$. In practice, one usually introduces an unnormalized parametric model $\tilde p_\theta$ and partition function $Z_\theta=\int \tilde p_\theta(x) \mathrm{d}x$ (normalization term) such that $p_m(x) = \frac{\tilde p_\theta(x)}{Z_\theta}$. Unfortunately, fitting the parameters of $p_m$ is intractable in large dimensional spaces because of the partition function that requires integrating over the entire dataset for every set of parameters during the training process.</p>
-<p>Methods that circumvent this difficulty include <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation">Kernel density estimation</a> which make strong assumptions on the form of the density estimator, or <a href="https://lilianweng.github.io/posts/2018-08-12-vae/">Variational Autoencoders</a> that also make a normality assumption on the latent variables distribution.</p>
-<p>Note that instead of learning the data distribution itself, we can try to learn its gradient. Score matching does exactly this: it introduces a so-called "score function" $s_m$ (with a set parameters $\boldsymbol{\theta}$, typically the weights in a neural network) which models the gradient of (the log of) the data distribution $p_{d}$.</p>
+<p>Methods that circumvent this difficulty include <a href="https://en.wikipedia.org/wiki/Kernel_density_estimation">Kernel density estimation</a> which makes strong assumptions on the form of the density estimator, or <a href="https://lilianweng.github.io/posts/2018-08-12-vae/">Variational Autoencoders</a> which also make a normality assumption on the distribution of the latent variables.</p>
+<p>Note that instead of learning the data distribution itself, we can try to learn its gradient. Score matching does exactly this: it introduces a so-called "score function" $\mathbf{s}_m$ (with a set of parameters $\boldsymbol{\theta}$, typically the weights in a neural network) which models the gradient of (the log of) the data distribution $p_{d}$.</p>
 $$
 \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta}) \triangleq \nabla_{\mathbf{x}} \log p_{m}(\mathbf{x} ; \boldsymbol{\theta}) = \nabla_{\mathbf{x}} \log \tilde p_{m}(\mathbf{x} ; \boldsymbol{\theta}) 
 $$<p></p>
@@ -1256,11 +1256,11 @@ $$<p></p>
 <p>Note that the presence of the log doesn't steer us away from the initial goal since</p>
 $$
 \nabla_{\mathbf{x}} \log p(\mathbf{x}) = \frac1{p(\mathbf{x})}{\nabla_{\mathbf{x}} p(\mathbf{x})},
-$$<p>i.e. the gradient of the log of the density is the gradient of the density, weighted by the inverse density.</p>
-<p>Optimizing the score function is equivalent to minimizing the <a href="https://en.wikipedia.org/wiki/Fisher_information_metric">Fisher divergence</a> between our model $s_m$ and the real score function $\mathbf{s}_{d}$ that we're trying to learn.</p>
-$$L(\boldsymbol{\theta}) \triangleq \frac{1}{2} \mathbb{E}_{p_{d}}\left[\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})-\mathbf{s}_{d}(\mathbf{x})\right\|_{2}^{2}\right],$$<p><a href="http://jmlr.org/papers/volume6/hyvarinen05a/old.pdf">Hyvärinen (2005)</a> showed that the Fisher divergence $L(\boldsymbol{\theta})$ is equal to</p>
-$$J(\boldsymbol{\theta}) \triangleq \mathbb{E}_{p_{d}}\left[\operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right)+\frac{1}{2}\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right\|_{2}^{2}\right],$$<p>up to an additive constant. In other words, for samples from the distribution $p_d$, the score function should have minimal gradient trace (i.e. be constant around sample coordinates) and norm (i.e. be as small as possible). This loss function is still not tractable in large dimensional spaces, but we can compute it in smaller dimensions. For larger dimensions, tricks (like <a href="http://blog.shakirm.com/2015/09/machine-learning-trick-of-the-day-3-hutchinsons-trick/">Hutchinson's</a>) are needed to evaluate the gradient trace.</p>
-<p>I'll be using the <a href="https://github.com/google/jax">Jax deep learning framework</a>, the latest cool kid on the neural networks block. Compared to PyTorch and TensorFlow, Jax is interesting because it has a functional spin and an interface very similar to Numpy. But let's get back to score matching.</p>
+$$<p>i.e., the gradient of the log of the density is the gradient of the density, weighted by the inverse density.</p>
+<p>Optimizing the score function is equivalent to minimizing the <a href="https://en.wikipedia.org/wiki/Fisher_information_metric">Fisher divergence</a> between our model $\mathbf{s}_m$ and the real score function $\mathbf{s}_{d}$ that we're trying to learn.</p>
+$$L(\boldsymbol{\theta}) \triangleq \frac{1}{2} \mathbb{E}_{p_{d}}\left[\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})-\mathbf{s}_{d}(\mathbf{x})\right\|_{2}^{2}\right],$$<p><a href="http://jmlr.org/papers/volume6/hyvarinen05a/old.pdf">Hyvärinen (2005)</a> showed that the Fisher divergence $L(\boldsymbol{\theta})$ is equal to a loss function $J$ defined as</p>
+$$J(\boldsymbol{\theta}) \triangleq \mathbb{E}_{p_{d}}\left[\operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right)+\frac{1}{2}\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right\|_{2}^{2}\right],$$<p>up to an additive constant. In other words, for samples from the distribution $p_d$, the score function should have minimal gradient trace (i.e., be constant around sample coordinates) and norm (i.e., be as small as possible). This loss function is still not tractable in large dimensional spaces, but we can compute it in smaller dimensions. For larger dimensions, tricks (like <a href="http://blog.shakirm.com/2015/09/machine-learning-trick-of-the-day-3-hutchinsons-trick/">Hutchinson's</a>) are needed to evaluate the gradient trace (more on this later).</p>
+<p>I'll be using the <a href="https://github.com/google/jax">JAX deep learning framework</a>, the latest cool kid on the neural networks' block. Compared to PyTorch and TensorFlow, JAX is interesting because it has a functional spin and an interface very similar to Numpy. But let's get back to score matching.</p>
 
 </div>
 </div>
@@ -1281,7 +1281,7 @@ $$J(\boldsymbol{\theta}) \triangleq \mathbb{E}_{p_{d}}\left[\operatorname{tr}\le
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Illustrative-example:-the-ring-dataset">Illustrative example: the ring dataset<a class="anchor-link" href="#Illustrative-example:-the-ring-dataset">&#182;</a></h2><p>To give a concrete example of score-matching I use a data distribution centered around 
+<h2 id="Illustrative-example:-the-ring-dataset">Illustrative example: the ring dataset<a class="anchor-link" href="#Illustrative-example:-the-ring-dataset">&#182;</a></h2><p>To give a concrete example of score matching let's use a synthetic data distribution centered around 
 a ring, with radial normal noise and uniform angular distribution.</p>
 
 </div>
@@ -1289,7 +1289,7 @@ a ring, with radial normal noise and uniform angular distribution.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -1300,12 +1300,11 @@ a ring, with radial normal noise and uniform angular distribution.</p>
 <span class="c1"># Matplotlib parameters</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;image.cmap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;RdBu&#39;</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">bright_colormap</span> <span class="o">=</span> <span class="n">ListedColormap</span><span class="p">([</span><span class="s1">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="s1">&#39;#0000FF&#39;</span><span class="p">])</span>
 
 <span class="k">class</span> <span class="nc">RingDistribution</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Two-dimensional probability distribution centered around a ring, with radial </span>
-<span class="sd">    normal noise and uniform angular distribution.</span>
+    <span class="sd">&quot;&quot;&quot;Two-dimensional probability distribution centered around a ring, with </span>
+<span class="sd">    radial normal noise and uniform angular distribution.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">radius</span>
@@ -1337,30 +1336,10 @@ a ring, with radial normal noise and uniform angular distribution.</p>
 <span class="n">STD</span> <span class="o">=</span> <span class="mf">0.1</span>
 <span class="n">distribution</span> <span class="o">=</span> <span class="n">RingDistribution</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">RADIUS</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">STD</span><span class="p">)</span>
 
-<span class="n">X</span> <span class="o">=</span> <span class="n">distribution</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">);</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">distribution</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>&lt;Figure size 720x720 with 0 Axes&gt;</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -1375,7 +1354,7 @@ $$
 &amp;=\nabla_{\mathbf{x}} \log \left(\sqrt{\frac{1}{2\pi}}\exp\left(-\frac{\left(r-R\right)^2}{2}\right)\right) \\
 &amp;= (\frac{R}{r} - 1) \mathbf{x}
 \end{aligned}
-$$<p>This fact allows us to visualize the score function that we're trying to learn, as a vector field.</p>
+$$<p>The fact that the score function can be computed analytically allows us to visualize the score function that we're trying to learn, as a vector field.</p>
 
 </div>
 </div>
@@ -1432,7 +1411,12 @@ $$<p>This fact allows us to visualize the score function that we're trying to le
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Learning-the-score-function-with-JAX">Learning the score function with JAX<a class="anchor-link" href="#Learning-the-score-function-with-JAX">&#182;</a></h2><p>In the following we define a few util functions in JAX then initialize a Multilayer Perceptron (MLP) to model and learn the score function. The output of the MLP has the same dimension as the input since the output is a vector field in the feature space.</p>
+<p>As expected, the score function is rotation-invariant and points to the ring, with smaller scores near the data distribution, and larger ones far from it.</p>
+<p>The score is larger when moving away from the data distribution because of the log term in the score definition: since $\mathbf{s}_m(\mathbf{x})=\nabla_\mathbf{x} \log(p(\mathbf{x})) = \left(\nabla_\mathbf{x} p(\mathbf{x})\right) / p(\mathbf{x})$, the score becomes large in regions of low probability. This property is useful for generative modeling, since the score points to the data distribution more forcefully in regions of the feature space that are "out of distribution".</p>
+<h2 id="Learning-the-score-function-with-JAX">Learning the score function with JAX<a class="anchor-link" href="#Learning-the-score-function-with-JAX">&#182;</a></h2><p>To try to learn the score function introduced above, we can use a deep learning model, the loss function 
+$$J(\boldsymbol{\theta}) \triangleq \mathbb{E}_{p_{d}}\left[\operatorname{tr}\left(\nabla_{\mathbf{x}} \mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right)+\frac{1}{2}\left\|\mathbf{s}_{m}(\mathbf{x} ; \boldsymbol{\theta})\right\|_{2}^{2}\right],$$
+introduced above, and our good old gradient descent will do the rest.</p>
+<p>In the following we define a few util functions in JAX then initialize a Multilayer Perceptron (MLP) to model the score function. The output of the MLP has the same dimension as the input since the output is a vector in the original feature space.</p>
 
 </div>
 </div>
